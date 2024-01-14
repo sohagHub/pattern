@@ -18,6 +18,8 @@ services:
     ports:
       - 5001:5001
       - 9229:9229
+    environment:
+      - CHOKIDAR_USEPOLLING=true
 
   ngrok:
     build: ./ngrok
@@ -32,3 +34,5 @@ services:
     ports:
       - 3001:3001
       - 35729:35729
+    environment:
+      - CHOKIDAR_USEPOLLING=true

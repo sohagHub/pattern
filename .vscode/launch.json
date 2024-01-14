@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "https://localhost:3001",
+            "webRoot": "${workspaceFolder}/client/src",
+            "sourceMapPathOverrides": {
+                "webpack:///src/*": "${webRoot}/*",
+                "/opt/client/src/*": "${webRoot}/*"
+            }
+        },
+        {
             "name": "Docker: Attach to Server",
             "type": "node",
             "request": "attach",
