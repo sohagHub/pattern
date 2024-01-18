@@ -252,3 +252,6 @@ CREATE TABLE plaid_api_events_table
   error_code text,
   created_at timestamptz default now()
 );
+
+
+ALTER TABLE transactions_table ADD COLUMN manually_updated BOOLEAN DEFAULT false;
