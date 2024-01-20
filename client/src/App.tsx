@@ -22,7 +22,7 @@ function App() {
     draggable: false,
     toastClassName: 'box toast__background',
     bodyClassName: 'toast__body',
-    hideProgressBar: true,
+    hideProgressBar: false,
   });
 
   return (
