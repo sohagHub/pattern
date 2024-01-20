@@ -79,6 +79,7 @@ const sanitizeTransactions = transactions =>
     'type',
     'date',
     'category',
+    'subcategory',
     'amount',
     'created_at',
     'updated_at',
