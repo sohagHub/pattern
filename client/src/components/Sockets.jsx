@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 import { useAccounts, useItems, useTransactions } from '../services';
+import { getTransactionsByUser } from '../services/api';
 const io = require('socket.io-client');
 const { REACT_APP_SERVER_PORT } = process.env;
 
@@ -13,6 +14,25 @@ export default function Sockets() {
 
   useEffect(() => {
     socket.current = io(`http://localhost:${REACT_APP_SERVER_PORT}`);
+
+    socket.current.on('SYNC_HAPPENED', ({ itemId, userId, log } = {}) => {
+      const msg = `${log}`;
+      console.log(msg);
+      toast(msg);
+      getAccountsByItem(itemId);
+      getTransactionsByItem(itemId);
+      getTransactionsByUser(userId);
+    });
+
+    socket.current.on('SYNC_ERROR', ({ itemId, userId, log, error} = {}) => {
+      const msg = `${log} ${error}`;
+      console.log(msg);
+      toast(msg, { autoClose: false });
+      getAccountsByItem(itemId);
+      getTransactionsByItem(itemId);
+      getTransactionsByUser(userId);
+    });
+
 
     socket.current.on('SYNC_UPDATES_AVAILABLE', ({ itemId } = {}) => {
       const msg = `New Webhook Event: Item ${itemId}: Transactions updates`;
