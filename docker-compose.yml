@@ -48,7 +48,7 @@ services:
       PLAID_ENV:
       PORT: 5001
       DB_PORT: 5432
-      DB_HOST_NAME: sohagst.duckdns.org
+      DB_HOST_NAME:
       POSTGRES_PASSWORD:
     #depends_on:
     #  - db
