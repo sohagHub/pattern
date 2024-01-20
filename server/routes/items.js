@@ -38,15 +38,6 @@ router.post(
   '/',
   asyncWrapper(async (req, res) => {
     const { publicToken, institutionId, userId } = req.body;
-    // prevent duplicate items for the same institution per user.
-    const existingItem = await retrieveItemByPlaidInstitutionId(
-      institutionId,
-      userId
-    );
-    if (existingItem)
-      throw new Boom('You have already linked an item at this institution.', {
-        statusCode: 409,
-      });
 
     // exchange the public token for a private access token and store with the item.
     const response = await plaid.itemPublicTokenExchange({
