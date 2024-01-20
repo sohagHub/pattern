@@ -149,107 +149,125 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   document.getElementsByTagName('body')[0].style.overflow = 'auto'; // to override overflow:hidden from link pane
   return (
     <div>
-      <Banner />
-      {linkTokens.error.error_code != null && (
-        <Callout warning>
-          <div>
-            Unable to fetch link_token: please make sure your backend server is
-            running and that your .env file has been configured correctly.
-          </div>
-          <div>
-            Error Code: <code>{linkTokens.error.error_code}</code>
-          </div>
-          <div>
-            Error Type: <code>{linkTokens.error.error_type}</code>{' '}
-          </div>
-          <div>Error Message: {linkTokens.error.error_message}</div>
-        </Callout>
-      )}
-      <UserCard user={user} userId={userId} removeButton={false} linkButton />
-      {numOfItems === 0 && <ErrorMessage />}
-      {numOfItems > 0 && transactions.length === 0 && (
-        <div className="loading">
-          <LoadingSpinner />
-          <LoadingCallout />
-        </div>
-      )}
-      {numOfItems > 0 && transactions.length > 0 && (
-        <>
-          <NetWorth
-            accounts={accounts}
-            numOfItems={numOfItems}
-            personalAssets={assets}
+      <div>
+        <Banner />
+        {linkTokens.error.error_code != null && (
+          <Callout warning>
+            <div>
+              Unable to fetch link_token: please make sure your backend server
+              is running and that your .env file has been configured
+              correctly.
+            </div>
+            <div>
+              Error Code: <code>{linkTokens.error.error_code}</code>
+            </div>
+            <div>
+              Error Type: <code>{linkTokens.error.error_type}</code>{' '}
+            </div>
+            <div>Error Message: {linkTokens.error.error_message}</div>
+          </Callout>
+        )}
+      </div>
+      <div className="container">
+        <div className="left-section">
+          <UserCard
+            user={user}
             userId={userId}
-            assetsOnly={false}
+            removeButton={false}
+            linkButton
           />
-          <SpendingInsights
-            numOfItems={numOfItems}
-            transactions={transactions}
-          />
-        </>
-      )}
-      {numOfItems === 0 && transactions.length === 0 && assets.length > 0 && (
-        <>
-          <NetWorth
-            accounts={accounts}
-            numOfItems={numOfItems}
-            personalAssets={assets}
-            userId={userId}
-            assetsOnly
-          />
-        </>
-      )}
-      {numOfItems > 0 && (
-        <>
           <Button
             large
             inline
-            className="add-account__button"
+            className="nice-button"
             onClick={handleSyncClick} // Assign the onClick event to handleSyncClick
           >
             Sync
           </Button>
+          {numOfItems > 0 && (
+            <>
+              <div className="item__header">
+                <div>
+                  <h2 className="item__header-heading">
+                    {`${items.length} ${pluralize(
+                      'Bank',
+                      items.length
+                    )} Linked`}
+                  </h2>
 
-          <div className="item__header">
-            <div>
-              <h2 className="item__header-heading">
-                {`${items.length} ${pluralize('Bank', items.length)} Linked`}
-              </h2>
-              {!!items.length && (
-                <p className="item__header-subheading">
-                  Below is a list of all your connected banks. Click on a bank
-                  to view its associated accounts.
-                </p>
-              )}
-            </div>
+                  {!!items.length && (
+                    <p className="item__header-subheading">
+                      Below is a list of all your connected banks. Click on a
+                      bank to view its associated accounts.
+                    </p>
+                  )}
+                </div>
 
-            <Button
-              large
-              inline
-              className="add-account__button"
-              onClick={initiateLink}
-            >
-              Add another bank
-            </Button>
-
-            {token != null && token.length > 0 && (
-              // Link will not render unless there is a link token
-              <LaunchLink token={token} userId={userId} itemId={null} />
-            )}
-          </div>
-          <ErrorMessage />
-          {items.map(item => (
-            <div id="itemCards" key={item.id}>
-              <ItemCard item={item} userId={userId} />
-            </div>
-          ))}
-        </>
-      )}
-      <div>
-        <div className="bottom-border-content">
-          <h2 className="header">Transactions</h2>
+                {token != null && token.length > 0 && (
+                  // Link will not render unless there is a link token
+                  <LaunchLink token={token} userId={userId} itemId={null} />
+                )}
+              </div>
+              <ErrorMessage />
+              {items.map(item => (
+                <div id="itemCards" key={item.id}>
+                  <ItemCard item={item} userId={userId} />
+                </div>
+              ))}
+              <Button
+                large
+                inline
+                className="add-account__button"
+                onClick={initiateLink}
+              >
+                Add another bank
+              </Button>
+            </>
+          )}
         </div>
-        <TransactionsTable transactions={transactions} />
+        <div className="right-section">
+          {numOfItems === 0 && <ErrorMessage />}
+          {numOfItems > 0 && transactions.length === 0 && (
+            <div className="loading">
+              <LoadingSpinner />
+              <LoadingCallout />
+            </div>
+          )}
+          {numOfItems > 0 && transactions.length > 0 && (
+            <>
+              <NetWorth
+                accounts={accounts}
+                numOfItems={numOfItems}
+                personalAssets={assets}
+                userId={userId}
+                assetsOnly={false}
+              />
+              <SpendingInsights
+                numOfItems={numOfItems}
+                transactions={transactions}
+              />
+            </>
+          )}
+          {numOfItems === 0 &&
+            transactions.length === 0 &&
+            assets.length > 0 && (
+              <>
+                <NetWorth
+                  accounts={accounts}
+                  numOfItems={numOfItems}
+                  personalAssets={assets}
+                  userId={userId}
+                  assetsOnly
+                />
+              </>
+            )}
+          <div>
+            <div className="bottom-border-content">
+              <h2 className="header">Transactions</h2>
+            </div>
+            <TransactionsTable transactions={transactions} />
+          </div>
+        </div>
       </div>
     </div>
   );

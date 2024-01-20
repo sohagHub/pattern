@@ -15,10 +15,10 @@ body {
 }
 
 .App {
-  max-width: 131 * $unit;
+  max-width: 300 * $unit;
   margin-right: auto;
   margin-left: auto;
-  padding: 10 * $unit 5 * $unit;
+  padding: 1 * $unit 40 * $unit 0 20 * $unit;
 }
 
 /*
@@ -335,7 +335,7 @@ transactions-table
 }
 
 .transactions-body {
-  height: 63 * $unit;
+  height: auto;
   overflow-y: auto;
   overflow-x: hidden;
   text-align: left;
@@ -543,6 +543,14 @@ ErrorMessage
   box-shadow: 0 0 8px rgba(74, 144, 226, 0.5); /* Subtle glow effect */
 }
 
+.pagination-list {
+  margin: 30;
+  padding: 10;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+}
+
 .pagination-item {
   display: inline-block;
   margin-right: 5px;
@@ -565,4 +573,62 @@ ErrorMessage
 .pagination-link.active {
   background-color: #333;
   color: #fff;
+}
+
+.table-filter-sort-container {
+  display: flex;
+  align-items: center;
+}
+
+.nice-text {
+  font-size: 1.1em;
+  color: #333;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.filter-input {
+  flex: 0 0 70%;
+  margin-right: 10px;
+}
+
+.sort-input {
+  flex: 1;
+}
+
+.container {
+  display: flex;
+  flex-direction: row; /* Ensures the children (left and right sections) are laid out in a row */
+  width: 100%; /* Use the full width of the parent */
+}
+
+.left-section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: left;
+  margin-right: 20px;
+  width: 25%; /* 30% width of the container */
+}
+
+.right-section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: right;
+  width: 70%; /* 70% width of the container */
+}
+
+.nice-button {
+  background-color: #4a90e2;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1.1em;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
 }
