@@ -41,14 +41,68 @@ export default function TransactionsTable(props: Props) {
   const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastTransaction = currentPage * transactionsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
-  const currentTransactions = props.transactions
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(indexOfFirstTransaction, indexOfLastTransaction);
+
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
+  // New state for filter term and sort direction
+  const [filterTerm, setFilterTerm] = useState('');
+  const [sortDirection, setSortDirection] = useState('');
+
+  // Function to handle changes to the filter input
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterTerm(event.target.value);
+  };
+
+  // Function to handle changes to the sort direction
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortDirection(event.target.value);
+  };
+
+  // Adjust rendering of currentTransactions to filter and sort
+  const filteredTransactions = props.transactions.filter(tx =>
+    (tx.name ? tx.name.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
+    (tx.category ? tx.category.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
+    (tx.subcategory ? tx.subcategory.toLowerCase().includes(filterTerm.toLowerCase()) : false)
+  );
+
+  const sortedTransactions = filteredTransactions.sort((a, b) => {
+    if (sortDirection === 'asc') {
+      return a.amount - b.amount;
+    } else if (sortDirection === 'desc') {
+      return b.amount - a.amount;
+    } else if (sortDirection === 'date_desc') {
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    } else {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    }
+  });
+
+  const currentTransactions = sortedTransactions
+    //.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(indexOfFirstTransaction, indexOfLastTransaction);
+
   return (
     <div className="transactions">
+      {/* New inputs for filter term and sort direction */}
+      
+      <div className="table-filter-sort-container">
+      <span className="nice-text">Filter</span>
+      <input
+        className="nice-input filter-input"
+        type="text"
+        placeholder="Filter by keyword"
+        value={filterTerm}
+        onChange={handleFilterChange}
+      />
+      <span className="nice-text">Sort</span>
+      <select className="nice-input sort-input" value={sortDirection} onChange={handleSortChange}>
+        <option value="">By Date Latest</option>
+        <option value="date_desc">By Date Earliest</option>
+        <option value="asc">By Amount Ascending</option>
+        <option value="desc">By Amount Descending</option>
+      </select>
+      </div>  
       <table className="transactions-table">
         <thead className="transactions-header">
           <tr>
@@ -61,9 +115,6 @@ export default function TransactionsTable(props: Props) {
         </thead>
         <tbody className="transactions-body">
           {currentTransactions
-            .sort(
-              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-            )
             .map(tx => (
               <tr key={tx.id} className="transactions-data-rows">
                 <td className="table-date">
