@@ -60,7 +60,7 @@ const createAccounts = async (plaidItemId, accounts) => {
         itemId,
         aid,
         name,
-        mask,
+        mask || 'itwasnull',
         officialName,
         currentBalance,
         availableBalance,
