@@ -54,10 +54,10 @@ const createOrUpdateTransactions = async transactions => {
           ON CONFLICT (plaid_transaction_id) DO UPDATE 
             SET 
               plaid_category_id = EXCLUDED.plaid_category_id,
-              category = EXCLUDED.category,
-              subcategory = EXCLUDED.subcategory,
+              category = CASE WHEN transactions_table.manually_updated THEN transactions_table.category ELSE EXCLUDED.category END,
+              subcategory = CASE WHEN transactions_table.manually_updated THEN transactions_table.subcategory ELSE EXCLUDED.subcategory END,
               type = EXCLUDED.type,
-              name = EXCLUDED.name,
+              name = CASE WHEN transactions_table.manually_updated THEN transactions_table.name ELSE EXCLUDED.name END,
               amount = EXCLUDED.amount,
               iso_currency_code = EXCLUDED.iso_currency_code,
               unofficial_currency_code = EXCLUDED.unofficial_currency_code,
@@ -88,6 +88,52 @@ const createOrUpdateTransactions = async transactions => {
   });
   await Promise.all(pendingQueries);
 };
+
+const justUpdateTransactions = async transactions => {
+  const pendingQueries = transactions.map(async transaction => {
+    // I have the updatred transaction object, just update it in the db
+    try {
+      const query = {
+        text: `
+          UPDATE transactions_table
+          SET
+            name = $2,
+            category = $3,
+            subcategory = $4,
+            manually_updated = true
+          WHERE id = $1
+          RETURNING *
+        `,
+        values: [
+          transaction.id,
+          transaction.name,
+          transaction.category,
+          transaction.subcategory
+        ],
+      };  
+      await db.query(query);
+    } catch (err) {
+      console.error(err);
+    }
+  });
+  await Promise.all(pendingQueries);
+}
+
+
+/**
+ * Retrieves a single transaction by its ID.
+ * 
+ * @param {number} transactionId the ID of the transaction.
+ * @returns {Object} the transaction.
+ */
+const retrieveTransactionById = async transactionId => {
+  const query = {
+    text: 'SELECT * FROM transactions WHERE id = $1',
+    values: [transactionId],
+  };
+  const { rows: transactions } = await db.query(query);
+  return transactions[0];
+}
 
 /**
  * Retrieves all transactions for a single account.
@@ -154,8 +200,10 @@ const deleteTransactions = async plaidTransactionIds => {
 
 module.exports = {
   createOrUpdateTransactions,
+  retrieveTransactionById,
   retrieveTransactionsByAccountId,
   retrieveTransactionsByItemId,
   retrieveTransactionsByUserId,
   deleteTransactions,
+  justUpdateTransactions,
 };
