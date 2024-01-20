@@ -5,6 +5,8 @@ import NavigationLink from 'plaid-threads/NavigationLink';
 import LoadingSpinner from 'plaid-threads/LoadingSpinner';
 import Callout from 'plaid-threads/Callout';
 import Button from 'plaid-threads/Button';
+import { syncAll } from '../services/api';
+import { TransactionsTable } from '.';
 
 import { RouteInfo, ItemType, AccountType, AssetType } from './types';
 import {
@@ -46,7 +48,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const [accounts, setAccounts] = useState<AccountType[]>([]);
   const [assets, setAssets] = useState<AssetType[]>([]);
 
-  const { getTransactionsByUser, transactionsByUser } = useTransactions();
+  const { transactionsByUser, getTransactionsByUser} = useTransactions();
   const { getAccountsByUser, accountsByUser } = useAccounts();
   const { assetsByUser, getAssetsByUser } = useAssets();
   const { usersById, getUserById } = useUsers();
@@ -59,6 +61,13 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
     // if done earlier, it may expire before enduser actually activates Link to add a bank.
     await generateLinkToken(userId, null);
   };
+
+  const handleSyncAll = async () => {
+    await syncAll();
+  };
+
+  // Call the function
+  //handleSyncAll();
 
   // update data store with user
   useEffect(() => {
@@ -129,13 +138,17 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
     setToken(linkTokens.byUser[userId]);
   }, [linkTokens, userId, numOfItems]);
 
+  const handleSyncClick = async () => {
+    try {
+      await syncAll();
+    } catch (error) {
+      console.error('Sync failed', error);
+    }
+  };
+
   document.getElementsByTagName('body')[0].style.overflow = 'auto'; // to override overflow:hidden from link pane
   return (
     <div>
-      <NavigationLink component={Link} to="/">
-        BACK TO LOGIN
-      </NavigationLink>
-
       <Banner />
       {linkTokens.error.error_code != null && (
         <Callout warning>
@@ -188,6 +201,15 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
       )}
       {numOfItems > 0 && (
         <>
+          <Button
+            large
+            inline
+            className="add-account__button"
+            onClick={handleSyncClick} // Assign the onClick event to handleSyncClick
+          >
+            Sync
+          </Button>
+
           <div className="item__header">
             <div>
               <h2 className="item__header-heading">
@@ -223,6 +245,12 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
           ))}
         </>
       )}
+      <div>
+        <div className="bottom-border-content">
+          <h2 className="header">Transactions</h2>
+        </div>
+        <TransactionsTable transactions={transactions} />
+      </div>
     </div>
   );
 };
