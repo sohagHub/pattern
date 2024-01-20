@@ -23,7 +23,7 @@ router.get(
     const radix = 10;
     count = parseInt(count, radix);
     offset = parseInt(offset, radix);
-    const requst = {
+    const request = {
       count: count,
       offset: offset,
       options: {
