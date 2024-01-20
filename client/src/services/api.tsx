@@ -59,6 +59,9 @@ export const getAccountsByItem = (itemId: number) =>
 export const getAccountsByUser = (userId: number) =>
   api.get(`/users/${userId}/accounts`);
 
+// sync
+export const syncAll = () => api.post('/services/sync');
+
 // transactions
 export const getTransactionsByAccount = (accountId: number) =>
   api.get(`/accounts/${accountId}/transactions`);
@@ -66,6 +69,8 @@ export const getTransactionsByItem = (itemId: number) =>
   api.get(`/items/${itemId}/transactions`);
 export const getTransactionsByUser = (userId: number) =>
   api.get(`/users/${userId}/transactions`);
+export const updateTransactionById = (id: number, data: any) =>
+  api.put(`/services/transaction/${id}`, data);
 
 // institutions
 export const getInstitutionById = (instId: string) =>
