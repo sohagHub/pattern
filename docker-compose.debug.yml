@@ -21,9 +21,6 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
 
-  ngrok:
-    build: ./ngrok
-    image: plaidinc/pattern-ngrok:debug
 
   client:
     build: ./client
