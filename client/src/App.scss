@@ -345,20 +345,24 @@ transactions-table
   width: 12%;
 }
 
+.table-account {
+  width: 15%;
+}
+
 .table-name {
   width: 28%;
 }
 
 .table-category {
-  width: 15%;
+  width: 12%;
 }
 
 .table-subcategory {
-  width: 25%;
+  width: 20%;
 }
 
 .table-amount {
-  width: 15%;
+  width: 13%;
 }
 
 /*
@@ -480,6 +484,8 @@ Monthly Spending
 .spendingInsightData {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  overflow-y: auto;
+  max-height: 400px;
 }
 
 /*

@@ -63,7 +63,10 @@ export default function TransactionsTable(props: Props) {
   const filteredTransactions = props.transactions.filter(tx =>
     (tx.name ? tx.name.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
     (tx.category ? tx.category.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
-    (tx.subcategory ? tx.subcategory.toLowerCase().includes(filterTerm.toLowerCase()) : false)
+    (tx.subcategory ? tx.subcategory.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
+    (tx.account_name ? tx.account_name.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
+    (tx.amount ? tx.amount.toString().toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
+    (tx.date ? tx.date.toLowerCase().includes(filterTerm.toLowerCase()) : false)
   );
 
   const sortedTransactions = filteredTransactions.sort((a, b) => {
@@ -107,6 +110,7 @@ export default function TransactionsTable(props: Props) {
         <thead className="transactions-header">
           <tr>
             <th className="table-date">Date</th>
+            <th className="table-account">Account</th>
             <th className="table-name">Name</th>
             <th className="table-category">Category</th>
             <th className="table-category">Subcategory</th>
@@ -123,6 +127,13 @@ export default function TransactionsTable(props: Props) {
                     type="text"
                     value={tx.date.slice(0, 10)}
                     readOnly
+                  />
+                </td>
+                <td className="table-account">
+                  <input
+                    className="nice-input"
+                    type="text"
+                    value={tx.account_name}
                   />
                 </td>
                 <td className="table-name">
