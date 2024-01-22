@@ -38,7 +38,7 @@ export default function CategoriesChart(props: Props) {
           data={data}
           cx="50%"
           cy="50%"
-          isAnimationActive={false}
+          isAnimationActive={true}
           paddingAngle={5}
           label={renderLabel}
           innerRadius={70}

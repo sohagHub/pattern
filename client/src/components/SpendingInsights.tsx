@@ -26,7 +26,8 @@ export default function SpendingInsights(props: Props) {
           date > oneMonthAgo &&
           tx.category !== 'Payment' &&
           tx.category !== 'Transfer' &&
-          tx.category !== 'Interest'
+          tx.category !== 'Interest' &&
+          tx.category !== 'Income' 
         );
       }),
     [transactions]
