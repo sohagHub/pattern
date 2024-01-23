@@ -50,12 +50,9 @@ export default function NetWorth(props: Props) {
       <h2 className="netWorthHeading">Net Worth</h2>
       {!props.assetsOnly && (
         <>
-          <div className="netWorthText">{`Your total across ${
-            props.numOfItems
-          } bank ${pluralize('account', props.numOfItems)}`}</div>
-          <h2 className="netWorthDollars">
+          <h4 className="netWorthDollars">
             {currencyFilter(assets - liabilities)}
-          </h2>
+          </h4>
           <div className="holdingsContainer">
             <div className="userDataBox">
               <div className="holdingsList">
