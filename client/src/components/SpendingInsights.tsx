@@ -4,7 +4,7 @@ import { currencyFilter, pluralize } from '../util';
 import { CategoriesChart } from '.';
 import { TransactionType } from './types';
 import { Bar } from 'recharts';
-import MonthlyCostChart from './MonthlyCost';
+import MonthlyCostChart from './MonthlyCostChart';
 
 interface Props {
   transactions: TransactionType[];
