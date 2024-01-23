@@ -12,8 +12,12 @@ export default function CategoriesChart(props: Props) {
   const data = [];
   const labels = Object.keys(props.categories);
   const values = Object.values(props.categories);
+  let totalValue = 0;
+
   for (let i = 0; i < labels.length; i++) {
-    data.push({ name: labels[i], value: Math.round(values[i]) });
+    const roundedValue = Math.round(values[i]);
+    data.push({ name: labels[i], value: roundedValue });
+    totalValue += roundedValue;
   }
 
   const COLORS = [
@@ -32,6 +36,7 @@ export default function CategoriesChart(props: Props) {
   return (
     <div className="holdingsList">
       <h4 className="holdingsHeading">Spending Categories</h4>
+      <div>Total: ${totalValue.toLocaleString()}</div>
       <PieChart width={400} height={400}>
         <Legend />
         <Pie
@@ -41,13 +46,18 @@ export default function CategoriesChart(props: Props) {
           isAnimationActive={true}
           paddingAngle={5}
           label={renderLabel}
-          innerRadius={70}
-          outerRadius={90}
+          innerRadius={0}
+          outerRadius={130}
           dataKey="value"
         >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
+          {data
+            .sort((a, b) => b.value - a.value)
+            .map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
         </Pie>
       </PieChart>
     </div>
