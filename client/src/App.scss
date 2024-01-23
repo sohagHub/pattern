@@ -391,7 +391,7 @@ net worth
 
 .netWorthText {
   font-family: $font-stack-monospace;
-  font-size: 2 * $unit;
+  font-size: 1 * $unit;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -402,7 +402,7 @@ net worth
   }
 
   .netWorthHeading {
-    margin-top: 7 * $unit;
+    margin-top: 1 * $unit;
     margin-bottom: 0;
   }
 }
@@ -413,7 +413,14 @@ net worth
 
 .userDataBox {
   width: 69 * $unit;
-  min-height: 40 * $unit;
+  min-height: 30 * $unit;
+  border: $border;
+  margin-right: 2 * $unit;
+}
+
+.userDataBoxBarChart {
+  width: 100%;
+  min-height: 30 * $unit;
   border: $border;
   margin-right: 2 * $unit;
 }
@@ -439,6 +446,7 @@ net worth
 
 .holdingsHeading {
   margin-top: 0;
+  margin-bottom: 0;
 }
 
 .data,
@@ -466,7 +474,7 @@ Monthly Spending
 }
 
 .monthlySpendingHeading {
-  margin-top: 7 * $unit;
+  margin-top: 2 * $unit;
   margin-bottom: 0;
 }
 
@@ -483,9 +491,10 @@ Monthly Spending
 
 .spendingInsightData {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 1fr;
   overflow-y: auto;
   max-height: 400px;
+  grid-row-gap: 1px; // Adjust the value as per your requirement
 }
 
 /*
@@ -637,4 +646,8 @@ ErrorMessage
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 4px;
+}
+
+.centered {
+  text-align: center;
 }
