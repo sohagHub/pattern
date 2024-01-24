@@ -1,14 +1,15 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
-import { currencyFilter, pluralize } from '../util';
+import { currencyFilter } from '../util';
 import { CategoriesChart } from '.';
 import { TransactionType } from './types';
-import { Bar } from 'recharts';
 import MonthlyCostChart from './MonthlyCostChart';
 
 interface Props {
   transactions: TransactionType[];
   numOfItems: number;
+  onMonthClick: (month: string | null) => void;
+  selectedMonth: string | null;
 }
 
 interface Categories {
@@ -16,10 +17,11 @@ interface Categories {
 }
 
 export default function SpendingInsights(props: Props) {
-  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  //const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   
   // grab transactions from most recent month and filter out transfers and payments
   const transactions = props.transactions;
+  const selectedMonth = props.selectedMonth;
   const monthlyTransactions = useMemo(
     () =>
       transactions.filter(tx => {
@@ -127,7 +129,7 @@ export default function SpendingInsights(props: Props) {
         <div className="userDataBoxBarChart">
           <MonthlyCostChart
             monthlyCosts={monthlyCosts}
-            onMonthClick={setSelectedMonth}
+            onMonthClick={props.onMonthClick}
           />
         </div>
       </div>

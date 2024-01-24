@@ -55,6 +55,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const { itemsByUser, getItemsByUser } = useItems();
   const userId = Number(match.params.userId);
   const { generateLinkToken, linkTokens } = useLink();
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
 
   const initiateLink = async () => {
     // only generate a link token upon a click from enduser to add a bank;
@@ -245,6 +246,8 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
               <SpendingInsights
                 numOfItems={numOfItems}
                 transactions={transactions}
+                onMonthClick={setSelectedMonth}
+                selectedMonth={selectedMonth}
               />
             </>
           )}
@@ -265,7 +268,10 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
             <div className="bottom-border-content">
               <h2 className="header">Transactions</h2>
             </div>
-            <TransactionsTable transactions={transactions} />
+            <TransactionsTable
+              transactions={transactions}
+              selectedMonth={selectedMonth}
+            />
           </div>
         </div>
       </div>

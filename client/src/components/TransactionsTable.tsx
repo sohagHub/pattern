@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { currencyFilter } from '../util';
 import { TransactionType } from './types';
 import { updateTransactionById } from '../services/api';
+import { set } from 'lodash';
+import { setMonth } from 'date-fns';
 
 interface Props {
   transactions: TransactionType[];
+  selectedMonth: string | null;
 }
 
 export default function TransactionsTable(props: Props) {
@@ -37,7 +40,7 @@ export default function TransactionsTable(props: Props) {
   };
 
   // Pagination logic
-  const transactionsPerPage = 100; // Replace 10 with the desired number of transactions per page
+  const transactionsPerPage = 50; // Replace 10 with the desired number of transactions per page
   const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastTransaction = currentPage * transactionsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
@@ -59,31 +62,86 @@ export default function TransactionsTable(props: Props) {
     setSortDirection(event.target.value);
   };
 
-  // Adjust rendering of currentTransactions to filter and sort
-  const filteredTransactions = props.transactions.filter(tx =>
-    (tx.name ? tx.name.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
-    (tx.category ? tx.category.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
-    (tx.subcategory ? tx.subcategory.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
-    (tx.account_name ? tx.account_name.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
-    (tx.amount ? tx.amount.toString().toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
-    (tx.date ? tx.date.toLowerCase().includes(filterTerm.toLowerCase()) : false)
-  );
+  const [filteredTransactions, setFilteredTransactions] = useState<TransactionType[]>([]);
+  const [currentTransactions, setCurrentTransactions] = useState<TransactionType[]>([]);
 
-  const sortedTransactions = filteredTransactions.sort((a, b) => {
-    if (sortDirection === 'asc') {
-      return a.amount - b.amount;
-    } else if (sortDirection === 'desc') {
-      return b.amount - a.amount;
-    } else if (sortDirection === 'date_desc') {
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
+  // New state for selected month filter
+  const [monthFilter, setMonthFilter] = useState('');
+
+  function convertDateString(input: string): string {
+    // Define a type for the month mapping
+    type MonthMap = { [key: string]: string };
+
+    // Mapping of month names to month numbers
+    const months: MonthMap = {
+        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
+        'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+    };
+
+    // Split the input into month and year
+    const parts = input.split(' ');
+    if (parts.length === 2) {
+        const month = parts[0];
+        const year = parts[1];
+
+        // Check if month is valid
+        if (months[month]) {
+            return `${year}-${months[month]}`;
+        } else {
+            return 'Invalid Month';
+        }
     } else {
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
+        return 'Invalid Date Format';
     }
-  });
+  }
 
-  const currentTransactions = sortedTransactions
-    //.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(indexOfFirstTransaction, indexOfLastTransaction);
+  // Update monthFilter when props.selectedMonth changes
+  useEffect(() => {
+    if (props.selectedMonth) {
+      console.log(props.selectedMonth);
+      const newMonthFilter = convertDateString(props.selectedMonth); //new Date(props.selectedMonth).toISOString().slice(0, 7);
+      setMonthFilter(newMonthFilter);
+      setFilterTerm(newMonthFilter); // Set filterTerm as monthFilter
+    }
+  }, [props.selectedMonth]);
+
+  useEffect(() => {
+    setMonthFilter('');
+  }, [filterTerm]);
+  
+  // Update filteredTransactions when props.selectedMonth changes
+  useEffect(() => {
+    const filteredTransactions = props.transactions.filter(tx =>
+      ((tx.name ? tx.name.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
+      (tx.category ? tx.category.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
+      (tx.subcategory ? tx.subcategory.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
+      (tx.account_name ? tx.account_name.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
+      (tx.amount ? tx.amount.toString().toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
+      (tx.date ? tx.date.toLowerCase().includes(filterTerm.toLowerCase()) : false)) &&
+      (tx.date ? tx.date.toLowerCase().includes(monthFilter.toLowerCase()) : false)
+    );
+
+    setFilteredTransactions(filteredTransactions);
+  }, [filterTerm, monthFilter, props.transactions]);
+
+  useEffect(() => {
+    const sortedTransactions = filteredTransactions.sort((a, b) => {
+      if (sortDirection === 'asc') {
+        return a.amount - b.amount;
+      } else if (sortDirection === 'desc') {
+        return b.amount - a.amount;
+      } else if (sortDirection === 'date_desc') {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      } else {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      }
+    });
+
+    const currentTransactions = sortedTransactions
+      .slice(indexOfFirstTransaction, indexOfLastTransaction);
+    
+    setCurrentTransactions(currentTransactions);
+  }, [filteredTransactions, indexOfFirstTransaction, indexOfLastTransaction, sortDirection]);
 
   return (
     <div className="transactions">
@@ -203,11 +261,11 @@ export default function TransactionsTable(props: Props) {
         </tbody>
       </table>
       <div className="pagination">
-        {props.transactions.length > transactionsPerPage && (
+        {filteredTransactions.length > transactionsPerPage && (
           <ul className="pagination-list">
             {Array.from({
               length: Math.ceil(
-                props.transactions.length / transactionsPerPage
+                filteredTransactions.length / transactionsPerPage
               ),
             }).map((_, index) => (
               <li
