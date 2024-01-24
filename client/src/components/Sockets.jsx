@@ -10,6 +10,7 @@ export default function Sockets() {
   const socket = useRef();
   const { getAccountsByItem } = useAccounts();
   const { getTransactionsByItem } = useTransactions();
+  const { getTransactionsByUser } = useTransactions();
   const { getItemById } = useItems();
 
   useEffect(() => {
@@ -65,7 +66,12 @@ export default function Sockets() {
       socket.current.removeAllListeners();
       socket.current.close();
     };
-  }, [getAccountsByItem, getTransactionsByItem, getItemById]);
+  }, [
+    getAccountsByItem,
+    getTransactionsByItem,
+    getTransactionsByUser,
+    getItemById,
+  ]);
 
   return <div />;
 }
