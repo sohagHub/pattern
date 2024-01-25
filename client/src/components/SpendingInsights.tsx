@@ -16,6 +16,17 @@ interface Categories {
   [key: string]: number;
 }
 
+// Function to check if a transaction category is excluded
+const isCostCategory = (category: string): boolean => {
+  return (
+    category !== 'Payment' &&
+    category !== 'Transfer' &&
+    category !== 'Interest' &&
+    category !== 'Income' &&
+    category !== 'Duplicate'
+  );
+};
+
 export default function SpendingInsights(props: Props) {
   //const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   
@@ -32,10 +43,7 @@ export default function SpendingInsights(props: Props) {
         const year = date.getFullYear();
         const monthYear = `${month} ${year}`;
         return (
-          tx.category !== 'Payment' &&
-          tx.category !== 'Transfer' &&
-          tx.category !== 'Interest' &&
-          tx.category !== 'Income' &&
+          isCostCategory(tx.category) &&
           (selectedMonth ? monthYear === selectedMonth : date > oneMonthAgo)
         );
       }),
@@ -50,13 +58,9 @@ export default function SpendingInsights(props: Props) {
       //   cost: number;
       // }[]; to MonthlyCostChart
       transactions.reduce((acc: any[], tx) => {
-        if (
-          tx.category === 'Payment' ||
-          tx.category === 'Transfer' ||
-          tx.category === 'Interest' ||
-          tx.category === 'Income'
-        )
+        if (!isCostCategory(tx.category)) {
           return acc;
+        }
         const date = new Date(tx.date);
         const month = date.toLocaleString('default', { month: 'short' });
         const year = date.getFullYear();
