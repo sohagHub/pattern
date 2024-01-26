@@ -31,7 +31,11 @@ type TransactionsAction =
       payload: TransactionType[];
     }
   | { type: 'DELETE_BY_ITEM'; payload: number }
-  | { type: 'DELETE_BY_USER'; payload: number };
+  | { type: 'DELETE_BY_USER'; payload: number }
+  | {
+      type: 'UPDATE_TRANSACTION';
+      payload: { id: number; updates: Partial<TransactionType> };
+    };
 
 interface TransactionsContextShape extends TransactionsState {
   dispatch: Dispatch<TransactionsAction>;
@@ -145,6 +149,12 @@ export function TransactionsProvider(props: any) {
  */
 function reducer(state: TransactionsState, action: TransactionsAction | any) {
   switch (action.type) {
+    case 'UPDATE_TRANSACTION':
+      const { id, updates } = action.payload;
+      return {
+        ...state,
+        [id]: { ...state[id], ...updates },
+      };
     case 'SUCCESSFUL_GET':
       if (!action.payload.length) {
         return state;

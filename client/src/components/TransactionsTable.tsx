@@ -5,6 +5,7 @@ import { TransactionType } from './types';
 import { updateTransactionById } from '../services/api';
 import { set } from 'lodash';
 import { setMonth } from 'date-fns';
+import useTransactions from '../services/transactions';
 
 interface Props {
   transactions: TransactionType[];
@@ -29,6 +30,8 @@ export default function TransactionsTable(props: Props) {
     );
   };
 
+  const { dispatch } = useTransactions();
+  
   // Define the save function
   const saveChanges = async (
     id: number,
@@ -37,6 +40,10 @@ export default function TransactionsTable(props: Props) {
   ) => {
     const response = updateTransactionById(id, { [field]: value });
     console.log(response);
+    dispatch({
+        type: 'UPDATE_TRANSACTION',
+        payload: { id, updates: { [field]: value } }
+      });
   };
 
   // Pagination logic
