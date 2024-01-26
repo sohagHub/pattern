@@ -48,7 +48,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const [accounts, setAccounts] = useState<AccountType[]>([]);
   const [assets, setAssets] = useState<AssetType[]>([]);
 
-  const { transactionsByUser, getTransactionsByUser} = useTransactions();
+  const { transactionsByUser, getTransactionsByUser } = useTransactions();
   const { getAccountsByUser, accountsByUser } = useAccounts();
   const { assetsByUser, getAssetsByUser } = useAssets();
   const { usersById, getUserById } = useUsers();
@@ -156,8 +156,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
           <Callout warning>
             <div>
               Unable to fetch link_token: please make sure your backend server
-              is running and that your .env file has been configured
-              correctly.
+              is running and that your .env file has been configured correctly.
             </div>
             <div>
               Error Code: <code>{linkTokens.error.error_code}</code>
@@ -251,23 +250,19 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
               />
             </>
           )}
-          {numOfItems === 0 &&
-            transactions.length === 0 &&
-            assets.length > 0 && (
-              <>
-                <NetWorth
-                  accounts={accounts}
-                  numOfItems={numOfItems}
-                  personalAssets={assets}
-                  userId={userId}
-                  assetsOnly
-                />
-              </>
-            )}
+          {numOfItems === 0 && transactions.length === 0 && assets.length > 0 && (
+            <>
+              <NetWorth
+                accounts={accounts}
+                numOfItems={numOfItems}
+                personalAssets={assets}
+                userId={userId}
+                assetsOnly
+              />
+            </>
+          )}
           <div>
-            <div className="bottom-border-content">
-              <h2 className="header">Transactions</h2>
-            </div>
+            <h2 className="header">Transactions</h2>
             <TransactionsTable
               transactions={transactions}
               selectedMonth={selectedMonth}
