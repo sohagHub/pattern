@@ -399,6 +399,7 @@ net worth
 .netWorthContainer {
   .netWorthDollars {
     margin-top: $unit;
+    margin-bottom: $unit;
   }
 
   .netWorthHeading {
@@ -409,6 +410,13 @@ net worth
 
 .holdingsContainer {
   display: flex;
+}
+
+.userDataBoxAssets {
+  width: 69 * $unit;
+  min-height: 20 * $unit;
+  border: $border;
+  margin-right: 2 * $unit;
 }
 
 .userDataBox {
@@ -442,6 +450,7 @@ net worth
 .dollarsHeading {
   font-weight: bold;
   margin-top: 0;
+  margin-bottom: $unit;
 }
 
 .holdingsHeading {
