@@ -7,7 +7,7 @@ import useTransactions from '../services/transactions';
 
 interface Props {
   transactions: TransactionType[];
-  filterText: string | null;
+  filterText: string;
 }
 
 export default function TransactionsTable(props: Props) {
@@ -81,8 +81,8 @@ export default function TransactionsTable(props: Props) {
     };
 
     // Split the input into month and year
-    const parts = input.split(' ');
-    if (parts.length === 2) {
+    const parts = input && input.split(' ');
+    if (parts && parts.length === 2) {
         const month = parts[0];
         const year = parts[1];
 
@@ -99,10 +99,12 @@ export default function TransactionsTable(props: Props) {
 
   // Update monthFilter when props.selectedMonth changes
   useEffect(() => {
-    if (props.filterText) {
-      console.log(props.filterText);
-      const newMonthFilter = convertDateString(props.filterText); //new Date(props.selectedMonth).toISOString().slice(0, 7);
-      setFilterTerm(newMonthFilter); // Set filterTerm as monthFilter
+    console.log('filter: ' + props.filterText);
+    const newFilterTerm = convertDateString(props.filterText);
+    if (newFilterTerm === 'Invalid Date Format' || newFilterTerm === 'Invalid Month') {
+      setFilterTerm(props.filterText ? props.filterText : '');
+    } else {
+      setFilterTerm(newFilterTerm);
     }
   }, [props.filterText]);
   

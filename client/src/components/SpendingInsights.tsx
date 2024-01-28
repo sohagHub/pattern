@@ -8,8 +8,8 @@ import MonthlyCostChart from './MonthlyCostChart';
 interface Props {
   transactions: TransactionType[];
   numOfItems: number;
-  onMonthClick: (month: string | null) => void;
-  selectedMonth: string | null;
+  onMonthClick: (month: string) => void;
+  selectedMonth: string;
 }
 
 interface Categories {
@@ -119,11 +119,11 @@ export default function SpendingInsights(props: Props) {
             <h4 className="holdingsHeading">Vendors</h4>
             <div className="spendingInsightData">
               <p className="title">Vendor</p> <p className="title">Amount</p>
-              {sortedNames.map((vendor: any[]) => (
-                <>
+              {sortedNames.map((vendor: any[], index) => (
+                <div key={index}>
                   <div>{vendor[0]}</div>
                   <div>{currencyFilter(vendor[1])}</div>
-                </>
+                </div>
               ))}
             </div>
           </div>

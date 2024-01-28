@@ -55,7 +55,12 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const { itemsByUser, getItemsByUser } = useItems();
   const userId = Number(match.params.userId);
   const { generateLinkToken, linkTokens } = useLink();
-  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
+  const [selectedAccount, setSelectedAccount] = useState<string>('');
+
+  useEffect(() => {
+    setSelectedMonth('');
+  }, [selectedAccount]);
 
   const initiateLink = async () => {
     // only generate a link token upon a click from enduser to add a bank;
@@ -211,7 +216,11 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
               <ErrorMessage />
               {items.map(item => (
                 <div id="itemCards" key={item.id}>
-                  <ItemCard item={item} userId={userId} />
+                  <ItemCard
+                    item={item}
+                    userId={userId}
+                    onShowAccountTransactions={setSelectedAccount}
+                  />
                 </div>
               ))}
               <Button
@@ -265,7 +274,13 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
             <h2 className="header">Transactions</h2>
             <TransactionsTable
               transactions={transactions}
-              filterText={selectedMonth}
+              filterText={
+                selectedAccount
+                  ? selectedAccount
+                  : selectedMonth
+                  ? selectedMonth
+                  : ''
+              }
             />
           </div>
         </div>

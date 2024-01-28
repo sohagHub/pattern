@@ -10,6 +10,7 @@ import { TransactionsTable } from '.';
 
 interface Props {
   account: AccountType;
+  onShowAccountTransactions: (accountId: string) => void;
 }
 
 // TODO: update all components to look like this:
@@ -27,6 +28,11 @@ export default function AccountCard(props: Props) {
 
   const toggleShowTransactions = () => {
     setTransactionsShown(shown => !shown);
+    if (!transactionsShown) {
+      props.onShowAccountTransactions(props.account.name);
+    } else {
+      props.onShowAccountTransactions('');
+    }
   };
 
   useEffect(() => {
@@ -54,9 +60,6 @@ export default function AccountCard(props: Props) {
           )}
         </div>
       </div>
-      {transactionsShown && (
-        <TransactionsTable transactions={transactions} filterText={null} />
-      )}
     </div>
   );
 }
