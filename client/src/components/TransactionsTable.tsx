@@ -3,13 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { currencyFilter } from '../util';
 import { TransactionType } from './types';
 import { updateTransactionById } from '../services/api';
-import { set } from 'lodash';
-import { setMonth } from 'date-fns';
 import useTransactions from '../services/transactions';
 
 interface Props {
   transactions: TransactionType[];
-  selectedMonth: string | null;
+  filterText: string | null;
 }
 
 export default function TransactionsTable(props: Props) {
@@ -72,9 +70,6 @@ export default function TransactionsTable(props: Props) {
   const [filteredTransactions, setFilteredTransactions] = useState<TransactionType[]>([]);
   const [currentTransactions, setCurrentTransactions] = useState<TransactionType[]>([]);
 
-  // New state for selected month filter
-  const [monthFilter, setMonthFilter] = useState('');
-
   function convertDateString(input: string): string {
     // Define a type for the month mapping
     type MonthMap = { [key: string]: string };
@@ -104,17 +99,12 @@ export default function TransactionsTable(props: Props) {
 
   // Update monthFilter when props.selectedMonth changes
   useEffect(() => {
-    if (props.selectedMonth) {
-      console.log(props.selectedMonth);
-      const newMonthFilter = convertDateString(props.selectedMonth); //new Date(props.selectedMonth).toISOString().slice(0, 7);
-      setMonthFilter(newMonthFilter);
+    if (props.filterText) {
+      console.log(props.filterText);
+      const newMonthFilter = convertDateString(props.filterText); //new Date(props.selectedMonth).toISOString().slice(0, 7);
       setFilterTerm(newMonthFilter); // Set filterTerm as monthFilter
     }
-  }, [props.selectedMonth]);
-
-  useEffect(() => {
-    setMonthFilter('');
-  }, [filterTerm]);
+  }, [props.filterText]);
   
   // Update filteredTransactions when props.selectedMonth changes
   useEffect(() => {
@@ -124,12 +114,11 @@ export default function TransactionsTable(props: Props) {
       (tx.subcategory ? tx.subcategory.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
       (tx.account_name ? tx.account_name.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
       (tx.amount ? tx.amount.toString().toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
-      (tx.date ? tx.date.toLowerCase().includes(filterTerm.toLowerCase()) : false)) &&
-      (tx.date ? tx.date.toLowerCase().includes(monthFilter.toLowerCase()) : false)
+      (tx.date ? tx.date.toLowerCase().includes(filterTerm.toLowerCase()) : false))
     );
 
     setFilteredTransactions(filteredTransactions);
-  }, [filterTerm, monthFilter, props.transactions]);
+  }, [filterTerm, props.transactions]);
 
   useEffect(() => {
     const sortedTransactions = filteredTransactions.sort((a, b) => {

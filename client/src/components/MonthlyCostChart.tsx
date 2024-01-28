@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   Cell,
+  LabelList,
 } from 'recharts';
 import colors from 'plaid-threads/scss/colors';
 
@@ -58,10 +59,16 @@ export default function MonthlyCostChart(props: Props) {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar dataKey="cost" fill={COLORS[0]} onClick={handleClick}>
+        <Bar
+          dataKey="cost"
+          fill={COLORS[4]}
+          onClick={handleClick}
+          isAnimationActive={true}
+        >
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
+          <LabelList dataKey="cost" position="insideTop" fill={COLORS[4]} />
         </Bar>
       </BarChart>
     </div>

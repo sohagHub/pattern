@@ -54,7 +54,9 @@ export default function AccountCard(props: Props) {
           )}
         </div>
       </div>
-      {transactionsShown && <TransactionsTable transactions={transactions} selectedMonth={null}/>}
+      {transactionsShown && (
+        <TransactionsTable transactions={transactions} filterText={null} />
+      )}
     </div>
   );
 }
