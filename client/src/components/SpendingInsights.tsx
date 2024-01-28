@@ -120,10 +120,10 @@ export default function SpendingInsights(props: Props) {
             <div className="spendingInsightData">
               <p className="title">Vendor</p> <p className="title">Amount</p>
               {sortedNames.map((vendor: any[], index) => (
-                <div key={index}>
+                <>
                   <div>{vendor[0]}</div>
                   <div>{currencyFilter(vendor[1])}</div>
-                </div>
+                </>
               ))}
             </div>
           </div>
