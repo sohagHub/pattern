@@ -199,13 +199,6 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                       items.length
                     )} Linked`}
                   </h2>
-
-                  {!!items.length && (
-                    <p className="item__header-subheading">
-                      Below is a list of all your connected banks. Click on a
-                      bank to view its associated accounts.
-                    </p>
-                  )}
                 </div>
 
                 {token != null && token.length > 0 && (
