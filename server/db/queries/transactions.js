@@ -12,7 +12,7 @@ const db = require('../');
  */
 const createOrUpdateTransactions = async transactions => {
   const pendingQueries = transactions.map(async transaction => {
-    const {
+    let {
       account_id: plaidAccountId,
       transaction_id: plaidTransactionId,
       category_id: plaidCategoryId,
@@ -29,7 +29,14 @@ const createOrUpdateTransactions = async transactions => {
     const { id: accountId } = await retrieveAccountByPlaidAccountId(
       plaidAccountId
     );
-    const [category, subcategory] = categories;
+    let [category, subcategory] = categories;
+
+    ({ transactionName, category, subcategory } = applyRulesForCategory(
+      transactionName,
+      category,
+      subcategory
+    ));
+
     try {
       const query = {
         text: `
@@ -197,6 +204,34 @@ const deleteTransactions = async plaidTransactionIds => {
   });
   await Promise.all(pendingQueries);
 };
+
+const applyRulesForCategory = (transactionName, category, subcategory) => {
+  if (transactionName === 'Costco' || transactionName === 'Trader Joe\'s') {
+    category = 'Food and Drink';
+    subcategory = 'Groceries';
+  } else if (transactionName.includes('FOOD.APPLE.COM')) {
+    transactionName = 'FOOD.APPLE.COM';
+    category = 'Food and Drink';
+    subcategory = 'Lunch SH';
+  } else if (transactionName.includes('AMAZON')) {
+    transactionName = 'AMAZON';
+    category = 'Shops';
+    subcategory = 'Digital Purchase';
+  } else if (transactionName.includes('USBANK LOAN PAYMENT')) {
+    transactionName = 'USBANK LOAN PAYMENT';
+    category = 'Transport';
+    subcategory = 'Auto Loan';
+  } else if (transactionName.includes('IC* INSTACART')) {
+    category = 'Food and Drink';
+    subcategory = 'Groceries';
+  } else if (transactionName.includes('TRUSTMARKBENEFIT')) {
+    transactionName = 'TRUSTMARKBENEFIT';
+    category = 'Healthcare';
+    subcategory = 'Health Insurance';
+  }
+
+  return { transactionName, category, subcategory };
+}
 
 module.exports = {
   createOrUpdateTransactions,
