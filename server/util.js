@@ -1,5 +1,10 @@
 const isArray = require('lodash/isArray');
 const pick = require('lodash/pick');
+const plaid = require('./plaid');
+const NodeCache = require('node-cache');
+
+// Create a new cache instance
+const myCache = new NodeCache({ stdTTL: 60 * 60 * 4, checkperiod: 60 * 60 * 4 });
 
 /**
  * Wraps input in an array if needed.
@@ -89,6 +94,34 @@ const sanitizeTransactions = transactions =>
 const validItemStatuses = new Set(['good', 'bad']);
 const isValidItemStatus = status => validItemStatuses.has(status);
 
+/**
+ * Fetches a single institution from the Plaid API by ID.
+ *
+ * @param {string} instId The ins_id of the institution to be returned.
+ * @returns {Object[]} an array containing a single institution.
+ */
+const getInstitutionById = async (instId) => {
+  const request = {
+    institution_id: instId,
+    country_codes: ['US'],
+    options: {
+      include_optional_metadata: true,
+    },
+  };
+  try {
+    if (myCache.has(instId)) {
+      return myCache.get(instId);
+    }
+    const response = await plaid.institutionsGetById(request);
+    const institution = response.data.institution;
+    myCache.set(instId, institution);
+    return institution;
+  } catch (error) {
+    console.error(error);
+    // Handle error
+  }
+};
+
 module.exports = {
   toArray,
   sanitizeAccounts,
@@ -97,4 +130,6 @@ module.exports = {
   sanitizeTransactions,
   validItemStatuses,
   isValidItemStatus,
+  getInstitutionById,
+  myCache,
 };

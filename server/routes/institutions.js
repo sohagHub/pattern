@@ -6,6 +6,7 @@ const express = require('express');
 const { asyncWrapper } = require('../middleware');
 const plaid = require('../plaid');
 const { toArray } = require('../util');
+const { getInstitutionById } = require('../util');
 
 const router = express.Router();
 
@@ -45,17 +46,9 @@ router.get(
 router.get(
   '/:instId',
   asyncWrapper(async (req, res) => {
-    const { instId } = req.params;
-    const request = {
-      institution_id: instId,
-      country_codes: ['US'],
-      options: {
-        include_optional_metadata: true,
-      },
-    };
     try {
-      const response = await plaid.institutionsGetById(request);
-      const institution = response.data.institution;
+      const { instId } = req.params;
+      institution = await getInstitutionById(instId);
       res.json(toArray(institution));
     } catch (error) {}
   })
