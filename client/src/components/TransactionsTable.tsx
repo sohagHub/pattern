@@ -110,13 +110,18 @@ export default function TransactionsTable(props: Props) {
   
   // Update filteredTransactions when props.selectedMonth changes
   useEffect(() => {
+    // split filterTerm by commas
+    const filterTerms = filterTerm.split(',').map((term: string) => term.trim().toLowerCase());
+
     const filteredTransactions = props.transactions.filter(tx =>
-      ((tx.name ? tx.name.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
-      (tx.category ? tx.category.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
-      (tx.subcategory ? tx.subcategory.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
-      (tx.account_name ? tx.account_name.toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
-      (tx.amount ? tx.amount.toString().toLowerCase().includes(filterTerm.toLowerCase()) : false) ||
-      (tx.date ? tx.date.toLowerCase().includes(filterTerm.toLowerCase()) : false))
+      filterTerms.every((filterTerm: string) =>
+        (tx.name ? tx.name.toLowerCase().includes(filterTerm) : false) ||
+        (tx.category ? tx.category.toLowerCase().includes(filterTerm) : false) ||
+        (tx.subcategory ? tx.subcategory.toLowerCase().includes(filterTerm) : false) ||
+        (tx.account_name ? tx.account_name.toLowerCase().includes(filterTerm) : false) ||
+        (tx.amount ? tx.amount.toString().toLowerCase().includes(filterTerm) : false) ||
+        (tx.date ? tx.date.toLowerCase().includes(filterTerm) : false)
+      )
     );
 
     setFilteredTransactions(filteredTransactions);
