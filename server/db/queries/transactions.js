@@ -228,6 +228,15 @@ const applyRulesForCategory = (transactionName, category, subcategory) => {
     transactionName = 'TRUSTMARKBENEFIT';
     category = 'Healthcare';
     subcategory = 'Health Insurance';
+  } else if (transactionName.includes('Robinhood') && category.includes('Service')) {
+    category = 'Investment';
+    subcategory = 'Robinhood';
+  } else if (transactionName.includes('MICROSOFT EDIPAYMENT')) {
+    transactionName = 'MICROSOFT EDIPAYMENT';
+    category = 'Income';
+    subcategory = 'Payroll';
+  } else if (transactionName.includes('APPLE INC.') && subcategory.includes('Payroll')) {
+    category = 'Income';
   }
 
   return { transactionName, category, subcategory };
