@@ -20,7 +20,10 @@ const {
   sanitizeItems,
   sanitizeUsers,
   sanitizeTransactions,
+  getInstitutionById,
 } = require('../util');
+
+const updateTransactions = require('../update_transactions');
 
 const router = express.Router();
 
@@ -145,6 +148,57 @@ router.delete(
     // delete from the db
     await deleteUsers(userId);
     res.sendStatus(204);
+  })
+);
+
+router.post(
+  '/:userId/transactions/sync',
+  asyncWrapper(async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const items = await retrieveItemsByUser(userId);
+
+      let institution;
+      for (const item of items) {
+        let plaidItemId; // Declare the variable outside of the try block
+        try {
+          const { plaid_item_id: plaidItemId } = item;
+          institution = await getInstitutionById(item.plaid_institution_id);
+          const {
+            addedCount,
+            modifiedCount,
+            removedCount,
+          } = await updateTransactions(plaidItemId);
+          const logMessage = `Bank: ${
+            institution.name
+          }, Transactions: ${addedCount} added, ${modifiedCount} modified, ${removedCount} removed, ItemId: ${
+            item.id
+          }`;
+          console.log(logMessage);
+          req.io.emit('SYNC_HAPPENED', {
+            itemId: plaidItemId,
+            userId: userId,
+            log: logMessage,
+          });
+        } catch (err) {
+          const logMessage = `Bank: ${institution.name}, ItemId: ${
+            item.id
+          }, Error: ${err.message}`;
+          console.error(err);
+          req.io.emit('SYNC_ERROR', {
+            itemId: plaidItemId,
+            userId: item.user_id,
+            log: logMessage,
+            errror: err,
+          });
+        }
+      }
+
+      res.json({ status: 'ok' });
+    } catch (err) {
+      console.error(err);
+      res.json({ status: 'error' });
+    }
   })
 );
 

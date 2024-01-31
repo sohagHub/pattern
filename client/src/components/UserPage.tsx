@@ -5,7 +5,7 @@ import NavigationLink from 'plaid-threads/NavigationLink';
 import LoadingSpinner from 'plaid-threads/LoadingSpinner';
 import Callout from 'plaid-threads/Callout';
 import Button from 'plaid-threads/Button';
-import { syncAll } from '../services/api';
+import { syncAll, syncAllForUser } from '../services/api';
 import { TransactionsTable } from '.';
 
 import { RouteInfo, ItemType, AccountType, AssetType } from './types';
@@ -67,13 +67,6 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
     // if done earlier, it may expire before enduser actually activates Link to add a bank.
     await generateLinkToken(userId, null);
   };
-
-  const handleSyncAll = async () => {
-    await syncAll();
-  };
-
-  // Call the function
-  //handleSyncAll();
 
   // update data store with user
   useEffect(() => {
@@ -146,7 +139,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
 
   const handleSyncClick = async () => {
     try {
-      await syncAll();
+      await syncAllForUser(userId); //syncAll();
     } catch (error) {
       console.error('Sync failed', error);
     }

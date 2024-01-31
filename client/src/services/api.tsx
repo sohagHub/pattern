@@ -61,6 +61,7 @@ export const getAccountsByUser = (userId: number) =>
 
 // sync
 export const syncAll = () => api.post('/services/sync');
+export const syncAllForUser = (userId: number) => api.post(`/users/${userId}/transactions/sync`);
 
 // transactions
 export const getTransactionsByAccount = (accountId: number) =>
