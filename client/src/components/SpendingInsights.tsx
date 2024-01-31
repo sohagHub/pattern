@@ -22,7 +22,8 @@ const isCostCategory = (category: string): boolean => {
     category !== 'Payment' &&
     category !== 'Transfer' &&
     category !== 'Interest' &&
-    category !== 'Income' &&
+    category !== 'Income' && 
+    category !== 'Investment' &&
     category !== 'Duplicate'
   );
 };
