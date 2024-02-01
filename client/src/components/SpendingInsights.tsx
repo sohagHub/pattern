@@ -18,38 +18,40 @@ interface Categories {
 
 // Function to check if a transaction category is excluded
 const isCostCategory = (category: string): boolean => {
-  return (
-    category !== 'Payment' &&
-    category !== 'Transfer' &&
-    category !== 'Interest' &&
-    category !== 'Income' && 
-    category !== 'Investment' &&
-    category !== 'Duplicate'
-  );
+  const excludedCategories = ['Payment', 'Transfer', 'Interest', 'Income', 'Investment', 'Duplicate'];
+  return !excludedCategories.includes(category);
 };
 
 export default function SpendingInsights(props: Props) {
-  //const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
-  
   // grab transactions from most recent month and filter out transfers and payments
   const transactions = props.transactions;
   const selectedMonth = props.selectedMonth;
-  const monthlyTransactions = useMemo(
-    () =>
-      transactions.filter(tx => {
-        const date = new Date(tx.date);
-        const today = new Date();
-        const oneMonthAgo = new Date(new Date().setDate(today.getDate() - 30));
-        const month = date.toLocaleString('default', { month: 'short' });
-        const year = date.getFullYear();
-        const monthYear = `${month} ${year}`;
-        return (
-          isCostCategory(tx.category) &&
-          (selectedMonth ? monthYear === selectedMonth : date > oneMonthAgo)
-        );
-      }),
-    [selectedMonth, transactions]
-  );
+  
+  const getOneMonthTransactions = (transactions: TransactionType[], targetMonthYear: string): TransactionType[] => {
+    return transactions.filter(tx => {
+      const date = new Date(tx.date);
+      const monthYear = getMonthYear(date);
+      return (
+        isCostCategory(tx.category) &&
+        monthYear === targetMonthYear
+      );
+    });
+  };
+
+  const monthlyTransactions = useMemo(() => {
+    const today = new Date();
+    const oneMonthAgo = new Date(new Date().setMonth(new Date().getMonth() - 1));
+    let result;
+    if (selectedMonth) {
+      result = getOneMonthTransactions(transactions, selectedMonth);
+    } else {
+      result = getOneMonthTransactions(transactions, getMonthYear(today));
+      if (result.length <= 0) {
+        result = getOneMonthTransactions(transactions, getMonthYear(oneMonthAgo));
+      }
+    }
+    return result;
+  }, [selectedMonth, transactions]);
 
   const monthlyCosts = useMemo(
     () =>
@@ -63,9 +65,7 @@ export default function SpendingInsights(props: Props) {
           return acc;
         }
         const date = new Date(tx.date);
-        const month = date.toLocaleString('default', { month: 'short' });
-        const year = date.getFullYear();
-        const monthYear = `${month} ${year}`;
+        const monthYear = getMonthYear(date);
         const index = acc.findIndex(item => item.month === monthYear);
         if (index === -1) {
           acc.push({ month: monthYear, cost: tx.amount });
@@ -141,3 +141,10 @@ export default function SpendingInsights(props: Props) {
     </div>
   );
 }
+const getMonthYear = (date: Date) => {
+  const month = date.toLocaleString('default', { month: 'short' });
+  const year = date.getFullYear();
+  const monthYear = `${month} ${year}`;
+  return monthYear;
+}
+
