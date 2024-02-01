@@ -31,7 +31,7 @@ const createOrUpdateTransactions = async transactions => {
     );
     let [category, subcategory] = categories;
 
-    ({ transactionName, category, subcategory } = applyRulesForCategory(
+    ({ transactionName, category, subcategory } = await applyRulesForCategory(
       transactionName,
       category,
       subcategory
@@ -205,7 +205,7 @@ const deleteTransactions = async plaidTransactionIds => {
   await Promise.all(pendingQueries);
 };
 
-const applyRulesForCategory = (transactionName, category, subcategory) => {
+const applyRulesForCategory = async (transactionName, category, subcategory) => {
   if (transactionName === 'Costco' || transactionName === 'Trader Joe\'s') {
     category = 'Food and Drink';
     subcategory = 'Groceries';
@@ -235,7 +235,8 @@ const applyRulesForCategory = (transactionName, category, subcategory) => {
     transactionName = 'MICROSOFT EDIPAYMENT';
     category = 'Income';
     subcategory = 'Payroll';
-  } else if (transactionName.includes('APPLE INC.') && subcategory.includes('Payroll')) {
+  } else if (transactionName.includes('APPLE INC') && subcategory.includes('Payroll')) {
+    transactionName = 'APPLE INC';
     category = 'Income';
   }
 
@@ -250,4 +251,5 @@ module.exports = {
   retrieveTransactionsByUserId,
   deleteTransactions,
   justUpdateTransactions,
+  applyRulesForCategory,
 };
