@@ -22,32 +22,55 @@ const isCostCategory = (category: string): boolean => {
   return !excludedCategories.includes(category);
 };
 
+type MonthMap = { [key: string]: string };
+
+// Mapping of month names to month numbers
+const months: MonthMap = {
+  Jan: '01',
+  Feb: '02',
+  Mar: '03',
+  Apr: '04',
+  May: '05',
+  Jun: '06',
+  Jul: '07',
+  Aug: '08',
+  Sep: '09',
+  Oct: '10',
+  Nov: '11',
+  Dec: '12',
+};
+
 export default function SpendingInsights(props: Props) {
   // grab transactions from most recent month and filter out transfers and payments
   const transactions = props.transactions;
   const selectedMonth = props.selectedMonth;
   
-  const getOneMonthTransactions = (transactions: TransactionType[], targetMonthYear: string): TransactionType[] => {
+  const getOneMonthTransactions = (
+    transactions: TransactionType[],
+    targetMonthYear: string
+  ): TransactionType[] => {
     return transactions.filter(tx => {
       const date = new Date(tx.date);
       const monthYear = getMonthYear(date);
-      return (
-        isCostCategory(tx.category) &&
-        monthYear === targetMonthYear
-      );
+      return isCostCategory(tx.category) && monthYear === targetMonthYear;
     });
   };
 
   const monthlyTransactions = useMemo(() => {
     const today = new Date();
-    const oneMonthAgo = new Date(new Date().setMonth(new Date().getMonth() - 1));
+    const oneMonthAgo = new Date(
+      new Date().setMonth(new Date().getMonth() - 1)
+    );
     let result;
     if (selectedMonth) {
       result = getOneMonthTransactions(transactions, selectedMonth);
     } else {
       result = getOneMonthTransactions(transactions, getMonthYear(today));
       if (result.length <= 0) {
-        result = getOneMonthTransactions(transactions, getMonthYear(oneMonthAgo));
+        result = getOneMonthTransactions(
+          transactions,
+          getMonthYear(oneMonthAgo)
+        );
       }
     }
     return result;
@@ -72,6 +95,22 @@ export default function SpendingInsights(props: Props) {
         } else {
           acc[index].cost = acc[index].cost + tx.amount;
         }
+
+        // sort the acc by year and month
+        acc.sort((a, b) => {
+          // a and b are like "Jan 2021"
+          const aMonth = a.month.split(' ')[0];
+          const aYear = a.month.split(' ')[1];
+          const bMonth = b.month.split(' ')[0];
+          const bYear = b.month.split(' ')[1];
+          const aMonthNumber = months[aMonth];
+          const bMonthNumber = months[bMonth];
+          if (aYear === bYear) {
+            return Number(aMonthNumber) - Number(bMonthNumber);
+          }
+          return aYear - bYear;
+        });
+        console.log('acc', acc);
         return acc;
       }, []),
 
@@ -141,8 +180,12 @@ export default function SpendingInsights(props: Props) {
     </div>
   );
 }
+
 const getMonthYear = (date: Date) => {
-  const month = date.toLocaleString('default', { month: 'short' });
+  const month = date.toLocaleString('default', {
+    month: 'short',
+    timeZone: 'UTC',
+  });
   const year = date.getFullYear();
   const monthYear = `${month} ${year}`;
   return monthYear;
