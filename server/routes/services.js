@@ -102,8 +102,10 @@ router.put(
         transaction.subcategory = subcategory;
       }
 
-      await justUpdateTransactions([transaction]);
+      justUpdateTransactions([transaction]);
     }
+    console.log('done');
+    res.json({ status: 'ok' });
   })
 );
 

@@ -205,39 +205,39 @@ const deleteTransactions = async plaidTransactionIds => {
   await Promise.all(pendingQueries);
 };
 
+const rules = [
+  { category: 'Food and Drink',                                                   newCategory: 'Food',                                            },
+  { name: 'Costco Gas',                         newName: 'Costco Gas',            newCategory: 'Transport',     newSubcategory: 'Gas'             },
+  { name: 'Costco',                             newName: 'Costco',                newCategory: 'Food',          newSubcategory: 'Groceries'       },
+  { name: 'Trader Joe\'s',                      newName: 'Trader Joe\'s',         newCategory: 'Food',          newSubcategory: 'Groceries'       },
+  { name: 'FOOD.APPLE.COM',                     newName: 'FOOD.APPLE.COM',        newCategory: 'Food',          newSubcategory: 'Lunch-SH'        },
+  { name: 'AMAZON',                             newName: 'Amazon',                newCategory: 'Shops',         newSubcategory: 'Online Shopping' },
+  { name: 'USBANK LOAN PAYMENT',                newName: 'USBANK LOAN PAYMENT',   newCategory: 'Transport',     newSubcategory: 'Auto Loan'       },
+  { name: 'IC* INSTACART',                      newName: 'IC* INSTACART',         newCategory: 'Food',          newSubcategory: 'Groceries'       },
+  { name: 'TRUSTMARKBENEFIT',                   newName: 'TRUSTMARKBENEFIT',      newCategory: 'Healthcare',    newSubcategory: 'Health Insurance'},
+  { name: 'MICROSOFT EDIPAYMENT',               newName: 'MICROSOFT EDIPAYMENT',  newCategory: 'Income',        newSubcategory: 'Payroll'         },
+  { name: 'Robinhood', category: 'Service',     newName: 'Robinhood',             newCategory: 'Investment',    newSubcategory: 'Robinhood'       },
+  { name: 'APPLE INC', subcategory: 'Payroll',  newName: 'APPLE INC',             newCategory: 'Income',        newSubcategory: 'Payroll'         },
+  { name: 'DISNEY PLUS',                        newName: 'DISNEY PLUS',           newCategory: 'Entertainment', newSubcategory: 'TV'              },
+  { name: 'BANK OF AMERICA MORTGAGE',           newName: 'BofA MORTGAGE',         newCategory: 'Home',          newSubcategory: 'Mortgage'        },
+  { name: 'Metropolitan Market',                newName: 'Metropolitan Market',   newCategory: 'Food',          newSubcategory: 'Groceries'       },
+  { name: 'KinderCare',                         newName: 'KinderCare',            newCategory: 'Childcare',     newSubcategory: 'KinderCare'      },
+  { name: 'FID BKG SVC LLC MONEYLINE PPD',                                        newCategory: 'Investment',     newSubcategory: 'Fidelity'       },
+  
+];
+
 const applyRulesForCategory = async (transactionName, category, subcategory) => {
-  if (transactionName === 'Costco' || transactionName === 'Trader Joe\'s') {
-    category = 'Food and Drink';
-    subcategory = 'Groceries';
-  } else if (transactionName.includes('FOOD.APPLE.COM')) {
-    transactionName = 'FOOD.APPLE.COM';
-    category = 'Food and Drink';
-    subcategory = 'Lunch SH';
-  } else if (transactionName.includes('AMAZON')) {
-    transactionName = 'AMAZON';
-    category = 'Shops';
-    subcategory = 'Digital Purchase';
-  } else if (transactionName.includes('USBANK LOAN PAYMENT')) {
-    transactionName = 'USBANK LOAN PAYMENT';
-    category = 'Transport';
-    subcategory = 'Auto Loan';
-  } else if (transactionName.includes('IC* INSTACART')) {
-    category = 'Food and Drink';
-    subcategory = 'Groceries';
-  } else if (transactionName.includes('TRUSTMARKBENEFIT')) {
-    transactionName = 'TRUSTMARKBENEFIT';
-    category = 'Healthcare';
-    subcategory = 'Health Insurance';
-  } else if (transactionName.includes('Robinhood') && category.includes('Service')) {
-    category = 'Investment';
-    subcategory = 'Robinhood';
-  } else if (transactionName.includes('MICROSOFT EDIPAYMENT')) {
-    transactionName = 'MICROSOFT EDIPAYMENT';
-    category = 'Income';
-    subcategory = 'Payroll';
-  } else if (transactionName.includes('APPLE INC') && subcategory.includes('Payroll')) {
-    transactionName = 'APPLE INC';
-    category = 'Income';
+  for (const rule of rules) {
+    if ((transactionName || '').toLowerCase().includes((rule.name || '').toLowerCase()) && 
+        (category || '').toLowerCase().includes((rule.category || '').toLowerCase()) && 
+        (subcategory || '').toLowerCase().includes((rule.subcategory || '').toLowerCase())) {
+      
+      const newTransactionName = rule.newName || transactionName;
+      const newCategory = rule.newCategory || category;
+      const newSubcategory = rule.newSubcategory || subcategory;
+
+      return { transactionName: newTransactionName, category: newCategory, subcategory: newSubcategory };
+    }
   }
 
   return { transactionName, category, subcategory };
