@@ -24,6 +24,7 @@ export default function MonthlyCostChart(props: Props) {
   const data = props.monthlyCosts.map(item => ({
     ...item,
     cost: Math.round(item.cost),
+    costString: `$${Math.round(item.cost).toLocaleString()}`,
   }));
 
   const COLORS = [
@@ -35,8 +36,8 @@ export default function MonthlyCostChart(props: Props) {
     colors.purple600,
   ];
 
-  const handleClick = (data: any, index: number) => {
-    const month = data.month;
+  const handleClick = (data: any) => {
+    const month = data.activeLabel;
     props.onMonthClick(month);
   };
 
@@ -45,7 +46,7 @@ export default function MonthlyCostChart(props: Props) {
       <h4 className="costHeading">Monthly Costs</h4>
       <BarChart
         width={1000}
-        height={300}
+        height={350}
         data={data}
         margin={{
           top: 5,
@@ -53,6 +54,8 @@ export default function MonthlyCostChart(props: Props) {
           left: 20,
           bottom: 5,
         }}
+        
+        onClick={handleClick}
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="month" />
@@ -62,13 +65,13 @@ export default function MonthlyCostChart(props: Props) {
         <Bar
           dataKey="cost"
           fill={COLORS[4]}
-          onClick={handleClick}
+          
           isAnimationActive={true}
         >
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
-          <LabelList dataKey="cost" position="insideTop" fill={COLORS[4]} />
+          <LabelList dataKey="costString" position="top" fill={COLORS[5]} />
         </Bar>
       </BarChart>
     </div>
