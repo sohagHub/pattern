@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { currencyFilter } from '../util';
 import { CategoriesChart } from '.';
@@ -44,6 +44,8 @@ export default function SpendingInsights(props: Props) {
   // grab transactions from most recent month and filter out transfers and payments
   const transactions = props.transactions;
   const selectedMonth = props.selectedMonth;
+
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   
   const getOneMonthTransactions = (
     transactions: TransactionType[],
@@ -129,12 +131,16 @@ export default function SpendingInsights(props: Props) {
 
   const namesObject = useMemo((): Categories => {
     return monthlyTransactions.reduce((obj: Categories, tx) => {
+      if (selectedCategory && tx.category !== selectedCategory) {
+        return obj;
+      }
+      
       tx.name in obj
         ? (obj[tx.name] = tx.amount + obj[tx.name])
         : (obj[tx.name] = tx.amount);
       return obj;
     }, {});
-  }, [monthlyTransactions]);
+  }, [monthlyTransactions, selectedCategory]);
 
   // sort names by spending totals
   const sortedNames = useMemo(() => {
@@ -152,7 +158,10 @@ export default function SpendingInsights(props: Props) {
       <h2 className="monthlySpendingHeading">Monthly Spending</h2>
       <div className="monthlySpendingContainer">
         <div className="userDataBox">
-          <CategoriesChart categories={categoriesObject} />
+          <CategoriesChart
+            categories={categoriesObject}
+            onCategoryClick={setSelectedCategory}
+          />
         </div>
         <div className="userDataBox">
           <div className="holdingsList">
