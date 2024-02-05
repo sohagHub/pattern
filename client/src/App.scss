@@ -3,6 +3,7 @@ $threads-font-path: '~plaid-threads/fonts';
 @import '~plaid-threads/scss/variables';
 
 $border: 1px solid $black200;
+//
 /*
 
 
@@ -15,10 +16,16 @@ body {
 }
 
 .App {
+  display: flex;
+  flex-direction: row;
   max-width: 300 * $unit;
   margin-right: auto;
   margin-left: auto;
   padding: 1 * $unit 40 * $unit 0 20 * $unit;
+
+  @media (max-width: 800px) {
+    padding: 1 * $unit 0 0 0;
+  }
 }
 
 /*
@@ -168,8 +175,8 @@ UserCard
 
 .user-card__detail {
   display: flex;
-  justify-content: space-around;
-  margin-left: 3 * $unit;
+  justify-content: space-between;
+  //margin-left: 3 * $unit;
 }
 
 .hoverable {
@@ -624,6 +631,10 @@ ErrorMessage
   display: flex;
   flex-direction: row; /* Ensures the children (left and right sections) are laid out in a row */
   width: 100%; /* Use the full width of the parent */
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+  }
 }
 
 .left-section {
@@ -633,6 +644,10 @@ ErrorMessage
   justify-content: left;
   margin-right: 20px;
   width: 25%; /* 30% width of the container */
+
+  @media (max-width: 800px) {
+    width: 100%;
+  }
 }
 
 .right-section {
@@ -641,6 +656,11 @@ ErrorMessage
   align-items: stretch;
   justify-content: right;
   width: 70%; /* 70% width of the container */
+
+  @media (max-width: 800px) {
+    width: 100%;
+  }
+
 }
 
 .nice-button {
