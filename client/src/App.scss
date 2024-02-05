@@ -584,8 +584,9 @@ ErrorMessage
 
 .pagination-item {
   display: inline-block;
-  margin-right: 5px;
+  margin-right: 5px;  
 }
+
 
 .pagination-link {
   display: inline-block;
@@ -606,6 +607,11 @@ ErrorMessage
   color: #fff;
 }
 
+.pagination-item.active .pagination-link {
+  background-color: #007bff;
+  color: white;
+}
+
 .table-filter-sort-container {
   display: flex;
   align-items: center;
@@ -619,12 +625,18 @@ ErrorMessage
 }
 
 .filter-input {
-  flex: 0 0 70%;
+  flex: 0 0 60%;
   margin-right: 10px;
 }
 
 .sort-input {
-  flex: 1;
+  flex: 0 0 20%;
+  margin-right: 10px;
+}
+
+.page-input {
+  text-justify: center;
+  width: auto;
 }
 
 .container {
