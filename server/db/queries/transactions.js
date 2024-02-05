@@ -223,7 +223,8 @@ const rules = [
   { name: 'BANK OF AMERICA MORTGAGE',           newName: 'BofA MORTGAGE',         newCategory: 'Home',          newSubcategory: 'Mortgage'        },
   { name: 'Metropolitan Market',                newName: 'Metropolitan Market',   newCategory: 'Food',          newSubcategory: 'Groceries'       },
   { name: 'KinderCare',                         newName: 'KinderCare',            newCategory: 'Childcare',     newSubcategory: 'KinderCare'      },
-  { name: 'FID BKG SVC LLC MONEYLINE PPD',                                        newCategory: 'Investment',     newSubcategory: 'Fidelity'       },
+  { name: 'FID BKG SVC LLC MONEYLINE PPD',                                        newCategory: 'Investment',    newSubcategory: 'Fidelity'        },
+  { name: 'Western Union',                      newName: 'Western Union',         newCategory: 'Gift',          newSubcategory: 'Parents'         },
   
 ];
 
