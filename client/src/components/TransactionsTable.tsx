@@ -4,6 +4,7 @@ import { currencyFilter } from '../util';
 import { TransactionType } from './types';
 import { updateTransactionById } from '../services/api';
 import useTransactions from '../services/transactions';
+import { DepositSwitchAltCreateRequestCountryCodeEnum } from 'plaid';
 
 interface Props {
   transactions: TransactionType[];
@@ -11,6 +12,8 @@ interface Props {
 }
 
 export default function TransactionsTable(props: Props) {
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+
   // State to store the editable state and modified values for each field
   const [editableTransactions, setEditableTransactions] = useState<{
     [key: string]: { name: string; category: string; subcategory: string };
@@ -45,10 +48,10 @@ export default function TransactionsTable(props: Props) {
   };
 
   // Pagination logic
-  const transactionsPerPage = 50; // Replace 10 with the desired number of transactions per page
+  //const transactionsPerPage = 50; // Replace 10 with the desired number of transactions per page
   const [currentPage, setCurrentPage] = useState(1);
-  const indexOfLastTransaction = currentPage * transactionsPerPage;
-  const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
+  const indexOfLastTransaction = currentPage * rowsPerPage;
+  const indexOfFirstTransaction = indexOfLastTransaction - rowsPerPage;
 
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -197,24 +200,40 @@ export default function TransactionsTable(props: Props) {
   return (
     <div className="transactions">
       {/* New inputs for filter term and sort direction */}
-      
+
       <div className="table-filter-sort-container">
-      <span className="nice-text">Filter</span>
-      <input
-        className="nice-input filter-input"
-        type="text"
-        placeholder="Filter by keyword"
-        value={filterTerm}
-        onChange={handleFilterChange}
-      />
-      <span className="nice-text">Sort</span>
-      <select className="nice-input sort-input" value={sortDirection} onChange={handleSortChange}>
-        <option value="">By Date Latest</option>
-        <option value="date_desc">By Date Earliest</option>
-        <option value="asc">By Amount Ascending</option>
-        <option value="desc">By Amount Descending</option>
-      </select>
-      </div>  
+        <span className="nice-text">Filter</span>
+        <input
+          className="nice-input filter-input"
+          type="text"
+          placeholder="Filter by keyword"
+          value={filterTerm}
+          onChange={handleFilterChange}
+        />
+        <span className="nice-text">Sort</span>
+        <select
+          className="nice-input sort-input"
+          value={sortDirection}
+          onChange={handleSortChange}
+        >
+          <option value="">By Date Latest</option>
+          <option value="date_desc">By Date Earliest</option>
+          <option value="asc">By Amount Ascending</option>
+          <option value="desc">By Amount Descending</option>
+        </select>
+        <span className="nice-text"></span>
+        <select
+          className="nice-input page-input"
+          value={rowsPerPage}
+          onChange={e => setRowsPerPage(Number(e.target.value))}
+        >
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+          <option value={30}>30</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+        </select>
+      </div>
       <table className="transactions-table">
         <thead className="transactions-header">
           <tr>
@@ -227,112 +246,118 @@ export default function TransactionsTable(props: Props) {
           </tr>
         </thead>
         <tbody className="transactions-body">
-          {currentTransactions
-            .map(tx => (
-              <tr key={tx.id} className="transactions-data-rows">
-                <td className="table-date">
-                  <input
-                    className="nice-input"
-                    type="text"
-                    value={tx.date.slice(0, 10)}
-                    readOnly
-                  />
-                </td>
-                <td className="table-account">
-                  <input
-                    className="nice-input"
-                    type="text"
-                    value={tx.account_name}
-                  />
-                </td>
-                <td className="table-name">
-                  <input
-                    className="nice-input"
-                    type="text"
-                    value={editableTransactions[tx.id]?.name ?? tx.name}
-                    onChange={e =>
-                      handleInputChange(tx.id, 'name', e.target.value)
-                    }
-                    onBlur={() =>
-                      saveChanges(
-                        tx.id,
-                        'name',
-                        editableTransactions[tx.id]?.name
-                      )
-                    }
-                  />
-                </td>
-                <td className="table-category">
-                  <input
-                    className="nice-input"
-                    type="text"
-                    value={editableTransactions[tx.id]?.category ?? tx.category}
-                    onChange={e =>
-                      handleInputChange(tx.id, 'category', e.target.value)
-                    }
-                    onBlur={() =>
-                      saveChanges(
-                        tx.id,
-                        'category',
-                        editableTransactions[tx.id]?.category
-                      )
-                    }
-                  />
-                </td>
-                <td className="table-subcategory">
-                  <input
-                    className="nice-input"
-                    type="text"
-                    value={
-                      editableTransactions[tx.id]?.subcategory ?? tx.subcategory
-                    }
-                    onChange={e =>
-                      handleInputChange(tx.id, 'subcategory', e.target.value)
-                    }
-                    onBlur={() =>
-                      saveChanges(
-                        tx.id,
-                        'subcategory',
-                        editableTransactions[tx.id]?.subcategory
-                      )
-                    }
-                  />
-                </td>
-                <td className="table-amount">
-                  <input
-                    className="nice-input"
-                    style={{ textAlign: 'right' }}
-                    type="text"
-                    value={currencyFilter(tx.amount)}
-                    readOnly
-                  />
-                </td>
-              </tr>
-            ))}
+          {currentTransactions.map(tx => (
+            <tr key={tx.id} className="transactions-data-rows">
+              <td className="table-date">
+                <input
+                  className="nice-input"
+                  type="text"
+                  value={tx.date.slice(0, 10)}
+                  readOnly
+                />
+              </td>
+              <td className="table-account">
+                <input
+                  className="nice-input"
+                  type="text"
+                  value={tx.account_name}
+                />
+              </td>
+              <td className="table-name">
+                <input
+                  className="nice-input"
+                  type="text"
+                  value={editableTransactions[tx.id]?.name ?? tx.name}
+                  onChange={e =>
+                    handleInputChange(tx.id, 'name', e.target.value)
+                  }
+                  onBlur={() =>
+                    saveChanges(
+                      tx.id,
+                      'name',
+                      editableTransactions[tx.id]?.name
+                    )
+                  }
+                />
+              </td>
+              <td className="table-category">
+                <input
+                  className="nice-input"
+                  type="text"
+                  value={editableTransactions[tx.id]?.category ?? tx.category}
+                  onChange={e =>
+                    handleInputChange(tx.id, 'category', e.target.value)
+                  }
+                  onBlur={() =>
+                    saveChanges(
+                      tx.id,
+                      'category',
+                      editableTransactions[tx.id]?.category
+                    )
+                  }
+                />
+              </td>
+              <td className="table-subcategory">
+                <input
+                  className="nice-input"
+                  type="text"
+                  value={
+                    editableTransactions[tx.id]?.subcategory ?? tx.subcategory
+                  }
+                  onChange={e =>
+                    handleInputChange(tx.id, 'subcategory', e.target.value)
+                  }
+                  onBlur={() =>
+                    saveChanges(
+                      tx.id,
+                      'subcategory',
+                      editableTransactions[tx.id]?.subcategory
+                    )
+                  }
+                />
+              </td>
+              <td className="table-amount">
+                <input
+                  className="nice-input"
+                  style={{ textAlign: 'right' }}
+                  type="text"
+                  value={currencyFilter(tx.amount)}
+                  readOnly
+                />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
       <div className="pagination">
-        {filteredTransactions.length > transactionsPerPage && (
+        {filteredTransactions.length > rowsPerPage && (
           <ul className="pagination-list">
-            {Array.from({
-              length: Math.ceil(
-                filteredTransactions.length / transactionsPerPage
-              ),
-            }).map((_, index) => (
-              <li
-                key={index}
-                className={`pagination-item ${
-                  currentPage === index + 1 ? 'active' : ''
-                }`}
-              >
-                <button
-                  className="pagination-link"
-                  onClick={() => paginate(index + 1)}
-                >
-                  {index + 1}
-                </button>
-              </li>
-            ))}
+            {Array.from({ length: Math.ceil(filteredTransactions.length / rowsPerPage) }).map((_, index) => {
+              // Only show the first two pages, last two pages, current page, and two pages around the current page
+              if (
+                index <= 2 ||
+                index > Math.ceil(filteredTransactions.length / rowsPerPage) - 4 ||
+                (index >= currentPage-2  && index <= currentPage )
+              ) {
+                return (
+                  <li
+                    key={index}
+                    className={`pagination-item  ${currentPage === index + 1 ? 'active' : ''}`}
+                  >
+                    <button className="pagination-link" onClick={() => paginate(index + 1)}>
+                      {index + 1}
+                    </button>
+                  </li>
+                );
+              }
+
+              // Show "..." for skipped pages, but only once before and after the current page
+              if (index === currentPage - 3 || index === currentPage + 2) {
+                return <li key={index}>...</li>;
+              }
+
+              return null;
+            })}
           </ul>
         )}
       </div>
