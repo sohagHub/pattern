@@ -76,8 +76,18 @@ export default function TransactionsTable(props: Props) {
 
     // Mapping of month names to month numbers
     const months: MonthMap = {
-        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
-        'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+      Jan: '01',
+      Feb: '02',
+      Mar: '03',
+      Apr: '04',
+      May: '05',
+      Jun: '06',
+      Jul: '07',
+      Aug: '08',
+      Sep: '09',
+      Oct: '10',
+      Nov: '11',
+      Dec: '12',
     };
 
     // Split the input into month and year
@@ -110,19 +120,57 @@ export default function TransactionsTable(props: Props) {
   
   // Update filteredTransactions when props.selectedMonth changes
   useEffect(() => {
-    // split filterTerm by commas
-    const filterTerms = filterTerm.split(',').map((term: string) => term.trim().toLowerCase());
+    // split filterTerm by spaces
+    const filterTerms = filterTerm
+      .split(' ')
+      .map((term: string) => term.trim().toLowerCase());
 
-    const filteredTransactions = props.transactions.filter(tx =>
-      filterTerms.every((filterTerm: string) =>
-        (tx.name ? tx.name.toLowerCase().includes(filterTerm) : false) ||
-        (tx.category ? tx.category.toLowerCase().includes(filterTerm) : false) ||
-        (tx.subcategory ? tx.subcategory.toLowerCase().includes(filterTerm) : false) ||
-        (tx.account_name ? tx.account_name.toLowerCase().includes(filterTerm) : false) ||
-        (tx.amount ? tx.amount.toString().toLowerCase().includes(filterTerm) : false) ||
-        (tx.date ? tx.date.toLowerCase().includes(filterTerm) : false)
-      )
-    );
+    const filteredTransactions = props.transactions.filter(tx => {
+      let shouldInclude = true;
+      let nextShouldNotInclude = false;
+
+      filterTerms.forEach((filterTerm, index) => {
+        if (filterTerm === 'and' || filterTerm === 'or') {
+          // Skip AND and OR, they are handled in the next iteration
+          return;
+        }
+
+        if (filterTerm === 'not') {
+          nextShouldNotInclude = true;
+          return;
+        }
+
+        const includesTerm =
+          (tx.name ? tx.name.toLowerCase().includes(filterTerm) : false) ||
+          (tx.category
+            ? tx.category.toLowerCase().includes(filterTerm)
+            : false) ||
+          (tx.subcategory
+            ? tx.subcategory.toLowerCase().includes(filterTerm)
+            : false) ||
+          (tx.account_name
+            ? tx.account_name.toLowerCase().includes(filterTerm)
+            : false) ||
+          (tx.amount
+            ? tx.amount
+                .toString()
+                .toLowerCase()
+                .includes(filterTerm)
+            : false) ||
+          (tx.date ? tx.date.toLowerCase().includes(filterTerm) : false);
+
+        if (nextShouldNotInclude) {
+          shouldInclude = shouldInclude && !includesTerm;
+          nextShouldNotInclude = false;
+        } else if (index > 0 && filterTerms[index - 1].toLowerCase() === 'or') {
+          shouldInclude = shouldInclude || includesTerm;
+        } else {
+          shouldInclude = shouldInclude && includesTerm;
+        }
+      });
+
+      return shouldInclude;
+    });
 
     setFilteredTransactions(filteredTransactions);
   }, [filterTerm, props.transactions]);
