@@ -210,6 +210,7 @@ const rules = [
   { name: 'Costco Gas',                         newName: 'Costco Gas',            newCategory: 'Transport',     newSubcategory: 'Gas'             },
   { name: 'Costco',                             newName: 'Costco',                newCategory: 'Food',          newSubcategory: 'Groceries'       },
   { name: 'Trader Joe\'s',                      newName: 'Trader Joe\'s',         newCategory: 'Food',          newSubcategory: 'Groceries'       },
+  { name: 'APNAR BAZAR',                        newName: 'APNAR BAZAR',           newCategory: 'Food',          newSubcategory: 'Groceries'       },
   { name: 'FOOD.APPLE.COM',                     newName: 'FOOD.APPLE.COM',        newCategory: 'Food',          newSubcategory: 'Lunch-SH'        },
   { name: 'AMAZON',                             newName: 'Amazon',                newCategory: 'Shops',         newSubcategory: 'Online Shopping' },
   { name: 'USBANK LOAN PAYMENT',                newName: 'USBANK LOAN PAYMENT',   newCategory: 'Transport',     newSubcategory: 'Auto Loan'       },
