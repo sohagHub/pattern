@@ -352,7 +352,7 @@ export default function TransactionsTable(props: Props) {
               }
 
               // Show "..." for skipped pages, but only once before and after the current page
-              if (index === currentPage - 3 || index === currentPage + 2) {
+              if (index === currentPage - 3 || index === currentPage -4 || index === currentPage + 2 || index === currentPage + 3) {
                 return <li key={index}>...</li>;
               }
 
