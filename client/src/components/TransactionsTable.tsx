@@ -4,7 +4,6 @@ import { currencyFilter } from '../util';
 import { TransactionType } from './types';
 import { updateTransactionById } from '../services/api';
 import useTransactions from '../services/transactions';
-import { DepositSwitchAltCreateRequestCountryCodeEnum } from 'plaid';
 
 interface Props {
   transactions: TransactionType[];
@@ -32,7 +31,7 @@ export default function TransactionsTable(props: Props) {
   };
 
   const { dispatch } = useTransactions();
-  
+
   // Define the save function
   const saveChanges = async (
     id: number,
@@ -42,9 +41,9 @@ export default function TransactionsTable(props: Props) {
     const response = updateTransactionById(id, { [field]: value });
     console.log(response);
     dispatch({
-        type: 'UPDATE_TRANSACTION',
-        payload: { id, updates: { [field]: value } }
-      });
+      type: 'UPDATE_TRANSACTION',
+      payload: { id, updates: { [field]: value } },
+    });
   };
 
   // Pagination logic
@@ -52,7 +51,6 @@ export default function TransactionsTable(props: Props) {
   const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastTransaction = currentPage * rowsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - rowsPerPage;
-
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -197,6 +195,69 @@ export default function TransactionsTable(props: Props) {
     setCurrentTransactions(currentTransactions);
   }, [filteredTransactions, indexOfFirstTransaction, indexOfLastTransaction, sortDirection]);
 
+  function renderPagination() {
+    const numPages = Math.ceil(filteredTransactions.length / rowsPerPage);
+    // always show the first 3 pages, last 3 pages, the current page, and 2 pages around the current page
+    const setOfNumbers = new Set([
+      1,
+      2,
+      3,
+      numPages - 2,
+      numPages - 1,
+      numPages,
+      currentPage,
+      currentPage - 1,
+      currentPage + 1,
+    ]);
+
+    let previousWasEllipsis = false;
+
+    return (
+      <>
+        {Array.from({ length: numPages }).map((_, index) => {
+          // Adjust the index to start from 1
+          const pageNumber = index + 1;
+
+          // Only show the pages in the set
+          if (setOfNumbers.has(pageNumber)) {
+            previousWasEllipsis = false;
+            return (
+              <li
+                key={index}
+                className={`pagination-item  ${
+                  currentPage === pageNumber ? 'active' : ''
+                }`}
+              >
+                <button
+                  className="pagination-link"
+                  onClick={() => paginate(pageNumber)}
+                >
+                  {pageNumber}
+                </button>
+              </li>
+            );
+          }
+
+          // Show "..." for skipped pages, but only once before and after the current page +- 1
+          if (
+            !previousWasEllipsis &&
+            (setOfNumbers.has(pageNumber - 1) ||
+              setOfNumbers.has(pageNumber + 1))
+          ) {
+            previousWasEllipsis = true;
+            return (
+              <li className="pagination-item" key={index}>
+                ......
+              </li>
+            );
+          }
+
+          return null;
+        })}
+      </>
+    );
+  }
+
   return (
     <div className="transactions">
       {/* New inputs for filter term and sort direction */}
@@ -221,7 +282,7 @@ export default function TransactionsTable(props: Props) {
           <option value="asc">By Amount Ascending</option>
           <option value="desc">By Amount Descending</option>
         </select>
-        <span className="nice-text"></span>
+        <span className="nice-text">Rows</span>
         <select
           className="nice-input page-input"
           value={rowsPerPage}
@@ -332,32 +393,9 @@ export default function TransactionsTable(props: Props) {
       <div className="pagination">
         {filteredTransactions.length > rowsPerPage && (
           <ul className="pagination-list">
-            {Array.from({ length: Math.ceil(filteredTransactions.length / rowsPerPage) }).map((_, index) => {
-              // Only show the first two pages, last two pages, current page, and two pages around the current page
-              if (
-                index <= 2 ||
-                index > Math.ceil(filteredTransactions.length / rowsPerPage) - 4 ||
-                (index >= currentPage-2  && index <= currentPage )
-              ) {
-                return (
-                  <li
-                    key={index}
-                    className={`pagination-item  ${currentPage === index + 1 ? 'active' : ''}`}
-                  >
-                    <button className="pagination-link" onClick={() => paginate(index + 1)}>
-                      {index + 1}
-                    </button>
-                  </li>
-                );
-              }
-
-              // Show "..." for skipped pages, but only once before and after the current page
-              if (index === currentPage - 3 || index === currentPage -4 || index === currentPage + 2 || index === currentPage + 3) {
-                return <li key={index}>...</li>;
-              }
-
-              return null;
-            })}
+            {/* BEGIN: ed8c6549bwf9 */}
+            {renderPagination()}
+            {/* END: ed8c6549bwf9 */}
           </ul>
         )}
       </div>
