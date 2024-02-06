@@ -217,7 +217,7 @@ const rules = [
   { name: 'IC* INSTACART',                      newName: 'IC* INSTACART',         newCategory: 'Food',          newSubcategory: 'Groceries'       },
   { name: 'TRUSTMARKBENEFIT',                   newName: 'TRUSTMARKBENEFIT',      newCategory: 'Healthcare',    newSubcategory: 'Health Insurance'},
   { name: 'MICROSOFT EDIPAYMENT',               newName: 'MICROSOFT EDIPAYMENT',  newCategory: 'Income',        newSubcategory: 'Payroll'         },
-  { name: 'Robinhood', category: 'Service',     newName: 'Robinhood',             newCategory: 'Investment',    newSubcategory: 'Robinhood'       },
+  { name: 'Robinhood', category: 'Transfer',    newName: 'Robinhood',             newCategory: 'Investment',    newSubcategory: 'Robinhood'       },
   { name: 'APPLE INC', subcategory: 'Payroll',  newName: 'APPLE INC',             newCategory: 'Income',        newSubcategory: 'Payroll'         },
   { name: 'DISNEY PLUS',                        newName: 'DISNEY PLUS',           newCategory: 'Entertainment', newSubcategory: 'TV'              },
   { name: 'BANK OF AMERICA MORTGAGE',           newName: 'BofA MORTGAGE',         newCategory: 'Home',          newSubcategory: 'Mortgage'        },
@@ -226,6 +226,7 @@ const rules = [
   { name: 'FID BKG SVC LLC',                                                      newCategory: 'Investment',    newSubcategory: 'Fidelity'        },
   { name: 'Western Union',                      newName: 'Western Union',         newCategory: 'Gift',          newSubcategory: 'Parents'         },
   { name: 'SOUPSON@COMMONS',                    newName: 'SOUPSON@COMMONS',       newCategory: 'Food',          newSubcategory: 'Lunch-TS'        },
+  { name: 'ZELLE PAYMENT TO SAJID SHARLEMIN',   newName: 'ZELLE PAYMENT TO SAJID SHARLEMIN',    newCategory: 'Utility',  newSubcategory: 'Mobile'        },
   
 ];
 
