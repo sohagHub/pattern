@@ -38,7 +38,10 @@ export default function TransactionsTable(props: Props) {
     field: keyof TransactionType,
     value: string
   ) => {
-    const response = updateTransactionById(id, { [field]: value });
+    if (!value) {
+      return;
+    }
+    const response = await updateTransactionById(id, { [field]: value });
     console.log(response);
     dispatch({
       type: 'UPDATE_TRANSACTION',
@@ -112,13 +115,16 @@ export default function TransactionsTable(props: Props) {
   useEffect(() => {
     console.log('filter: ' + props.filterText);
     const newFilterTerm = convertDateString(props.filterText);
-    if (newFilterTerm === 'Invalid Date Format' || newFilterTerm === 'Invalid Month') {
+    if (
+      newFilterTerm === 'Invalid Date Format' ||
+      newFilterTerm === 'Invalid Month'
+    ) {
       setFilterTerm(props.filterText ? props.filterText : '');
     } else {
       setFilterTerm(newFilterTerm);
     }
   }, [props.filterText]);
-  
+
   // Update filteredTransactions when props.selectedMonth changes
   useEffect(() => {
     // split filterTerm by spaces
@@ -189,11 +195,18 @@ export default function TransactionsTable(props: Props) {
       }
     });
 
-    const currentTransactions = sortedTransactions
-      .slice(indexOfFirstTransaction, indexOfLastTransaction);
-    
+    const currentTransactions = sortedTransactions.slice(
+      indexOfFirstTransaction,
+      indexOfLastTransaction
+    );
+
     setCurrentTransactions(currentTransactions);
-  }, [filteredTransactions, indexOfFirstTransaction, indexOfLastTransaction, sortDirection]);
+  }, [
+    filteredTransactions,
+    indexOfFirstTransaction,
+    indexOfLastTransaction,
+    sortDirection,
+  ]);
 
   function renderPagination() {
     const numPages = Math.ceil(filteredTransactions.length / rowsPerPage);
