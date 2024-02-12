@@ -133,6 +133,10 @@ export default function TransactionsTable(props: Props) {
       .map((term: string) => term.trim().toLowerCase());
 
     const filteredTransactions = props.transactions.filter(tx => {
+      if (tx.category === 'Duplicate') {
+        return false;
+      }
+
       let shouldInclude = true;
       let nextShouldNotInclude = false;
 
