@@ -255,3 +255,8 @@ CREATE TABLE plaid_api_events_table
 
 
 ALTER TABLE transactions_table ADD COLUMN manually_updated BOOLEAN DEFAULT false;
+
+
+ALTER TABLE transactions_table ADD column original_category text default null;
+ALTER TABLE transactions_table ADD column original_subcategory text default null;
+ALTER TABLE transactions_table ADD column original_name text default null;

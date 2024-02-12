@@ -31,6 +31,10 @@ const createOrUpdateTransactions = async transactions => {
     );
     let [category, subcategory] = categories;
 
+    const original_name = transactionName;
+    const original_category = category;
+    const original_subcategory = subcategory;
+
     ({ transactionName, category, subcategory } = await applyRulesForCategory(
       transactionName,
       category,
@@ -54,10 +58,13 @@ const createOrUpdateTransactions = async transactions => {
               unofficial_currency_code,
               date,
               pending,
-              account_owner
+              account_owner,
+              original_name,
+              original_category,
+              original_subcategory
             )
           VALUES
-            ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+            ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
           ON CONFLICT (plaid_transaction_id) DO UPDATE 
             SET 
               plaid_category_id = EXCLUDED.plaid_category_id,
@@ -70,7 +77,10 @@ const createOrUpdateTransactions = async transactions => {
               unofficial_currency_code = EXCLUDED.unofficial_currency_code,
               date = EXCLUDED.date,
               pending = EXCLUDED.pending,
-              account_owner = EXCLUDED.account_owner;
+              account_owner = EXCLUDED.account_owner,
+              original_name = EXCLUDED.name,
+              original_category = EXCLUDED.category,
+              original_subcategory = EXCLUDED.subcategory;
         `,
         values: [
           accountId,
@@ -86,6 +96,9 @@ const createOrUpdateTransactions = async transactions => {
           transactionDate,
           pending,
           accountOwner,
+          original_name,
+          original_category,
+          original_subcategory,
         ],
       };
       await db.query(query);
@@ -206,27 +219,31 @@ const deleteTransactions = async plaidTransactionIds => {
 };
 
 const rules = [
-  { name: 'Costco Gas',                         newName: 'Costco Gas',            newCategory: 'Transport',     newSubcategory: 'Gas'             },
+  { name: 'BANK OF AMERICA MORTGAGE',           newName: 'BofA MORTGAGE',         newCategory: 'Home',          newSubcategory: 'Mortgage'        },
+  { name: 'KinderCare',                         newName: 'KinderCare',            newCategory: 'Childcare',     newSubcategory: 'KinderCare'      },
+  { name: 'Western Union',                      newName: 'Western Union',         newCategory: 'Gift',          newSubcategory: 'Parents'         },
   { name: 'Costco',                             newName: 'Costco',                newCategory: 'Food',          newSubcategory: 'Groceries'       },
   { name: 'Trader Joe\'s',                      newName: 'Trader Joe\'s',         newCategory: 'Food',          newSubcategory: 'Groceries'       },
   { name: 'APNAR BAZAR',                        newName: 'APNAR BAZAR',           newCategory: 'Food',          newSubcategory: 'Groceries'       },
+  { name: 'APNA BAZAR',                         newName: 'APNA BAZAR',            newCategory: 'Food',          newSubcategory: 'Groceries'       },
+  { name: 'MAYURI FOODS',                       newName: 'MAYURI FOODS',          newCategory: 'Food',          newSubcategory: 'Groceries'       },
+  { name: 'ASIAN FAMILY MARKET',                newName: 'ASIAN FAMILY MARKET',   newCategory: 'Food',          newSubcategory: 'Groceries'       },
   { name: 'FOOD.APPLE.COM',                     newName: 'FOOD.APPLE.COM',        newCategory: 'Food',          newSubcategory: 'Lunch-SH'        },
-  { name: 'AMAZON',                             newName: 'Amazon',                newCategory: 'Shops',         newSubcategory: 'Online Shopping' },
-  { name: 'USBANK LOAN PAYMENT',                newName: 'USBANK LOAN PAYMENT',   newCategory: 'Transport',     newSubcategory: 'Auto Loan'       },
-  { name: 'IC* INSTACART',                      newName: 'IC* INSTACART',         newCategory: 'Food',          newSubcategory: 'Groceries'       },
-  { name: 'TRUSTMARKBENEFIT',                   newName: 'TRUSTMARKBENEFIT',      newCategory: 'Healthcare',    newSubcategory: 'Health Insurance'},
-  { name: 'MICROSOFT EDIPAYMENT',               newName: 'MICROSOFT EDIPAYMENT',  newCategory: 'Income',        newSubcategory: 'Payroll'         },
-  { name: 'Robinhood',                          newName: 'Robinhood',             newCategory: 'Investment',    newSubcategory: 'Robinhood'       },
-  { name: 'APPLE INC', subcategory: 'Payroll',  newName: 'APPLE INC',             newCategory: 'Income',        newSubcategory: 'Payroll'         },
-  { name: 'DISNEY PLUS',                        newName: 'DISNEY PLUS',           newCategory: 'Entertainment', newSubcategory: 'TV'              },
-  { name: 'BANK OF AMERICA MORTGAGE',           newName: 'BofA MORTGAGE',         newCategory: 'Home',          newSubcategory: 'Mortgage'        },
-  { name: 'Metropolitan Market',                newName: 'Metropolitan Market',   newCategory: 'Food',          newSubcategory: 'Groceries'       },
-  { name: 'KinderCare',                         newName: 'KinderCare',            newCategory: 'Childcare',     newSubcategory: 'KinderCare'      },
-  { name: 'FID BKG SVC LLC',                                                      newCategory: 'Investment',    newSubcategory: 'Fidelity'        },
-  { name: 'Western Union',                      newName: 'Western Union',         newCategory: 'Gift',          newSubcategory: 'Parents'         },
   { name: 'SOUPSON@COMMONS',                    newName: 'SOUPSON@COMMONS',       newCategory: 'Food',          newSubcategory: 'Lunch-TS'        },
-  { name: 'ZELLE PAYMENT TO SAJID SHARLEMIN',   newName: 'ZELLE PAYMENT TO SAJID SHARLEMIN',    newCategory: 'Utility',  newSubcategory: 'Mobile'        },
+  { name: 'AMAZON',                             newName: 'Amazon',                newCategory: 'Shops',         newSubcategory: 'Online Shopping' },
+  { name: 'IC* INSTACART',                      newName: 'IC* INSTACART',         newCategory: 'Food',          newSubcategory: 'Groceries'       },
+  { name: 'Metropolitan Market',                newName: 'Metropolitan Market',   newCategory: 'Food',          newSubcategory: 'Groceries'       },
   { category: 'Food and Drink',                                                   newCategory: 'Food',                                            },
+  { name: 'USBANK LOAN PAYMENT',                newName: 'USBANK LOAN PAYMENT',   newCategory: 'Transport',     newSubcategory: 'Auto Loan'       },
+  { name: 'Costco Gas',                         newName: 'Costco Gas',            newCategory: 'Transport',     newSubcategory: 'Gas'             },
+  { name: 'BROWN BEAR CAR WASH',                newName: 'BROWN BEAR CAR WASH',   newCategory: 'Transport',     newSubcategory: 'Car Wash'       },
+  { name: 'TRUSTMARKBENEFIT',                   newName: 'TRUSTMARKBENEFIT',      newCategory: 'Healthcare',    newSubcategory: 'Health Insurance'},
+  { name: 'DISNEY PLUS',                        newName: 'DISNEY PLUS',           newCategory: 'Entertainment', newSubcategory: 'TV'              },
+  { name: 'ZELLE PAYMENT TO SAJID SHARLEMIN',   newName: 'ZELLE PAYMENT TO SAJID SHARLEMIN',    newCategory: 'Utility',  newSubcategory: 'Mobile'        },
+  { name: 'MICROSOFT EDIPAYMENT',               newName: 'MICROSOFT EDIPAYMENT',  newCategory: 'Income',        newSubcategory: 'Payroll'         },
+  { name: 'APPLE INC', subcategory: 'Payroll',  newName: 'APPLE INC',             newCategory: 'Income',        newSubcategory: 'Payroll'         },
+  { name: 'Robinhood',                          newName: 'Robinhood',             newCategory: 'Investment',    newSubcategory: 'Robinhood'       },
+  { name: 'FID BKG SVC LLC',                                                      newCategory: 'Investment',    newSubcategory: 'Fidelity'        },
 ];
 
 const applyRulesForCategory = async (transactionName, category, subcategory) => {
