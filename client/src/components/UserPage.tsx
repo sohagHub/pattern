@@ -57,6 +57,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const { generateLinkToken, linkTokens } = useLink();
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedAccount, setSelectedAccount] = useState<string>('');
+  const [isExpanded, setIsExpanded] = useState(true);
 
   useEffect(() => {
     setSelectedMonth('');
@@ -154,7 +155,8 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
           <Callout warning>
             <div>
               Unable to fetch link_token: please make sure your backend server
-              is running and that your .env file has been configured correctly.
+              is running and that your .env file has been configured
+              correctly.
             </div>
             <div>
               Error Code: <code>{linkTokens.error.error_code}</code>
@@ -182,43 +184,54 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
           >
             Sync
           </Button>
-          {numOfItems > 0 && (
-            <>
-              <div className="item__header">
-                <div>
-                  <h2 className="item__header-heading">
-                    {`${items.length} ${pluralize(
-                      'Bank',
-                      items.length
-                    )} Linked`}
-                  </h2>
-                </div>
+          <div>
 
-                {token != null && token.length > 0 && (
-                  // Link will not render unless there is a link token
-                  <LaunchLink token={token} userId={userId} itemId={null} />
-                )}
-              </div>
-              <ErrorMessage />
-              {items.map(item => (
-                <div id="itemCards" key={item.id}>
-                  <ItemCard
-                    item={item}
-                    userId={userId}
-                    onShowAccountTransactions={setSelectedAccount}
-                  />
+          <>
+            {numOfItems > 0 && (
+              <>
+                <div className="item__header">
+                  <div>
+                    <h2 className="item__header-heading">
+                      {`${items.length} ${pluralize(
+                        'Bank',
+                        items.length
+                      )} Linked`}
+                    </h2>
+                  </div>
+
+                  {token != null && token.length > 0 && (
+                    <LaunchLink
+                      token={token}
+                      userId={userId}
+                      itemId={null}
+                    />
+                  )}
                 </div>
-              ))}
-              <Button
-                large
-                inline
-                className="add-account__button"
-                onClick={initiateLink}
-              >
-                Add another bank
-              </Button>
-            </>
-          )}
+              <ErrorMessage />
+              <button onClick={() => setIsExpanded(!isExpanded)}>
+                {isExpanded ? "-" : "Show Banks"}
+              </button>
+                {isExpanded && (items.map(item => (
+                  <div id="itemCards" key={item.id}>
+                    <ItemCard
+                      item={item}
+                      userId={userId}
+                      onShowAccountTransactions={setSelectedAccount}
+                    />
+                  </div>
+                )))}
+              </>
+            )}
+          </>
+          </div>
+          <Button
+            large
+            inline
+            className="add-account__button"
+            onClick={initiateLink}
+          >
+            Add another bank
+          </Button>
         </div>
         <div className="right-section">
           {numOfItems === 0 && <ErrorMessage />}
@@ -245,17 +258,19 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
               />
             </>
           )}
-          {numOfItems === 0 && transactions.length === 0 && assets.length > 0 && (
-            <>
-              <NetWorth
-                accounts={accounts}
-                numOfItems={numOfItems}
-                personalAssets={assets}
-                userId={userId}
-                assetsOnly
-              />
-            </>
-          )}
+          {numOfItems === 0 &&
+            transactions.length === 0 &&
+            assets.length > 0 && (
+              <>
+                <NetWorth
+                  accounts={accounts}
+                  numOfItems={numOfItems}
+                  personalAssets={assets}
+                  userId={userId}
+                  assetsOnly
+                />
+              </>
+            )}
           <div>
             <h2 className="header">Transactions</h2>
             <TransactionsTable
