@@ -94,7 +94,7 @@ export const exchangeToken = async (
       accounts,
     });
     return data;
-  } catch (err) {
+  } catch (err: any) {
     const { response } = err;
     if (response && response.status === 409) {
       toast.error(
