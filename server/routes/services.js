@@ -25,7 +25,10 @@ const updateTransactions = require('../update_transactions');
 const {
   retrieveTransactionById,
   justUpdateTransactions,
-  applyRulesForCategory
+  applyRulesForCategory,
+  createRule,
+  updateRule,
+  retrieveRuleById,
 } = require('../db/queries/transactions');
 
 const { get } = require('lodash');
@@ -79,6 +82,50 @@ router.put(
     item.category = req.body.category ? req.body.category : item.category;
     item.subcategory = req.body.subcategory ? req.body.subcategory : item.subcategory;
     await justUpdateTransactions([item]);
+    res.json({ status: 'ok' });
+
+  })
+);
+
+router.put(
+  '/rule/:id',
+  asyncWrapper(async (req, res) => {
+    console.log(req.body);
+    const id = req.params.id;
+    let item = await retrieveRuleById(id);
+
+    // if not empty update
+    item.name = req.body.name ? req.body.name : item.name;
+    item.category = req.body.category ? req.body.category : item.category;
+    item.subcategory = req.body.subcategory ? req.body.subcategory : item.subcategory;
+    item.newName = req.body.newName ? req.body.newName : item.newName;
+    item.newCategory = req.body.newCategory ? req.body.newCategory : item.newCategory;
+    item.newSubcategory = req.body.newSubcategory ? req.body.newSubcategory : item.newSubcategory;
+    item.serial = req.body.serial ? req.body.serial : item.serial;
+
+    await updateRule(item);
+
+    res.json({ status: 'ok' });
+  })
+);
+
+router.post(
+  '/:userId/rule',
+  asyncWrapper(async (req, res) => {
+    console.log(req.body);
+    const userId = req.params.userId;
+    let item = {};
+    // if not empty update
+    item.name = req.body.name;
+    item.category = req.body.applyRulesForCategory;
+    item.subcategory = req.body.subcategory;
+    item.newName = req.body.newName;
+    item.newCategory = req.body.newCategory;
+    item.newSubcategory = req.body.newSubcategory;
+    item.serial = req.body.serial;
+    item.userId = userId;
+    await createRule(item);
+
     res.json({ status: 'ok' });
   })
 );

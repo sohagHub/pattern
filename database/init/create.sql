@@ -260,3 +260,23 @@ ALTER TABLE transactions_table ADD COLUMN manually_updated BOOLEAN DEFAULT false
 ALTER TABLE transactions_table ADD column original_category text default null;
 ALTER TABLE transactions_table ADD column original_subcategory text default null;
 ALTER TABLE transactions_table ADD column original_name text default null;
+
+CREATE TABLE transaction_rules_table
+(
+  id SERIAL PRIMARY KEY,
+  user_id integer,
+  serial integer,
+  name text,
+  category text,
+  subcategory text,
+  new_name text,
+  new_category text,
+  new_subcategory text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+CREATE TRIGGER transaction_rules_updated_at_timestamp
+BEFORE UPDATE ON transaction_rules_table
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();

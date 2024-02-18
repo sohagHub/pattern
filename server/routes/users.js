@@ -13,6 +13,7 @@ const {
   retrieveItemsByUser,
   retrieveTransactionsByUserId,
   retrieveUserById,
+  retrieveRulesByUserId,
 } = require('../db/queries');
 const { asyncWrapper } = require('../middleware');
 const {
@@ -148,6 +149,21 @@ router.delete(
     // delete from the db
     await deleteUsers(userId);
     res.sendStatus(204);
+  })
+);
+
+/**
+ * Retrieves all rules associated with a single user.
+ *
+ * @param {string} userId the ID of the user.
+ * @returns {Object[]} an array of rules
+ */
+router.get(
+  '/:userId/rules',
+  asyncWrapper(async (req, res) => {
+    const { userId } = req.params;
+    const rules = await retrieveRulesByUserId(userId);
+    res.json(rules);
   })
 );
 

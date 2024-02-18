@@ -236,10 +236,11 @@ const rules = [
   { category: 'Food and Drink',                                                   newCategory: 'Food',                                            },
   { name: 'USBANK LOAN PAYMENT',                newName: 'USBANK LOAN PAYMENT',   newCategory: 'Transport',     newSubcategory: 'Auto Loan'       },
   { name: 'Costco Gas',                         newName: 'Costco Gas',            newCategory: 'Transport',     newSubcategory: 'Gas'             },
-  { name: 'BROWN BEAR CAR WASH',                newName: 'BROWN BEAR CAR WASH',   newCategory: 'Transport',     newSubcategory: 'Car Wash'       },
+  { name: 'BROWN BEAR CAR WASH',                newName: 'BROWN BEAR CAR WASH',   newCategory: 'Transport',     newSubcategory: 'Car Wash'        },
   { name: 'TRUSTMARKBENEFIT',                   newName: 'TRUSTMARKBENEFIT',      newCategory: 'Healthcare',    newSubcategory: 'Health Insurance'},
   { name: 'DISNEY PLUS',                        newName: 'DISNEY PLUS',           newCategory: 'Entertainment', newSubcategory: 'TV'              },
-  { name: 'ZELLE PAYMENT TO SAJID SHARLEMIN',   newName: 'ZELLE PAYMENT TO SAJID SHARLEMIN',    newCategory: 'Utility',  newSubcategory: 'Mobile'        },
+  { name: 'ZELLE PAYMENT TO SAJID SHARLEMIN',   newName: 'SAJID SHARLEMIN',       newCategory: 'Utility',       newSubcategory: 'Mobile'          },
+  { name: 'Github',                             newName: 'GitHub',                newCategory: 'Utility',       newSubcategory: 'Coding'          },
   { name: 'MICROSOFT EDIPAYMENT',               newName: 'MICROSOFT EDIPAYMENT',  newCategory: 'Income',        newSubcategory: 'Payroll'         },
   { name: 'APPLE INC', subcategory: 'Payroll',  newName: 'APPLE INC',             newCategory: 'Income',        newSubcategory: 'Payroll'         },
   { name: 'Robinhood',                          newName: 'Robinhood',             newCategory: 'Investment',    newSubcategory: 'Robinhood'       },
@@ -263,6 +264,85 @@ const applyRulesForCategory = async (transactionName, category, subcategory) => 
   return { transactionName, category, subcategory };
 }
 
+const createRule = async (rule) => {
+  const { userId, serial, name, category, subcategory, newName, newCategory, newSubcategory } = rule;
+  const query = {
+    text: `
+      INSERT INTO transaction_rules_table
+        (
+          user_id,
+          serial,
+          name,
+          category,
+          subcategory,
+          new_name,
+          new_category,
+          new_subcategory
+        )
+      VALUES
+        ($1, $2, $3, $4, $5, $6, $7, $8)
+    `,
+    values: [
+      userId,
+      serial,
+      name,
+      category,
+      subcategory,
+      newName,
+      newCategory,
+      newSubcategory,
+    ],
+  };
+  await db.query(query);
+}
+
+const updateRule = async (rule) => {
+  const { id, serial, name, category, subcategory, newName, newCategory, newSubcategory } = rule;
+  const query = {
+    text: `
+      UPDATE transaction_rules_table
+      SET
+        serial = $2,
+        name = $3,
+        category = $4,
+        subcategory = $5,
+        new_name = $6,
+        new_category = $7,
+        new_subcategory = $8
+      WHERE id = $1
+    `,
+    values: [
+      id,
+      serial,
+      name,
+      category,
+      subcategory,
+      newName,
+      newCategory,
+      newSubcategory,
+    ],
+  };
+  await db.query(query);
+}
+
+const retrieveRulesByUserId = async userId => {
+  const query = {
+    text: 'SELECT * FROM transaction_rules_table WHERE user_id = $1',
+    values: [userId],
+  };
+  const { rows: rules } = await db.query(query);
+  return rules;
+}
+
+const retrieveRuleById = async ruleId => {
+  const query = {
+    text: 'SELECT * FROM transaction_rules_table WHERE id = $1',
+    values: [ruleId],
+  };
+  const { rows: rules } = await db.query(query);
+  return rules[0];
+}
+
 module.exports = {
   createOrUpdateTransactions,
   retrieveTransactionById,
@@ -272,4 +352,9 @@ module.exports = {
   deleteTransactions,
   justUpdateTransactions,
   applyRulesForCategory,
+
+  createRule,
+  updateRule,
+  retrieveRulesByUserId,
+  retrieveRuleById,
 };
