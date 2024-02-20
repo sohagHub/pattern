@@ -281,4 +281,4 @@ BEFORE UPDATE ON transaction_rules_table
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
-ALTER TABLE items_table ADD COLUMN isProd BOOLEAN DEFAULT false;
+ALTER TABLE items_table ADD COLUMN is_prod BOOLEAN DEFAULT false;
