@@ -26,6 +26,7 @@ const {
   retrieveTransactionsByItemId,
   retrieveTransactionsByUserId,
   deleteTransactions,
+  retrieveRulesByUserId,
 } = require('./transactions');
 const {
   createUser,
@@ -66,6 +67,8 @@ module.exports = {
   deleteTransactions,
   createOrUpdateTransactions,
   updateItemTransactionsCursor,
+
+  retrieveRulesByUserId,
   // users
   createUser,
   deleteUsers,

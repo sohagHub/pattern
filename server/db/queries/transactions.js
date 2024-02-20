@@ -218,44 +218,18 @@ const deleteTransactions = async plaidTransactionIds => {
   await Promise.all(pendingQueries);
 };
 
-const rules = [
-  { name: 'BANK OF AMERICA MORTGAGE',           newName: 'BofA MORTGAGE',         newCategory: 'Home',          newSubcategory: 'Mortgage'        },
-  { name: 'KinderCare',                         newName: 'KinderCare',            newCategory: 'Childcare',     newSubcategory: 'KinderCare'      },
-  { name: 'Western Union',                      newName: 'Western Union',         newCategory: 'Gift',          newSubcategory: 'Parents'         },
-  { name: 'Costco',                             newName: 'Costco',                newCategory: 'Food',          newSubcategory: 'Groceries'       },
-  { name: 'Trader Joe\'s',                      newName: 'Trader Joe\'s',         newCategory: 'Food',          newSubcategory: 'Groceries'       },
-  { name: 'APNAR BAZAR',                        newName: 'APNAR BAZAR',           newCategory: 'Food',          newSubcategory: 'Groceries'       },
-  { name: 'APNA BAZAR',                         newName: 'APNA BAZAR',            newCategory: 'Food',          newSubcategory: 'Groceries'       },
-  { name: 'MAYURI FOODS',                       newName: 'MAYURI FOODS',          newCategory: 'Food',          newSubcategory: 'Groceries'       },
-  { name: 'ASIAN FAMILY MARKET',                newName: 'ASIAN FAMILY MARKET',   newCategory: 'Food',          newSubcategory: 'Groceries'       },
-  { name: 'FOOD.APPLE.COM',                     newName: 'FOOD.APPLE.COM',        newCategory: 'Food',          newSubcategory: 'Lunch-SH'        },
-  { name: 'SOUPSON@COMMONS',                    newName: 'SOUPSON@COMMONS',       newCategory: 'Food',          newSubcategory: 'Lunch-TS'        },
-  { name: 'AMAZON',                             newName: 'Amazon',                newCategory: 'Shops',         newSubcategory: 'Online Shopping' },
-  { name: 'IC* INSTACART',                      newName: 'IC* INSTACART',         newCategory: 'Food',          newSubcategory: 'Groceries'       },
-  { name: 'Metropolitan Market',                newName: 'Metropolitan Market',   newCategory: 'Food',          newSubcategory: 'Groceries'       },
-  { category: 'Food and Drink',                                                   newCategory: 'Food',                                            },
-  { name: 'USBANK LOAN PAYMENT',                newName: 'USBANK LOAN PAYMENT',   newCategory: 'Transport',     newSubcategory: 'Auto Loan'       },
-  { name: 'Costco Gas',                         newName: 'Costco Gas',            newCategory: 'Transport',     newSubcategory: 'Gas'             },
-  { name: 'BROWN BEAR CAR WASH',                newName: 'BROWN BEAR CAR WASH',   newCategory: 'Transport',     newSubcategory: 'Car Wash'        },
-  { name: 'TRUSTMARKBENEFIT',                   newName: 'TRUSTMARKBENEFIT',      newCategory: 'Healthcare',    newSubcategory: 'Health Insurance'},
-  { name: 'DISNEY PLUS',                        newName: 'DISNEY PLUS',           newCategory: 'Entertainment', newSubcategory: 'TV'              },
-  { name: 'ZELLE PAYMENT TO SAJID SHARLEMIN',   newName: 'SAJID SHARLEMIN',       newCategory: 'Utility',       newSubcategory: 'Mobile'          },
-  { name: 'Github',                             newName: 'GitHub',                newCategory: 'Utility',       newSubcategory: 'Coding'          },
-  { name: 'MICROSOFT EDIPAYMENT',               newName: 'MICROSOFT EDIPAYMENT',  newCategory: 'Income',        newSubcategory: 'Payroll'         },
-  { name: 'APPLE INC', subcategory: 'Payroll',  newName: 'APPLE INC',             newCategory: 'Income',        newSubcategory: 'Payroll'         },
-  { name: 'Robinhood',                          newName: 'Robinhood',             newCategory: 'Investment',    newSubcategory: 'Robinhood'       },
-  { name: 'FID BKG SVC LLC',                                                      newCategory: 'Investment',    newSubcategory: 'Fidelity'        },
-];
-
 const applyRulesForCategory = async (transactionName, category, subcategory) => {
+  const rules = await retrieveRulesByUserId(1);
+
   for (const rule of rules) {
-    if ((transactionName || '').toLowerCase().includes((rule.name || '').toLowerCase()) && 
-        (category || '').toLowerCase().includes((rule.category || '').toLowerCase()) && 
-        (subcategory || '').toLowerCase().includes((rule.subcategory || '').toLowerCase())) {
-      
-      const newTransactionName = rule.newName || transactionName;
-      const newCategory = rule.newCategory || category;
-      const newSubcategory = rule.newSubcategory || subcategory;
+    if (
+      (transactionName || '').toLowerCase().includes((rule.name || '').toLowerCase()) &&
+      (category || '').toLowerCase().includes((rule.category || '').toLowerCase()) &&
+      (subcategory || '').toLowerCase().includes((rule.subcategory || '').toLowerCase())
+    ) {
+      const newTransactionName = rule.new_name || transactionName;
+      const newCategory = rule.new_category || category;
+      const newSubcategory = rule.new_subcategory || subcategory;
 
       return { transactionName: newTransactionName, category: newCategory, subcategory: newSubcategory };
     }
@@ -325,9 +299,17 @@ const updateRule = async (rule) => {
   await db.query(query);
 }
 
-const retrieveRulesByUserId = async userId => {
+const deleteRule = async (ruleId) => {
   const query = {
-    text: 'SELECT * FROM transaction_rules_table WHERE user_id = $1',
+    text: 'DELETE FROM transaction_rules_table WHERE id = $1',
+    values: [ruleId],
+  };
+  await db.query(query);
+}
+
+const retrieveRulesByUserId = async (userId) => {
+  const query = {
+    text: 'SELECT * FROM transaction_rules_table WHERE user_id = $1 ORDER BY serial ASC',
     values: [userId],
   };
   const { rows: rules } = await db.query(query);
@@ -355,6 +337,7 @@ module.exports = {
 
   createRule,
   updateRule,
+  deleteRule,
   retrieveRulesByUserId,
   retrieveRuleById,
 };

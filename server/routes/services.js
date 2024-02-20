@@ -28,6 +28,7 @@ const {
   applyRulesForCategory,
   createRule,
   updateRule,
+  deleteRule,
   retrieveRuleById,
 } = require('../db/queries/transactions');
 
@@ -117,18 +118,33 @@ router.post(
     let item = {};
     // if not empty update
     item.name = req.body.name;
-    item.category = req.body.applyRulesForCategory;
+    item.category = req.body.category;
     item.subcategory = req.body.subcategory;
-    item.newName = req.body.newName;
-    item.newCategory = req.body.newCategory;
-    item.newSubcategory = req.body.newSubcategory;
+    item.newName = req.body.new_name;
+    item.newCategory = req.body.new_category;
+    item.newSubcategory = req.body.new_subcategory;
     item.serial = req.body.serial;
     item.userId = userId;
+
+    // if name, category, subcategory all are null, return error
+    if (!item.name && !item.category && !item.subcategory) {
+      res.json({ status: 'error', message: 'name, category, and subcategory - all cannot be empty' });
+      return;
+    }
+
     await createRule(item);
 
     res.json({ status: 'ok' });
   })
 );
+
+router.delete(
+  '/rule/:id',
+  asyncWrapper(async (req, res) => {
+  const id = req.params.id;
+  await deleteRule(id);
+  res.json({ status: 'ok' });
+}));
 
 router.put(
   '/updateTransactionsByRule/:userId',
