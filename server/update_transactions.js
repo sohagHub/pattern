@@ -3,6 +3,7 @@
  */
 
 const plaid = require('./plaid');
+const { prodClient } = require('./plaid');
 const {
   retrieveItemByPlaidItemId,
   createAccounts,
@@ -11,6 +12,7 @@ const {
   updateItemTransactionsCursor,
 } = require('./db/queries');
 
+const FiveDaysInMillis = 5 * 24 * 60 * 60 * 1000;
 /**
  * Fetches transactions from the Plaid API for a given item.
  *
@@ -25,6 +27,8 @@ const fetchTransactionUpdates = async (plaidItemId) => {
   const {
     plaid_access_token: accessToken,
     last_transactions_update_cursor: lastCursor,
+    is_prod: isProd,
+    updated_at: updatedAt,
   } = await retrieveItemByPlaidItemId(
     plaidItemId
   );
@@ -48,7 +52,16 @@ const fetchTransactionUpdates = async (plaidItemId) => {
         cursor: cursor,
         count: batchSize,
       };
-      const response = await plaid.transactionsSync(request)
+
+      const plaidClient = isProd ? prodClient : plaid;
+      const updatedAtDate = new Date(updatedAt);
+      let response;
+      if (isProd && updatedAtDate.getTime() > Date.now() - FiveDaysInMillis) {
+        response = { data: { added: [], modified: [], removed: [], has_more: false } };
+      } else {
+        response = await plaidClient.transactionsSync(request);
+      }
+      
       const data = response.data;
       // Add this page of results
       added = added.concat(data.added);
@@ -85,7 +98,9 @@ const updateTransactions = async (plaidItemId) => {
     access_token: accessToken,
   };
 
-  const {data: {accounts}} = await plaid.accountsGet(request);
+  // if access token contains production string, use prod client
+  const plaidClient = accessToken.includes('production') ? prodClient : plaid;
+  const {data: {accounts}} = await plaidClient.accountsGet(request);
   
   // Update the DB.
   await createAccounts(plaidItemId, accounts);
