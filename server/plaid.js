@@ -16,6 +16,7 @@ const {
   PLAID_CLIENT_ID,
   PLAID_ENV,
   PLAID_SECRET_DEVELOPMENT,
+  PLAID_SECRET_PRODUCTION,
   PLAID_SECRET_SANDBOX,
 } = process.env;
 
@@ -87,15 +88,15 @@ const clientMethodLoggingFns = {
 };
 // Wrapper for the Plaid client. This allows us to easily log data for all Plaid client requests.
 class PlaidClientWrapper {
-  constructor() {
+  constructor(clientId, secret, env) {
     // Initialize the Plaid client.
 
     const configuration = new Configuration({
-      basePath: PlaidEnvironments[PLAID_ENV],
+      basePath: PlaidEnvironments[env],
       baseOptions: {
         headers: {
-          'PLAID-CLIENT-ID': PLAID_CLIENT_ID,
-          'PLAID-SECRET': PLAID_SECRET,
+          'PLAID-CLIENT-ID': clientId,
+          'PLAID-SECRET': secret,
           'Plaid-Version': '2020-09-14',
         },
       },
@@ -124,4 +125,17 @@ class PlaidClientWrapper {
   }
 }
 
-module.exports = new PlaidClientWrapper();
+const devClient = new PlaidClientWrapper(
+  PLAID_CLIENT_ID,
+  PLAID_SECRET_DEVELOPMENT,
+  'development'
+);
+
+const prodClient = new PlaidClientWrapper(
+  PLAID_CLIENT_ID,
+  PLAID_SECRET_PRODUCTION,
+  'production'
+);
+
+module.exports = devClient;
+module.exports.prodClient = prodClient;
