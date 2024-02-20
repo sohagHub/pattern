@@ -282,3 +282,16 @@ FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
 ALTER TABLE items_table ADD COLUMN is_prod BOOLEAN DEFAULT false;
+
+CREATE OR REPLACE VIEW public.items AS
+SELECT items_table.id,
+  items_table.plaid_item_id,
+  items_table.user_id,
+  items_table.plaid_access_token,
+  items_table.plaid_institution_id,
+  items_table.status,
+  items_table.created_at,
+  items_table.updated_at,
+  items_table.transactions_cursor,
+  items_table.is_prod
+FROM items_table;
