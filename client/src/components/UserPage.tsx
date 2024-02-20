@@ -155,8 +155,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
           <Callout warning>
             <div>
               Unable to fetch link_token: please make sure your backend server
-              is running and that your .env file has been configured
-              correctly.
+              is running and that your .env file has been configured correctly.
             </div>
             <div>
               Error Code: <code>{linkTokens.error.error_code}</code>
@@ -185,54 +184,58 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
             Sync
           </Button>
           <div>
+            <>
+              {numOfItems > 0 && (
+                <>
+                  <div className="item__header">
+                    <div>
+                      <h2 className="item__header-heading">
+                        {`${items.length} ${pluralize(
+                          'Bank',
+                          items.length
+                        )} Linked`}{' '}
+                        <button onClick={() => setIsExpanded(!isExpanded)}>
+                          {isExpanded ? '- ' : ' + '}
+                        </button>
+                      </h2>
+                    </div>
 
-          <>
-            {numOfItems > 0 && (
-              <>
-                <div className="item__header">
-                  <div>
-                    <h2 className="item__header-heading">
-                      {`${items.length} ${pluralize(
-                        'Bank',
-                        items.length
-                      )} Linked`}
-                    </h2>
+                    {token != null && token.length > 0 && (
+                      <LaunchLink token={token} userId={userId} itemId={null} />
+                    )}
                   </div>
+                  <ErrorMessage />
 
-                  {token != null && token.length > 0 && (
-                    <LaunchLink
-                      token={token}
-                      userId={userId}
-                      itemId={null}
-                    />
-                  )}
-                </div>
-              <ErrorMessage />
-              <button onClick={() => setIsExpanded(!isExpanded)}>
-                {isExpanded ? "-" : "Show Banks"}
-              </button>
-                {isExpanded && (items.map(item => (
-                  <div id="itemCards" key={item.id}>
-                    <ItemCard
-                      item={item}
-                      userId={userId}
-                      onShowAccountTransactions={setSelectedAccount}
-                    />
-                  </div>
-                )))}
-              </>
-            )}
-          </>
+                  {isExpanded &&
+                    items.map(item => (
+                      <div id="itemCards" key={item.id}>
+                        <ItemCard
+                          item={item}
+                          userId={userId}
+                          onShowAccountTransactions={setSelectedAccount}
+                        />
+                      </div>
+                    ))}
+                </>
+              )}
+            </>
           </div>
-          <Button
-            large
-            inline
-            className="add-account__button"
-            onClick={initiateLink}
-          >
-            Add another bank
-          </Button>
+          <div>
+            <Button
+              large
+              inline
+              className="add-account-button"
+              onClick={initiateLink}
+            >
+              Add another bank
+            </Button>
+            <br />
+            <div>
+              <Link to="/settings">Settings</Link>
+            </div>
+          </div>
         </div>
+
         <div className="right-section">
           {numOfItems === 0 && <ErrorMessage />}
           {numOfItems > 0 && transactions.length === 0 && (
@@ -258,19 +261,17 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
               />
             </>
           )}
-          {numOfItems === 0 &&
-            transactions.length === 0 &&
-            assets.length > 0 && (
-              <>
-                <NetWorth
-                  accounts={accounts}
-                  numOfItems={numOfItems}
-                  personalAssets={assets}
-                  userId={userId}
-                  assetsOnly
-                />
-              </>
-            )}
+          {numOfItems === 0 && transactions.length === 0 && assets.length > 0 && (
+            <>
+              <NetWorth
+                accounts={accounts}
+                numOfItems={numOfItems}
+                personalAssets={assets}
+                userId={userId}
+                assetsOnly
+              />
+            </>
+          )}
           <div>
             <h2 className="header">Transactions</h2>
             <TransactionsTable

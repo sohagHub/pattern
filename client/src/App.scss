@@ -546,7 +546,6 @@ ErrorMessage
   }
 }
 
-
 /* Styling for the input box */
 .nice-input {
   width: 100%; /* Full width */
@@ -562,6 +561,11 @@ ErrorMessage
   transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transition for focus effect */
 }
 
+.settings-new-input {
+  width: auto;
+  @extend .nice-input;
+}
+
 /* Hover state */
 .nice-input:hover {
   border-color: #888; /* Darker border on hover */
@@ -570,7 +574,7 @@ ErrorMessage
 /* Focus state */
 .nice-input:focus {
   outline: none; /* Removes the default focus outline */
-  border-color: #4A90E2; /* Blue border on focus */
+  border-color: #4a90e2; /* Blue border on focus */
   box-shadow: 0 0 8px rgba(74, 144, 226, 0.5); /* Subtle glow effect */
 }
 
@@ -584,9 +588,8 @@ ErrorMessage
 
 .pagination-item {
   display: inline-block;
-  margin-right: 5px;  
+  margin-right: 5px;
 }
-
 
 .pagination-link {
   display: inline-block;
@@ -672,7 +675,6 @@ ErrorMessage
   @media (max-width: 800px) {
     width: 100%;
   }
-
 }
 
 .nice-button {
@@ -691,4 +693,42 @@ ErrorMessage
 
 .centered {
   text-align: center;
+}
+
+.add-account-button {
+  width: 99%;
+  // get all from nice-button without having to repeat
+  @extend .nice-button;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.custom-table th {
+  background-color: #f2f2f2;
+}
+
+.custom-table .transactions-data-rows:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.custom-table button {
+  padding: 4px 8px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.custom-table button:hover {
+  background-color: #45a049;
 }

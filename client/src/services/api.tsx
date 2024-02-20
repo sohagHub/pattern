@@ -73,6 +73,9 @@ export const getTransactionsByUser = (userId: number) =>
 export const updateTransactionById = (id: number, data: any) =>
   api.put(`/services/transaction/${id}`, data);
 
+export const getRulesByUser = (userId: number) =>
+  api.get(`/users/${userId}/rules`);
+    
 // institutions
 export const getInstitutionById = (instId: string) =>
   api.get(`/institutions/${instId}`);

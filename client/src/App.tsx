@@ -3,7 +3,7 @@ import { Route, Switch, withRouter } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
-import { UserPage, Landing, Sockets, OAuthLink, UserList } from './components';
+import { UserPage, Landing, Sockets, OAuthLink, UserList, SettingsPage } from './components';
 import { AccountsProvider } from './services/accounts';
 import { InstitutionsProvider } from './services/institutions';
 import { ItemsProvider } from './services/items';
@@ -42,6 +42,7 @@ function App() {
                           <Route path="/user/:userId" component={UserPage} />
                           <Route path="/oauth-link" component={OAuthLink} />
                           <Route path="/admin" component={UserList} />
+                          <Route path="/settings" component={SettingsPage} />
                         </Switch>
                       </AssetsProvider>
                     </CurrentUserProvider>
