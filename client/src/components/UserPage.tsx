@@ -155,7 +155,8 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
           <Callout warning>
             <div>
               Unable to fetch link_token: please make sure your backend server
-              is running and that your .env file has been configured correctly.
+              is running and that your .env file has been configured
+              correctly.
             </div>
             <div>
               Error Code: <code>{linkTokens.error.error_code}</code>
@@ -201,7 +202,11 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                     </div>
 
                     {token != null && token.length > 0 && (
-                      <LaunchLink token={token} userId={userId} itemId={null} />
+                      <LaunchLink
+                        token={token}
+                        userId={userId}
+                        itemId={null}
+                      />
                     )}
                   </div>
                   <ErrorMessage />
@@ -230,9 +235,9 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
               Add another bank
             </Button>
             <br />
-            <div>
-              <Link to="/settings">Settings</Link>
-            </div>
+            <Link to="/settings" className="add-account-button">
+              Settings
+            </Link>
           </div>
         </div>
 
