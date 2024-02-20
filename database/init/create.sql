@@ -280,3 +280,5 @@ CREATE TRIGGER transaction_rules_updated_at_timestamp
 BEFORE UPDATE ON transaction_rules_table
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
+
+ALTER TABLE items_table ADD COLUMN isProd BOOLEAN DEFAULT false;
