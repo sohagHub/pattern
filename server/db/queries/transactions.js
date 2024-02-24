@@ -31,6 +31,12 @@ const createOrUpdateTransactions = async transactions => {
     );
     let [category, subcategory] = categories;
 
+    // if pending is true, we don't want to update the transaction
+    if (pending) {
+      console.log('Skipping pending transaction:', transaction);
+      return;
+    }
+    
     const original_name = transactionName;
     const original_category = category;
     const original_subcategory = subcategory;
