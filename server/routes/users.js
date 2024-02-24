@@ -199,7 +199,8 @@ router.post(
         } catch (err) {
           const logMessage = `Bank: ${institution.name}, ItemId: ${
             item.id
-          }, Error: ${err.message}`;
+            }, Error: ${err.message}`;
+          console.log(logMessage);
           console.error(err);
           req.io.emit('SYNC_ERROR', {
             itemId: plaidItemId,
