@@ -29,6 +29,7 @@ const fetchTransactionUpdates = async (plaidItemId) => {
     last_transactions_update_cursor: lastCursor,
     is_prod: isProd,
     updated_at: updatedAt,
+    is_archived: isArchived,
   } = await retrieveItemByPlaidItemId(
     plaidItemId
   );
@@ -56,10 +57,11 @@ const fetchTransactionUpdates = async (plaidItemId) => {
       const plaidClient = isProd ? prodClient : plaid;
       const updatedAtDate = new Date(updatedAt);
       let response;
-      if (isProd && updatedAtDate.getTime() > Date.now() - FiveDaysInMillis) {
-        response = { data: { added: [], modified: [], removed: [], has_more: false } };
+      if ((isProd && updatedAtDate.getTime() > Date.now() - FiveDaysInMillis) || isArchived) {
+        response = { data: { added: [], modified: [], removed: [], has_more: false, next_cursor: cursor, isUpdated: false} };
       } else {
         response = await plaidClient.transactionsSync(request);
+        response.data.isUpdated = true;
       }
       
       const data = response.data;
@@ -70,12 +72,13 @@ const fetchTransactionUpdates = async (plaidItemId) => {
       hasMore = data.has_more;
       // Update cursor to the next cursor
       cursor = data.next_cursor;
+      isUpdated = data.isUpdated;
     }
   } catch (err) {
     console.error(`Error fetching transactions: ${err.message}`);
     cursor = lastCursor;
   }
-  return { added, modified, removed, cursor, accessToken };
+  return { added, modified, removed, cursor, accessToken, isUpdated, isArchived };
 };
 
 /**
@@ -90,9 +93,10 @@ const updateTransactions = async (plaidItemId) => {
     modified,
     removed,
     cursor,
-    accessToken
+    accessToken,
+    isUpdated,
+    isArchived,
   } = await fetchTransactionUpdates(plaidItemId);
-
   
   const request = {
     access_token: accessToken,
@@ -100,13 +104,19 @@ const updateTransactions = async (plaidItemId) => {
 
   // if access token contains production string, use prod client
   const plaidClient = accessToken.includes('production') ? prodClient : plaid;
-  const {data: {accounts}} = await plaidClient.accountsGet(request);
+
+  if (!isArchived) {
+    const { data: { accounts } } = await plaidClient.accountsGet(request);
   
-  // Update the DB.
-  await createAccounts(plaidItemId, accounts);
-  await createOrUpdateTransactions(added.concat(modified));
-  await deleteTransactions(removed);
-  await updateItemTransactionsCursor(plaidItemId, cursor);
+    // Update the DB.
+    await createAccounts(plaidItemId, accounts);
+    await createOrUpdateTransactions(added.concat(modified));
+    await deleteTransactions(removed);
+    if (isUpdated) {
+      await updateItemTransactionsCursor(plaidItemId, cursor);
+    }
+  }
+  
   return {
     addedCount: added.length,
     modifiedCount: modified.length,

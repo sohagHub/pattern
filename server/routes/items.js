@@ -15,6 +15,7 @@ const {
 } = require('../db/queries');
 const { asyncWrapper } = require('../middleware');
 const plaid = require('../plaid');
+const { prodClient } = require('../plaid');
 const {
   sanitizeAccounts,
   sanitizeItems,
@@ -38,9 +39,15 @@ router.post(
   '/',
   asyncWrapper(async (req, res) => {
     const { publicToken, institutionId, userId } = req.body;
+    let plaidClient = plaid;
+    let isProd = false;
+    if (publicToken.includes('production')) {
+      plaidClient = prodClient;
+      isProd = true;
+    }
 
     // exchange the public token for a private access token and store with the item.
-    const response = await plaid.itemPublicTokenExchange({
+    const response = await plaidClient.itemPublicTokenExchange({
       public_token: publicToken,
     });
     const accessToken = response.data.access_token;
@@ -49,7 +56,8 @@ router.post(
       institutionId,
       accessToken,
       itemId,
-      userId
+      userId,
+      isProd
     );
 
     // Make an initial call to fetch transactions and enable SYNC_UPDATES_AVAILABLE webhook sending
