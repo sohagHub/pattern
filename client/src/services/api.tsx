@@ -5,7 +5,7 @@ import { PlaidLinkOnSuccessMetadata } from 'react-plaid-link';
 
 import { DuplicateItemToastMessage } from '../components';
 
-const baseURL = '/';
+const baseURL = '/api';
 
 const api = axios.create({
   baseURL,
@@ -35,6 +35,9 @@ export const addNewUser = (username: string) =>
   api.post('/users', { username });
 export const deleteUserById = (userId: number) =>
   api.delete(`/users/${userId}`);
+
+export const getRulesByUserId = (userId: number) =>
+  axios.get(`/users/${userId}/rules`);
 
 // items
 export const getItemById = (id: number) => api.get(`/items/${id}`);

@@ -51,19 +51,19 @@ io.on('connection', socket => {
   });
 });
 
-app.get('/test', (req, res) => {
+app.get('/api/test', (req, res) => {
   res.send('test response');
 });
 
-app.use('/users', usersRouter);
-app.use('/sessions', sessionsRouter);
-app.use('/items', itemsRouter);
-app.use('/accounts', accountsRouter);
-app.use('/institutions', institutionsRouter);
-app.use('/services', serviceRouter);
-app.use('/link-event', linkEventsRouter);
-app.use('/link-token', linkTokensRouter);
-app.use('/assets', assetsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/sessions', sessionsRouter);
+app.use('/api/items', itemsRouter);
+app.use('/api/accounts', accountsRouter);
+app.use('/api/institutions', institutionsRouter);
+app.use('/api/services', serviceRouter);
+app.use('/api/link-event', linkEventsRouter);
+app.use('/api/link-token', linkTokensRouter);
+app.use('/api/assets', assetsRouter);
 app.use('*', unhandledRouter);
 
 // Error handling has to sit at the bottom of the stack.

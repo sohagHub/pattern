@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getRulesByUser } from '../services/api';
 
 interface Rule {
   id: number;
@@ -17,7 +18,8 @@ const SettingsPage = () => {
   const [newRule, setNewRule] = useState<Partial<Rule>>({});
 
   const refreshRules = () =>
-    axios.get('/users/1/rules').then(response => {
+    //axios.get('/api/users/1/rules').then(response => {
+    getRulesByUser(1).then(response => {
       setRules(response.data);
     });
 
