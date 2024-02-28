@@ -9,12 +9,13 @@ interface Props {
 }
 const AddUserForm = (props: Props) => {
   const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const { addNewUser, getUsers } = useUsers();
   const { setNewUser } = useCurrentUser();
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    await addNewUser(username);
+    await addNewUser(username, password);
     setNewUser(username);
     props.hideForm();
   };
@@ -44,6 +45,19 @@ const AddUserForm = (props: Props) => {
               placeholder="New user name"
               label="User_Name"
               onChange={e => setUsername(e.target.value)}
+            />
+          </div>
+          <div className="add-user__column-2">
+            <TextInput
+              id="password"
+              name="password"
+              required
+              autoComplete="off"
+              className="input_field"
+              value={password}
+              placeholder="New password"
+              label="Password"
+              onChange={e => setPassword(e.target.value)}
             />
           </div>
           <div className="add-user__column-3">
