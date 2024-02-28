@@ -40,6 +40,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
     username: '',
     created_at: '',
     updated_at: '',
+    token: '',
   });
   const [items, setItems] = useState<ItemType[]>([]);
   const [token, setToken] = useState('');

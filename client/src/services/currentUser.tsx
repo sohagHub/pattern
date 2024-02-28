@@ -33,7 +33,7 @@ interface CurrentUserContextShape extends CurrentUserState {
   setNewUser: (username: string) => void;
   userState: CurrentUserState;
   setCurrentUser: (username: string) => void;
-  login: (username: string) => void;
+  login: (username: string, password: string) => void;
 }
 const CurrentUserContext = createContext<CurrentUserContextShape>(
   initialState as CurrentUserContextShape
@@ -50,11 +50,15 @@ export function CurrentUserProvider(props: any) {
    * @desc Requests details for a single User.
    */
   const login = useCallback(
-    async username => {
+    async (username, password) => {
       try {
-        const { data: payload } = await apiGetLoginUser(username);
+        const { data: payload } = await apiGetLoginUser(username, password);
         if (payload != null) {
           toast.success(`Successful login.  Welcome back ${username}`);
+          await new Promise(resolve => {
+            localStorage.setItem('token', payload[0].token);
+            resolve(null);
+          });
           dispatch({ type: 'SUCCESSFUL_GET', payload: payload[0] });
           history.push(`/user/${payload[0].id}`);
         } else {
@@ -69,9 +73,9 @@ export function CurrentUserProvider(props: any) {
   );
 
   const setCurrentUser = useCallback(
-    async username => {
+    async (username, password) => {
       try {
-        const { data: payload } = await apiGetLoginUser(username);
+        const { data: payload } = await apiGetLoginUser(username, password);
         if (payload != null) {
           dispatch({ type: 'SUCCESSFUL_GET', payload: payload[0] });
           history.push(`/user/${payload[0].id}`);
