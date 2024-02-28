@@ -22,6 +22,7 @@ const {
   sanitizeUsers,
   sanitizeTransactions,
   getInstitutionById,
+  getPasswordHash,
 } = require('../util');
 
 const updateTransactions = require('../update_transactions');
@@ -54,12 +55,14 @@ router.get(
 router.post(
   '/',
   asyncWrapper(async (req, res) => {
-    const { username } = req.body;
+    const { username, password } = req.body;
     const usernameExists = await retrieveUserByUsername(username);
+    const hashedPassword = await getPasswordHash(password);
+
     // prevent duplicates
     if (usernameExists)
       throw new Boom('Username already exists', { statusCode: 409 });
-    const newUser = await createUser(username);
+    const newUser = await createUser(username, hashedPassword);
     res.json(sanitizeUsers(newUser));
   })
 );

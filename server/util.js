@@ -2,6 +2,7 @@ const isArray = require('lodash/isArray');
 const pick = require('lodash/pick');
 const plaid = require('./plaid');
 const NodeCache = require('node-cache');
+const bcrypt = require('bcrypt');
 
 // Create a new cache instance
 const myCache = new NodeCache({ stdTTL: 60 * 60 * 4, checkperiod: 60 * 60 * 4 });
@@ -122,6 +123,21 @@ const getInstitutionById = async (instId) => {
   }
 };
 
+
+// pasword hashing and verification
+const saltRounds = 10;
+
+const getPasswordHash = async password => {
+  const hash = await bcrypt.hash(password, saltRounds);
+  return hash; // The hash includes both the salt and the hashed password
+};
+
+const verifyPassword = async (passwordAttempt, storedHash) => {
+  const match = await bcrypt.compare(passwordAttempt, storedHash);
+  return match; // true if the password matches, false otherwise
+};
+
+
 module.exports = {
   toArray,
   sanitizeAccounts,
@@ -132,4 +148,6 @@ module.exports = {
   isValidItemStatus,
   getInstitutionById,
   myCache,
+  getPasswordHash,
+  verifyPassword,
 };

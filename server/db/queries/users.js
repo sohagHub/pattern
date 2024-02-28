@@ -10,11 +10,11 @@ const db = require('../');
  * @param {string} username the username of the user.
  * @returns {Object} the new user.
  */
-const createUser = async username => {
+const createUser = async (username, password) => {
   const query = {
     // RETURNING is a Postgres-specific clause that returns a list of the inserted items.
-    text: 'INSERT INTO users_table (username) VALUES ($1) RETURNING *;',
-    values: [username],
+    text: 'INSERT INTO users_table (username, pass_word) VALUES ($1, $2) RETURNING *;',
+    values: [username, password],
   };
   const { rows } = await db.query(query);
   return rows[0];
