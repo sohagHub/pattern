@@ -7,19 +7,23 @@ import { DuplicateItemToastMessage } from '../components';
 
 const baseURL = '/api';
 
+// Get the token
+const token = localStorage.getItem('token');
+
 const api = axios.create({
   baseURL,
   headers: {
     'Cache-Control': 'no-cache, no-store, must-revalidate',
     Pragma: 'no-cache',
     Expires: 0,
+    Authorization: `Bearer ${token}`,
   },
 });
 
 export default api;
 // currentUser
-export const getLoginUser = (username: string) =>
-  api.post('/sessions', { username });
+export const getLoginUser = (username: string, password: string) =>
+  api.post('/sessions', { username, password });
 
 // assets
 export const addAsset = (userId: number, description: string, value: number) =>
@@ -31,8 +35,8 @@ export const deleteAssetByAssetId = (assetId: number) =>
 // users
 export const getUsers = () => api.get('/users');
 export const getUserById = (userId: number) => api.get(`/users/${userId}`);
-export const addNewUser = (username: string) =>
-  api.post('/users', { username });
+export const addNewUser = (username: string, password: string) =>
+  api.post('/users', { username, password });
 export const deleteUserById = (userId: number) =>
   api.delete(`/users/${userId}`);
 
@@ -78,7 +82,7 @@ export const updateTransactionById = (id: number, data: any) =>
 
 export const getRulesByUser = (userId: number) =>
   api.get(`/users/${userId}/rules`);
-    
+
 // institutions
 export const getInstitutionById = (instId: string) =>
   api.get(`/institutions/${instId}`);
