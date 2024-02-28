@@ -5,7 +5,7 @@ COPY ["package-lock.json", "/opt/server/"]
 
 WORKDIR /opt/server
 
-RUN npm ci
+RUN npm install --force
 
 COPY ["./", "/opt/server/"]
 
