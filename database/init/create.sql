@@ -312,3 +312,14 @@ SELECT items_table.id,
   items_table.is_prod,
   items_table.is_archived
 FROM items_table;
+
+
+ALTER TABLE users_table ADD column pass_word text default null;
+
+CREATE OR REPLACE VIEW users AS
+SELECT id,
+  username,
+  created_at,
+  updated_at,
+  pass_word
+FROM users_table;
