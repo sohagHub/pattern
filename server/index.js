@@ -7,7 +7,7 @@ const socketIo = require('socket.io');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
-const { errorHandler } = require('./middleware');
+const { errorHandler, authenticateToken } = require('./middleware');
 
 const {
   usersRouter,
@@ -55,8 +55,12 @@ app.get('/api/test', (req, res) => {
   res.send('test response');
 });
 
-app.use('/api/users', usersRouter);
+
 app.use('/api/sessions', sessionsRouter);
+
+app.use(authenticateToken);
+
+app.use('/api/users', usersRouter);
 app.use('/api/items', itemsRouter);
 app.use('/api/accounts', accountsRouter);
 app.use('/api/institutions', institutionsRouter);

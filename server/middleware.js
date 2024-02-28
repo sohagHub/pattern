@@ -3,6 +3,14 @@
  */
 
 const Boom = require('@hapi/boom');
+const jwt = require('jsonwebtoken');
+
+const {
+  PLAID_CLIENT_ID,
+  PLAID_ENV,
+  PLAID_SECRET_DEVELOPMENT,
+  PLAID_SECRET_PRODUCTION,
+} = process.env;
 
 /**
  * A higher-order function that wraps an async callback to properly trigger the
@@ -41,4 +49,19 @@ const errorHandler = (err, req, res, next) => {
   res.status(statusCode).json(payload);
 };
 
-module.exports = { asyncWrapper, errorHandler };
+const SECRET_KEY = PLAID_SECRET_PRODUCTION; // Store securely
+
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
+
+
+module.exports = { asyncWrapper, errorHandler, authenticateToken };
