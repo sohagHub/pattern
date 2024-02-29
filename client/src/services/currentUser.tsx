@@ -55,10 +55,7 @@ export function CurrentUserProvider(props: any) {
         const { data: payload } = await apiGetLoginUser(username, password);
         if (payload != null) {
           toast.success(`Successful login.  Welcome back ${username}`);
-          await new Promise(resolve => {
-            localStorage.setItem('token', payload[0].token);
-            resolve(null);
-          });
+          localStorage.setItem('token', payload[0].token);
           dispatch({ type: 'SUCCESSFUL_GET', payload: payload[0] });
           history.push(`/user/${payload[0].id}`);
         } else {
