@@ -13,12 +13,9 @@ const { sanitizeUsers, getPasswordHash, verifyPassword } = require('../util');
 
 const router = express.Router();
 
-const {
-  PLAID_SECRET_PRODUCTION,
-} = process.env;
+const { PLAID_SECRET_PRODUCTION } = process.env;
 
 const SECRET_KEY = PLAID_SECRET_PRODUCTION; // Store securely
-
 
 /**
  * Retrieves user information for a single user.
@@ -35,7 +32,7 @@ router.post(
     const passwordMatch = await verifyPassword(password, user.pass_word);
     if (user != null && passwordMatch) {
       const token = jwt.sign({ userId: user.id }, SECRET_KEY, {
-        expiresIn: '5m'
+        expiresIn: '10m',
       });
       let returnUser = sanitizeUsers(user);
       returnUser[0].token = token;
