@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { getRulesByUser } from '../services/api';
+import { getRulesByUser, addRuleForUser, deleteRuleById } from '../services/api';
 
 interface Rule {
   id: number;
@@ -18,7 +18,6 @@ const SettingsPage = () => {
   const [newRule, setNewRule] = useState<Partial<Rule>>({});
 
   const refreshRules = () =>
-    //axios.get('/api/users/1/rules').then(response => {
     getRulesByUser(1).then(response => {
       setRules(response.data);
     });
@@ -33,7 +32,7 @@ const SettingsPage = () => {
 
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    axios.post('/services/1/rule', newRule).then(response => {
+    addRuleForUser(1, newRule).then(response => {
       if (response.data.status === 'ok') {
         refreshRules();
         setNewRule({});
@@ -42,7 +41,7 @@ const SettingsPage = () => {
   };
 
   const handleDelete = (id: number) => {
-    axios.delete(`/services/rule/${id}`).then(response => {
+    deleteRuleById(id).then(response => {
       if (response.data.status === 'ok') {
         setRules(rules.filter(rule => rule.id !== id));
       }

@@ -46,8 +46,11 @@ export const addNewUser = (username: string, password: string) =>
 export const deleteUserById = (userId: number) =>
   api.delete(`/users/${userId}`);
 
+// rules
 export const getRulesByUserId = (userId: number) =>
   axios.get(`/users/${userId}/rules`);
+
+
 
 // items
 export const getItemById = (id: number) => api.get(`/items/${id}`);
@@ -88,6 +91,13 @@ export const updateTransactionById = (id: number, data: any) =>
 
 export const getRulesByUser = (userId: number) =>
   api.get(`/users/${userId}/rules`);
+
+export const addRuleForUser = (userId: number, rule: any) => {
+  return api.post(`/services/${userId}/rule`, rule);
+};
+
+export const deleteRuleById = (id: number) =>
+  api.delete(`/services/rule/${id}`);
 
 // institutions
 export const getInstitutionById = (instId: string) =>
