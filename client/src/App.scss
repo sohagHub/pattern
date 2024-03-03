@@ -710,6 +710,18 @@ ErrorMessage
   @extend .nice-button;
 }
 
+.plus-button {
+  display: inline-block;
+  padding: 10px 20px; /* Adjust the padding as needed */
+  font-size: 16px; /* Adjust font-size as needed */
+  text-align: center;
+  vertical-align: middle;
+  background-color: #fff; /* Example background color */
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
 .custom-table {
   width: 100%;
   border-collapse: collapse;

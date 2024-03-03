@@ -181,14 +181,6 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
             removeButton={false}
             linkButton
           />
-          <Button
-            large
-            inline
-            className="nice-button"
-            onClick={handleSyncClick} // Assign the onClick event to handleSyncClick
-          >
-            Sync
-          </Button>
           <div>
             <>
               {numOfItems > 0 && (
@@ -200,7 +192,10 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                           'Bank',
                           items.length
                         )} Linked`}{' '}
-                        <button onClick={() => setIsExpanded(!isExpanded)}>
+                        <button
+                          className="plus-button"
+                          onClick={() => setIsExpanded(!isExpanded)}
+                        >
                           {isExpanded ? '- ' : ' + '}
                         </button>
                       </h2>
@@ -227,6 +222,14 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
             </>
           </div>
           <div>
+            <Button
+              large
+              inline
+              className="add-account-button"
+              onClick={handleSyncClick} // Assign the onClick event to handleSyncClick
+            >
+              Sync
+            </Button>
             <Button
               large
               inline
