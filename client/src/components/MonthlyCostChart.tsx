@@ -54,7 +54,6 @@ export default function MonthlyCostChart(props: Props) {
           left: 20,
           bottom: 5,
         }}
-        
         onClick={handleClick}
       >
         <CartesianGrid strokeDasharray="3 3" />
@@ -62,12 +61,7 @@ export default function MonthlyCostChart(props: Props) {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar
-          dataKey="cost"
-          fill={COLORS[4]}
-          
-          isAnimationActive={true}
-        >
+        <Bar dataKey="cost" fill={COLORS[4]} isAnimationActive={true}>
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}

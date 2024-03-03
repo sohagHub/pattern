@@ -120,15 +120,17 @@ const ItemCard = (props: Props) => {
         <div>
           {accounts.map(account => (
             <div key={account.id}>
-              <AccountCard account={account} onShowAccountTransactions={ props.onShowAccountTransactions} />
+              <AccountCard
+                account={account}
+                onShowAccountTransactions={props.onShowAccountTransactions}
+              />
             </div>
           ))}
         </div>
       )}
       {showAccounts && accounts.length === 0 && (
         <Callout>
-          No transactions or accounts have been retrieved for this item. See
-          the{' '}
+          No transactions or accounts have been retrieved for this item. See the{' '}
           <InlineLink href="https://github.com/plaid/pattern/blob/master/docs/troubleshooting.md">
             {' '}
             troubleshooting guide{' '}

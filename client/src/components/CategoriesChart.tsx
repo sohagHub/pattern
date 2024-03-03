@@ -60,14 +60,13 @@ export default function CategoriesChart(props: Props) {
 
       if (
         pieChartRef.current &&
+        // eslint-disable-next-line prettier/prettier
         !(pieChartRef.current as any)?.contains(event.target as Node)
       ) {
         console.log('You clicked outside of the pie chart!');
         props.onCategoryClick('');
       }
     };
-
-    
 
     // Add the event listener when the component mounts
     document.addEventListener('mousedown', handleClickOutside);
@@ -76,7 +75,7 @@ export default function CategoriesChart(props: Props) {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [props]);
   
   return (
     <div className="holdingsList" ref={pieChartRef}>

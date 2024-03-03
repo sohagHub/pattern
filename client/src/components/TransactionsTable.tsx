@@ -345,6 +345,7 @@ export default function TransactionsTable(props: Props) {
                 <input
                   className="nice-input"
                   type="text"
+                  // eslint-disable-next-line prettier/prettier
                   value={editableTransactions[tx.id]?.name ?? tx.name}
                   onChange={e =>
                     handleInputChange(tx.id, 'name', e.target.value)

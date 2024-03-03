@@ -31,7 +31,7 @@ export default function useOnClickOutside(props: Props) {
       document.removeEventListener('mousedown', listener);
       document.removeEventListener('touchstart', listener);
     };
-  }, [props.callback, props.ignoreRef]);
+  }, [props, props.callback, props.ignoreRef]);
 
   return ref;
 }

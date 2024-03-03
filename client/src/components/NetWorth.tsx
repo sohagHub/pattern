@@ -1,8 +1,7 @@
-import React from 'react';
 import IconButton from 'plaid-threads/IconButton';
 import Trash from 'plaid-threads/Icons/Trash';
 
-import { currencyFilter, pluralize } from '../util';
+import { currencyFilter } from '../util';
 import { Asset } from '.';
 import { AccountType, AssetType } from './types';
 import { useAssets } from '../services';

@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { getRulesByUser, addRuleForUser, deleteRuleById } from '../services/api';
+
+import {
+  getRulesByUser,
+  addRuleForUser,
+  deleteRuleById,
+} from '../services/api';
 
 interface Rule {
   id: number;

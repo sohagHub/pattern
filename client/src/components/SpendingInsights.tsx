@@ -18,7 +18,14 @@ interface Categories {
 
 // Function to check if a transaction category is excluded
 const isCostCategory = (category: string): boolean => {
-  const excludedCategories = ['Payment', 'Transfer', 'Interest', 'Income', 'Investment', 'Duplicate'];
+  const excludedCategories = [
+    'Payment',
+    'Transfer',
+    'Interest',
+    'Income',
+    'Investment',
+    'Duplicate',
+  ];
   return !excludedCategories.includes(category);
 };
 
@@ -46,7 +53,7 @@ export default function SpendingInsights(props: Props) {
   const selectedMonth = props.selectedMonth;
 
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  
+
   const getOneMonthTransactions = (
     transactions: TransactionType[],
     targetMonthYear: string
@@ -134,7 +141,7 @@ export default function SpendingInsights(props: Props) {
       if (selectedCategory && tx.category !== selectedCategory) {
         return obj;
       }
-      
+
       tx.name in obj
         ? (obj[tx.name] = tx.amount + obj[tx.name])
         : (obj[tx.name] = tx.amount);
@@ -198,5 +205,4 @@ const getMonthYear = (date: Date) => {
   const year = date.getFullYear();
   const monthYear = `${month} ${year}`;
   return monthYear;
-}
-
+};

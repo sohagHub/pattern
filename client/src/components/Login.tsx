@@ -44,7 +44,7 @@ const Login = () => {
               placeholder="Enter Password"
               value={password}
               onChange={e => setPassword(e.currentTarget.value)}
-              type='password'
+              type="password"
             />
           </ModalBody>
         </>

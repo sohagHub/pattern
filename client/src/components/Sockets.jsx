@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 import { useAccounts, useItems, useTransactions } from '../services';
-import { getTransactionsByUser } from '../services/api';
 const io = require('socket.io-client');
 const { REACT_APP_SERVER_PORT } = process.env;
 
@@ -25,7 +24,7 @@ export default function Sockets() {
       getTransactionsByUser(userId);
     });
 
-    socket.current.on('SYNC_ERROR', ({ itemId, userId, log, error} = {}) => {
+    socket.current.on('SYNC_ERROR', ({ itemId, userId, log, error } = {}) => {
       const msg = `${log} ${error}`;
       console.log(msg);
       toast(msg, { autoClose: false });
@@ -33,7 +32,6 @@ export default function Sockets() {
       getTransactionsByItem(itemId);
       getTransactionsByUser(userId);
     });
-
 
     socket.current.on('SYNC_UPDATES_AVAILABLE', ({ itemId } = {}) => {
       const msg = `New Webhook Event: Item ${itemId}: Transactions updates`;
