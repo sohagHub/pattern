@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import sortBy from 'lodash/sortBy';
-import NavigationLink from 'plaid-threads/NavigationLink';
 import LoadingSpinner from 'plaid-threads/LoadingSpinner';
 import Callout from 'plaid-threads/Callout';
 import Button from 'plaid-threads/Button';
-import { syncAll, syncAllForUser } from '../services/api';
+import { syncAllForUser } from '../services/api';
 import { TransactionsTable } from '.';
 
 import { RouteInfo, ItemType, AccountType, AssetType } from './types';
@@ -156,8 +155,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
           <Callout warning>
             <div>
               Unable to fetch link_token: please make sure your backend server
-              is running and that your .env file has been configured
-              correctly.
+              is running and that your .env file has been configured correctly.
             </div>
             <div>
               Error Code: <code>{linkTokens.error.error_code}</code>
@@ -203,11 +201,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                     </div>
 
                     {token != null && token.length > 0 && (
-                      <LaunchLink
-                        token={token}
-                        userId={userId}
-                        itemId={null}
-                      />
+                      <LaunchLink token={token} userId={userId} itemId={null} />
                     )}
                   </div>
                   <ErrorMessage />
