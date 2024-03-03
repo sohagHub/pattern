@@ -5,6 +5,8 @@ import {
   addRuleForUser,
   deleteRuleById,
 } from '../services/api';
+import { useCurrentUser } from '../services';
+
 
 interface Rule {
   id: number;
@@ -18,11 +20,12 @@ interface Rule {
 }
 
 const SettingsPage = () => {
+  const { userState } = useCurrentUser();
   const [rules, setRules] = useState<Rule[]>([]);
   const [newRule, setNewRule] = useState<Partial<Rule>>({});
 
   const refreshRules = () =>
-    getRulesByUser(1).then(response => {
+    getRulesByUser(userState.currentUser.id).then(response => {
       setRules(response.data);
     });
 
@@ -36,7 +39,7 @@ const SettingsPage = () => {
 
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    addRuleForUser(1, newRule).then(response => {
+    addRuleForUser(userState.currentUser.id, newRule).then(response => {
       if (response.data.status === 'ok') {
         refreshRules();
         setNewRule({});
