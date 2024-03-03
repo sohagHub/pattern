@@ -697,6 +697,15 @@ ErrorMessage
 
 .add-account-button {
   width: 99%;
+  font-size: 1.1em;
+  // get all from nice-button without having to repeat
+  @extend .nice-button;
+}
+
+.rule-link-button {
+  width: 99%;
+  text-align: left;
+  
   // get all from nice-button without having to repeat
   @extend .nice-button;
 }

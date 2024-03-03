@@ -4,7 +4,7 @@ import sortBy from 'lodash/sortBy';
 import LoadingSpinner from 'plaid-threads/LoadingSpinner';
 import Callout from 'plaid-threads/Callout';
 import Button from 'plaid-threads/Button';
-import { syncAllForUser } from '../services/api';
+import { applyRulesForUser, syncAllForUser } from '../services/api';
 import { TransactionsTable } from '.';
 
 import { RouteInfo, ItemType, AccountType, AssetType } from './types';
@@ -67,6 +67,12 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
     // only generate a link token upon a click from enduser to add a bank;
     // if done earlier, it may expire before enduser actually activates Link to add a bank.
     await generateLinkToken(userId, null);
+  };
+
+  const applyRules = async () => {
+    // only generate a link token upon a click from enduser to add a bank;
+    // if done earlier, it may expire before enduser actually activates Link to add a bank.
+    await applyRulesForUser(userId);
   };
 
   // update data store with user
@@ -229,9 +235,17 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
             >
               Add another bank
             </Button>
+            <Button
+              large
+              inline
+              className="add-account-button"
+              onClick={applyRules}
+            >
+              Apply Rules
+            </Button>
             <br />
-            <Link to="/settings" className="add-account-button">
-              Settings
+            <Link to="/settings" className="rule-link-button">
+              Show Rules
             </Link>
           </div>
         </div>
