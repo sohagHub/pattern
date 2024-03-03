@@ -26,6 +26,22 @@ api.interceptors.request.use(config => {
   return config;
 });
 
+api.interceptors.response.use(
+  response => {
+    return response;
+  },
+  error => {
+    if (
+      (error.response && error.response.status === 403) ||
+      error.response.status === 401
+    ) {
+      localStorage.removeItem('token');
+      window.location.href = '/';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;
 // currentUser
 export const getLoginUser = (username: string, password: string) =>
@@ -49,8 +65,6 @@ export const deleteUserById = (userId: number) =>
 // rules
 export const getRulesByUserId = (userId: number) =>
   axios.get(`/users/${userId}/rules`);
-
-
 
 // items
 export const getItemById = (id: number) => api.get(`/items/${id}`);
@@ -77,7 +91,8 @@ export const getAccountsByUser = (userId: number) =>
 
 // sync
 export const syncAll = () => api.post('/services/sync');
-export const syncAllForUser = (userId: number) => api.post(`/users/${userId}/transactions/sync`);
+export const syncAllForUser = (userId: number) =>
+  api.post(`/users/${userId}/transactions/sync`);
 
 // transactions
 export const getTransactionsByAccount = (accountId: number) =>
@@ -120,8 +135,8 @@ export const exchangeToken = async (
       accounts,
     });
     return data;
-  } catch (err: any) {
-    const { response } = err;
+  } catch (err) {
+    const { response } = err as { response: any };
     if (response && response.status === 409) {
       toast.error(
         <DuplicateItemToastMessage institutionName={institution.name} />
