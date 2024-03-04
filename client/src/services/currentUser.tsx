@@ -17,7 +17,7 @@ interface CurrentUserState {
 }
 
 const initialState = {
-  currentUser: {},
+  currentUser: JSON.parse(localStorage.getItem('currentUser') || '{}'),
   newUser: null,
 };
 type CurrentUserAction =
@@ -57,7 +57,7 @@ export function CurrentUserProvider(props: any) {
           toast.success(`Successful login.  Welcome back ${username}`);
           localStorage.setItem('token', payload[0].token);
           dispatch({ type: 'SUCCESSFUL_GET', payload: payload[0] });
-          history.push(`/user/${payload[0].id}`);
+          history.push(`/spending`);
         } else {
           toast.error(`Username ${username} is invalid.  Try again. `);
           dispatch({ type: 'FAILED_GET' });
@@ -75,7 +75,7 @@ export function CurrentUserProvider(props: any) {
         const { data: payload } = await apiGetLoginUser(username, password);
         if (payload != null) {
           dispatch({ type: 'SUCCESSFUL_GET', payload: payload[0] });
-          history.push(`/user/${payload[0].id}`);
+          history.push(`/spending`);
         } else {
           dispatch({ type: 'FAILED_GET' });
         }
@@ -112,6 +112,7 @@ export function CurrentUserProvider(props: any) {
 function reducer(state: CurrentUserState, action: CurrentUserAction | any) {
   switch (action.type) {
     case 'SUCCESSFUL_GET':
+      localStorage.setItem('currentUser', JSON.stringify(action.payload));
       return {
         currentUser: action.payload,
         newUser: null,

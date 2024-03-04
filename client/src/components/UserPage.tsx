@@ -6,6 +6,7 @@ import Callout from 'plaid-threads/Callout';
 import Button from 'plaid-threads/Button';
 import { applyRulesForUser, syncAllForUser } from '../services/api';
 import { TransactionsTable } from '.';
+import { useCurrentUser } from '../services';
 
 import { RouteInfo, ItemType, AccountType, AssetType } from './types';
 import {
@@ -53,7 +54,8 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const { assetsByUser, getAssetsByUser } = useAssets();
   const { usersById, getUserById } = useUsers();
   const { itemsByUser, getItemsByUser } = useItems();
-  const userId = Number(match.params.userId);
+  const { userState } = useCurrentUser();
+  const userId = Number(userState.currentUser.id);
   const { generateLinkToken, linkTokens } = useLink();
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedAccount, setSelectedAccount] = useState<string>('');
