@@ -97,17 +97,17 @@ export default function TransactionsTable(props: Props) {
     // Split the input into month and year
     const parts = input && input.split(' ');
     if (parts && parts.length === 2) {
-        const month = parts[0];
-        const year = parts[1];
+      const month = parts[0];
+      const year = parts[1];
 
-        // Check if month is valid
-        if (months[month]) {
-            return `${year}-${months[month]}`;
-        } else {
-            return 'Invalid Month';
-        }
+      // Check if month is valid
+      if (months[month]) {
+        return `${year}-${months[month]}`;
+      } else {
+        return 'Invalid Month';
+      }
     } else {
-        return 'Invalid Date Format';
+      return 'Invalid Date Format';
     }
   }
 
@@ -164,9 +164,9 @@ export default function TransactionsTable(props: Props) {
             : false) ||
           (tx.amount
             ? tx.amount
-                .toString()
-                .toLowerCase()
-                .includes(filterTerm)
+              .toString()
+              .toLowerCase()
+              .includes(filterTerm)
             : false) ||
           (tx.date ? tx.date.toLowerCase().includes(filterTerm) : false);
 
@@ -241,9 +241,8 @@ export default function TransactionsTable(props: Props) {
             return (
               <li
                 key={index}
-                className={`pagination-item  ${
-                  currentPage === pageNumber ? 'active' : ''
-                }`}
+                className={`pagination-item  ${currentPage === pageNumber ? 'active' : ''
+                  }`}
               >
                 <button
                   className="pagination-link"
@@ -274,6 +273,35 @@ export default function TransactionsTable(props: Props) {
       </>
     );
   }
+
+  type FieldName = 'date' | 'account_name' | 'name' | 'category' | 'subcategory' | 'amount';
+  type EditableField = Exclude<FieldName, 'date' | 'amount' | 'account_name'>; // Assuming 'date', 'amount', 'account_name' are not editable
+
+  const renderEditableCell = (tx: TransactionType, field: FieldName, type: string = "text", readOnly: boolean = false) => {    
+    const isEditableField = field === 'name' || field === 'category' || field === 'subcategory';
+    const isEditableTransaction = isEditableField && editableTransactions[tx.id];
+    const editableValue = isEditableTransaction ? editableTransactions[tx.id][field as EditableField] : undefined;
+    // eslint-disable-next-line prettier/prettier
+    let value = editableValue ?? tx[field];
+    if (field === 'amount') {
+      value = currencyFilter(Number(value));
+    }
+    
+    return (
+      <td className={`table-${field}`}>
+        <input
+          className="nice-input"
+          type={type}
+          value={value}
+          onChange = {readOnly || !isEditableField ? undefined : (e: React.ChangeEvent<HTMLInputElement>) => handleInputChange(tx.id, field, e.target.value)}
+          onBlur   = {readOnly || !isEditableField ? undefined : () => saveChanges(tx.id, field as keyof TransactionType, String(value))}
+          readOnly = {readOnly}
+          style={{ textAlign: field === 'amount' ? 'right' : 'left' }}
+        />
+      </td>
+    );
+  };
+
 
   return (
     <div className="transactions">
@@ -326,88 +354,17 @@ export default function TransactionsTable(props: Props) {
         <tbody className="transactions-body">
           {currentTransactions.map(tx => (
             <tr key={tx.id} className="transactions-data-rows">
-              <td className="table-date">
-                <input
-                  className="nice-input"
-                  type="text"
-                  value={tx.date.slice(0, 10)}
-                  readOnly
-                />
-              </td>
-              <td className="table-account">
-                <input
-                  className="nice-input"
-                  type="text"
-                  value={tx.account_name}
-                />
-              </td>
-              <td className="table-name">
-                <input
-                  className="nice-input"
-                  type="text"
-                  // eslint-disable-next-line prettier/prettier
-                  value={editableTransactions[tx.id]?.name ?? tx.name}
-                  onChange={e =>
-                    handleInputChange(tx.id, 'name', e.target.value)
-                  }
-                  onBlur={() =>
-                    saveChanges(
-                      tx.id,
-                      'name',
-                      editableTransactions[tx.id]?.name
-                    )
-                  }
-                />
-              </td>
-              <td className="table-category">
-                <input
-                  className="nice-input"
-                  type="text"
-                  value={editableTransactions[tx.id]?.category ?? tx.category}
-                  onChange={e =>
-                    handleInputChange(tx.id, 'category', e.target.value)
-                  }
-                  onBlur={() =>
-                    saveChanges(
-                      tx.id,
-                      'category',
-                      editableTransactions[tx.id]?.category
-                    )
-                  }
-                />
-              </td>
-              <td className="table-subcategory">
-                <input
-                  className="nice-input"
-                  type="text"
-                  value={
-                    editableTransactions[tx.id]?.subcategory ?? tx.subcategory
-                  }
-                  onChange={e =>
-                    handleInputChange(tx.id, 'subcategory', e.target.value)
-                  }
-                  onBlur={() =>
-                    saveChanges(
-                      tx.id,
-                      'subcategory',
-                      editableTransactions[tx.id]?.subcategory
-                    )
-                  }
-                />
-              </td>
-              <td className="table-amount">
-                <input
-                  className="nice-input"
-                  style={{ textAlign: 'right' }}
-                  type="text"
-                  value={currencyFilter(tx.amount)}
-                  readOnly
-                />
-              </td>
+              {renderEditableCell(tx, 'date', 'text', true)}  {/* Date, readOnly */}
+              {renderEditableCell(tx, 'account_name')}
+              {renderEditableCell(tx, 'name')}
+              {renderEditableCell(tx, 'category')}
+              {renderEditableCell(tx, 'subcategory')}
+              {renderEditableCell(tx, 'amount', 'text', true)} {/* Amount, readOnly */}
             </tr>
           ))}
         </tbody>
       </table>
+      
       <div className="pagination">
         {filteredTransactions.length > rowsPerPage && (
           <ul className="pagination-list">
