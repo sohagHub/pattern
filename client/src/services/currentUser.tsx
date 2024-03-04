@@ -57,7 +57,7 @@ export function CurrentUserProvider(props: any) {
           toast.success(`Successful login.  Welcome back ${username}`);
           localStorage.setItem('token', payload[0].token);
           dispatch({ type: 'SUCCESSFUL_GET', payload: payload[0] });
-          history.push(`/spending`);
+          history.push(`/user/${payload[0].id}`);
         } else {
           toast.error(`Username ${username} is invalid.  Try again. `);
           dispatch({ type: 'FAILED_GET' });
@@ -75,7 +75,7 @@ export function CurrentUserProvider(props: any) {
         const { data: payload } = await apiGetLoginUser(username, password);
         if (payload != null) {
           dispatch({ type: 'SUCCESSFUL_GET', payload: payload[0] });
-          history.push(`/spending`);
+          history.push(`/user/${payload[0].id}`);
         } else {
           dispatch({ type: 'FAILED_GET' });
         }
