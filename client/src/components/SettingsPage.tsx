@@ -7,7 +7,6 @@ import {
 } from '../services/api';
 import { useCurrentUser } from '../services';
 
-
 interface Rule {
   id: number;
   serial: number;
