@@ -292,7 +292,7 @@ export default function TransactionsTable(props: Props) {
         <input
           className="nice-input"
           type={type}
-          value={value}
+          value={field === 'date' ? tx.date.slice(0, 10) : value}
           onChange = {readOnly || !isEditableField ? undefined : (e: React.ChangeEvent<HTMLInputElement>) => handleInputChange(tx.id, field, e.target.value)}
           onBlur   = {readOnly || !isEditableField ? undefined : () => saveChanges(tx.id, field as keyof TransactionType, String(value))}
           readOnly = {readOnly}
