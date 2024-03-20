@@ -12,7 +12,7 @@ const {
   updateItemTransactionsCursor,
 } = require('./db/queries');
 
-const FiveDaysInMillis = 5 * 24 * 60 * 60 * 1000;
+const FiveDaysInMillis = 1 * 24 * 60 * 60 * 1000;
 /**
  * Fetches transactions from the Plaid API for a given item.
  *
