@@ -175,12 +175,14 @@ export default function SpendingInsights(props: Props) {
             <h4 className="holdingsHeading">Vendors</h4>
             <div className="spendingInsightData">
               <p className="title">Vendor</p> <p className="title">Amount</p>
-              {sortedNames.map((vendor: any[], index) => (
-                <>
-                  <div>{vendor[0]}</div>
-                  <div>{currencyFilter(vendor[1])}</div>
-                </>
-              ))}
+              {sortedNames
+                .filter((vendor: any[]) => Number(vendor[1]) > 0)
+                .map((vendor: any[], index) => (
+                  <>
+                    <div>{vendor[0]}</div>
+                    <div>{currencyFilter(vendor[1])}</div>
+                  </>
+                ))}
             </div>
           </div>
         </div>

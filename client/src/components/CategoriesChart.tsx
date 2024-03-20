@@ -17,6 +17,9 @@ export default function CategoriesChart(props: Props) {
   let totalValue = 0;
 
   for (let i = 0; i < labels.length; i++) {
+    if (values[i] <= 0) {
+      continue;
+    }
     const roundedValue = Math.round(values[i]);
     data.push({ name: labels[i], value: roundedValue });
     totalValue += roundedValue;
