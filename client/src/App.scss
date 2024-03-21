@@ -352,12 +352,12 @@ transactions-table
   width: 12%;
 }
 
-.table-account {
-  width: 15%;
+.table-account_name {
+  width: 18%;
 }
 
 .table-name {
-  width: 28%;
+  width: 30%;
 }
 
 .table-category {
@@ -365,11 +365,11 @@ transactions-table
 }
 
 .table-subcategory {
-  width: 20%;
+  width: 18%;
 }
 
 .table-amount {
-  width: 13%;
+  width: 10%;
 }
 
 /*
@@ -705,7 +705,7 @@ ErrorMessage
 .rule-link-button {
   width: 99%;
   text-align: left;
-  
+
   // get all from nice-button without having to repeat
   @extend .nice-button;
 }
@@ -754,16 +754,15 @@ ErrorMessage
   background-color: #45a049;
 }
 
-
 .input_login {
-    background-color: transparent;
-    border-radius: 0.2rem;
-    border: 1px solid #949494;
-    font-family: Cern, Helvetica, Arial, sans-serif;
-    font-size: 1.6rem;
-    font-weight: normal;
-    line-height: 4.8rem;
-    height: 4.8rem;
-    padding: 0 1.6rem;
-    width: 100%;
+  background-color: transparent;
+  border-radius: 0.2rem;
+  border: 1px solid #949494;
+  font-family: Cern, Helvetica, Arial, sans-serif;
+  font-size: 1.6rem;
+  font-weight: normal;
+  line-height: 4.8rem;
+  height: 4.8rem;
+  padding: 0 1.6rem;
+  width: 100%;
 }
