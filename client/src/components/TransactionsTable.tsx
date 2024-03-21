@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function TransactionsTable(props: Props) {
-  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [rowsPerPage, setRowsPerPage] = useState(30);
 
   // State to store the editable state and modified values for each field
   const [editableTransactions, setEditableTransactions] = useState<{
@@ -357,7 +357,7 @@ export default function TransactionsTable(props: Props) {
             <th className="table-name">Name</th>
             <th className="table-category">
               Category
-              <select onChange={handleCategoryFilterChange} value={categoryFilter}>
+              <select className="table-category-select" onChange={handleCategoryFilterChange} value={categoryFilter}>
                 <option value="All">All</option>
                 {uniqueCategories.map(category => (
                   <option key={category} value={category}>{category}</option>
@@ -372,7 +372,7 @@ export default function TransactionsTable(props: Props) {
           {currentTransactions.map(tx => (
             <tr key={tx.id} className="transactions-data-rows">
               {renderEditableCell(tx, 'date', 'text', true)}  {/* Date, readOnly */}
-              {renderEditableCell(tx, 'account_name')}
+              {renderEditableCell(tx, 'account_name', 'text', true)}  {/* Account, readOnly */}
               {renderEditableCell(tx, 'name')}
               {renderEditableCell(tx, 'category')}
               {renderEditableCell(tx, 'subcategory')}

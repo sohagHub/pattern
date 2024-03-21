@@ -327,13 +327,15 @@ transactions-table
 .transactions-table {
   padding: 0 (1 * $unit);
   width: 100%;
+  border-collapse: collapse; // Add this line to collapse borders
 }
 
 .transactions-table th {
   font-size: 2 * $unit;
   font-weight: 600;
-  padding-top: 2 * $unit;
-  padding-bottom: 2 * $unit;
+  padding: 1 * $unit;
+  text-align: left; // Align text to the left
+  background-color: #9fc6f0; // Add a background color to the header
 }
 
 .transactions-table thead tr {
@@ -370,6 +372,23 @@ transactions-table
 
 .table-amount {
   width: 10%;
+}
+
+.table-category-select {
+  width: 100%; /* Full width */
+  padding: 5px; /* Some padding */
+  border: 1px solid #ccc; /* Gray border */
+  border-radius: 4px; /* Rounded borders */
+  box-sizing: border-box; /* Make sure padding and border do not increase the width */
+  font-size: 16px; /* Larger, more readable text */
+  color: #333; /* Darker text color for readability */
+  background-color: rgb(184, 218, 247); /* White background */
+  appearance: none; /* Remove default appearance */
+  -webkit-appearance: none; /* Remove default appearance for Chrome */
+  -moz-appearance: none; /* Remove default appearance for Firefox */
+  background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Custom dropdown arrow */
+  background-repeat: no-repeat; /* Do not repeat the background image */
+  background-position: right 5px top 50%; /* Position the background image */
 }
 
 /*
