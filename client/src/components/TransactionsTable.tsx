@@ -125,66 +125,70 @@ export default function TransactionsTable(props: Props) {
     }
   }, [props.filterText]);
 
+  const [categoryFilter, setCategoryFilter] = useState('All');
+  const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
+  
   // Update filteredTransactions when props.selectedMonth changes
   useEffect(() => {
-    // split filterTerm by spaces
-    const filterTerms = filterTerm
-      .split(' ')
-      .map((term: string) => term.trim().toLowerCase());
+    const input = filterTerm;
+    const andTerms: string[] = [];
+    const orTerms: string[] = [];
+    const notTerms: string[] = [];
 
-    const filteredTransactions = props.transactions.filter(tx => {
-      if (tx.category === 'Duplicate') {
+    // Use a regex to capture the content inside OR() and NOT(), and split the rest as AND terms
+    const orMatches = input.match(/OR ?\((.*?)\)/);
+    const notMatches = input.match(/NOT ?\((.*?)\)/);
+
+    if (orMatches && orMatches[1]) {
+      orTerms.push(...orMatches[1].trim().toLowerCase().split(/\s+/));
+    }
+
+    if (notMatches && notMatches[1]) {
+      notTerms.push(...notMatches[1].trim().toLowerCase().split(/\s+/));
+    }
+
+    // Remove the OR and NOT parts from the input, then treat the rest as AND terms
+    const andString = input.replace(/OR ?\(.*?\)/, '').replace(/NOT ?\(.*?\)/, '');
+    andTerms.push(...andString.trim().toLowerCase().split(/\s+/).filter(term => term));
+
+    // Function to check if a transaction matches a given term
+    const matchesTerm = (tx: TransactionType, term: string): boolean => (
+      // eslint-disable-next-line prettier/prettier
+      tx.name?.toLowerCase().includes(term) ||
+      tx.category?.toLowerCase().includes(term) ||
+      tx.subcategory?.toLowerCase().includes(term) ||
+      tx.account_name?.toLowerCase().includes(term) ||
+      tx.amount?.toString().toLowerCase().includes(term) ||
+      tx.date?.toLowerCase().includes(term)
+    );
+
+    // Filter transactions based on AND, OR, NOT logic
+    let filteredTransactions = props.transactions.filter(tx => {
+      //if (tx.category === 'Duplicate') return false;
+
+      const andMatch = andTerms.length === 0 || andTerms.every(term => matchesTerm(tx, term));
+      const orMatch = orTerms.length > 0 && orTerms.some(term => matchesTerm(tx, term));
+      const notMatch = notTerms.every(term => !matchesTerm(tx, term));
+
+      return andMatch && (orMatch || orTerms.length === 0) && notMatch;
+    });
+
+    const uniqueCategories = Array.from(new Set(filteredTransactions.map(tx => tx.category)));
+    setUniqueCategories(uniqueCategories);
+
+    filteredTransactions = filteredTransactions.filter(tx => {
+      // Category filter
+      if (categoryFilter !== 'All' && tx.category !== categoryFilter) {
         return false;
       }
 
-      let shouldInclude = true;
-      let nextShouldNotInclude = false;
-
-      filterTerms.forEach((filterTerm, index) => {
-        if (filterTerm === 'and' || filterTerm === 'or') {
-          // Skip AND and OR, they are handled in the next iteration
-          return;
-        }
-
-        if (filterTerm === 'not') {
-          nextShouldNotInclude = true;
-          return;
-        }
-
-        const includesTerm =
-          (tx.name ? tx.name.toLowerCase().includes(filterTerm) : false) ||
-          (tx.category
-            ? tx.category.toLowerCase().includes(filterTerm)
-            : false) ||
-          (tx.subcategory
-            ? tx.subcategory.toLowerCase().includes(filterTerm)
-            : false) ||
-          (tx.account_name
-            ? tx.account_name.toLowerCase().includes(filterTerm)
-            : false) ||
-          (tx.amount
-            ? tx.amount
-              .toString()
-              .toLowerCase()
-              .includes(filterTerm)
-            : false) ||
-          (tx.date ? tx.date.toLowerCase().includes(filterTerm) : false);
-
-        if (nextShouldNotInclude) {
-          shouldInclude = shouldInclude && !includesTerm;
-          nextShouldNotInclude = false;
-        } else if (index > 0 && filterTerms[index - 1].toLowerCase() === 'or') {
-          shouldInclude = shouldInclude || includesTerm;
-        } else {
-          shouldInclude = shouldInclude && includesTerm;
-        }
-      });
-
-      return shouldInclude;
+      return true;
     });
 
     setFilteredTransactions(filteredTransactions);
-  }, [filterTerm, props.transactions]);
+  }, [categoryFilter, filterTerm, props.transactions]);
+
+
 
   useEffect(() => {
     const sortedTransactions = filteredTransactions.sort((a, b) => {
@@ -211,6 +215,11 @@ export default function TransactionsTable(props: Props) {
     indexOfLastTransaction,
     sortDirection,
   ]);
+
+  // Handler for category filter change
+  const handleCategoryFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setCategoryFilter(event.target.value);
+  };
 
   function renderPagination() {
     const numPages = Math.ceil(filteredTransactions.length / rowsPerPage);
@@ -346,7 +355,15 @@ export default function TransactionsTable(props: Props) {
             <th className="table-date">Date</th>
             <th className="table-account">Account</th>
             <th className="table-name">Name</th>
-            <th className="table-category">Category</th>
+            <th className="table-category">
+              Category
+              <select onChange={handleCategoryFilterChange} value={categoryFilter}>
+                <option value="All">All</option>
+                {uniqueCategories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+            </th>
             <th className="table-category">Subcategory</th>
             <th className="table-amount">Amount</th>
           </tr>
