@@ -54,7 +54,7 @@ export default function AccountCard(props: Props) {
         <div className="account-data-row__right">
           {transactions.length !== 0 && (
             <Button onClick={toggleShowTransactions} centered small inline>
-              {transactionsShown ? 'Hide Transactions' : 'View Transactions'}
+              View Transactions
             </Button>
           )}
         </div>

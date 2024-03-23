@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function TransactionsTable(props: Props) {
-  const [rowsPerPage, setRowsPerPage] = useState(30);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
 
   // State to store the editable state and modified values for each field
   const [editableTransactions, setEditableTransactions] = useState<{
@@ -114,14 +114,17 @@ export default function TransactionsTable(props: Props) {
   // Update monthFilter when props.selectedMonth changes
   useEffect(() => {
     console.log('filter: ' + props.filterText);
-    const newFilterTerm = convertDateString(props.filterText);
+    // get all term that are separated by space or quotes and not empty string
+    let terms = props.filterText.split('\'').filter((item) => item.trim() !== '');
+
+    const newFilterTerm = convertDateString(terms[0]);//convertDateString(props.filterText);
     if (
       newFilterTerm === 'Invalid Date Format' ||
       newFilterTerm === 'Invalid Month'
     ) {
-      setFilterTerm(props.filterText ? props.filterText : '');
+      setFilterTerm(terms.join(' '));
     } else {
-      setFilterTerm(newFilterTerm);
+      setFilterTerm(newFilterTerm + ' ' + terms.slice(1).join(' '));
     }
   }, [props.filterText]);
 

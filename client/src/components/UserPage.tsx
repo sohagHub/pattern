@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
+import Modal from 'plaid-threads/Modal';
 import sortBy from 'lodash/sortBy';
 import LoadingSpinner from 'plaid-threads/LoadingSpinner';
 import Callout from 'plaid-threads/Callout';
@@ -61,9 +62,15 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const [selectedAccount, setSelectedAccount] = useState<string>('');
   const [isExpanded, setIsExpanded] = useState(true);
 
-  useEffect(() => {
-    setSelectedMonth('');
-  }, [selectedAccount]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const initiateLink = async () => {
     // only generate a link token upon a click from enduser to add a bank;
@@ -296,11 +303,9 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
             <TransactionsTable
               transactions={transactions}
               filterText={
-                selectedAccount
-                  ? selectedAccount
-                  : selectedMonth
-                  ? selectedMonth
-                  : ''
+                (selectedMonth ? "'" + selectedMonth + "'" : '') +
+                ' ' +
+                (selectedAccount ? "'" + selectedAccount + "'" : '')
               }
             />
           </div>
