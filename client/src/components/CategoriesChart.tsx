@@ -95,6 +95,10 @@ export default function CategoriesChart(props: Props) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [props]);
+
+  const chartHeight = 400; // the height of your chart
+  const chartWidth = 500; // the width of your chart
+  const barHeight = chartHeight / data.length; // the height of the bars
   
   return (
     <div className="holdingsList" ref={pieChartRef}>
@@ -104,7 +108,7 @@ export default function CategoriesChart(props: Props) {
         Switch to {chartType === 'pie' ? 'Bar Chart' : 'Pie Chart'}
       </button>
       {chartType === 'pie' ? (
-        <PieChart width={500} height={400}>
+        <PieChart width={chartWidth} height={chartHeight}>
           <Legend />
           <Tooltip content={<CustomTooltip/>}/>
           <Pie
@@ -127,23 +131,39 @@ export default function CategoriesChart(props: Props) {
                   key={`cell-${index}`}
                   fill={COLORS[index % COLORS.length]}
                   stroke={activeIndex === index ? 'black' : 'none'}
-                  strokeWidth={activeIndex === index ? 1 : 1}
+                  strokeWidth={activeIndex === index ? 2 : 1}
                   onClick={() => onPieChartClick(entry)}
                 />
               ))}
           </Pie>
         </PieChart>
       ) : (
-          <BarChart width={500} height={400} data={data.sort((a, b) => b.value - a.value)} layout="vertical" margin={{ top: 5, right: 50, left: 50, bottom: 5 }}>
+          <BarChart width={chartWidth} height={chartHeight} data={data.sort((a, b) => b.value - a.value)} layout="vertical" margin={{ top: 5, right: 50, left: 50, bottom: 5 }}>
             <XAxis type="number" />
             <YAxis dataKey="name" type="category" />
-            <Tooltip content={<CustomTooltip/>}/>
-            <Bar dataKey="value">
+            <Tooltip content={<CustomTooltip />} />
+            <Bar dataKey="value" onMouseEnter={onPieEnter} onMouseLeave={onPieLeave}>
               {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                  stroke={activeIndex === index ? 'black' : 'none'}
+                  strokeWidth={activeIndex === index ? 2 : 1}
+                  onClick={() => onPieChartClick(entry)}
+                />
               ))}
               <LabelList dataKey={ renderLabel} position="right" />
             </Bar>
+            {data.map((entry, index) => (
+              <rect
+                x={0}
+                y={index * 40} // adjust this value based on your bar width and gap
+                width={chartWidth} // adjust this value based on your chart width
+                height={barHeight} // adjust this value based on your bar width
+                fill="transparent"
+                onClick={() => onPieChartClick(entry)}
+              />
+            ))}
           </BarChart>
       )}
     </div>
