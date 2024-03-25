@@ -6,7 +6,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   Cell,
   LabelList,
 } from 'recharts';
@@ -46,7 +45,7 @@ export default function MonthlyCostChart(props: Props) {
       <h4 className="costHeading">Monthly Costs</h4>
       <BarChart
         width={1000}
-        height={350}
+        height={300}
         data={data}
         margin={{
           top: 5,
@@ -60,7 +59,6 @@ export default function MonthlyCostChart(props: Props) {
         <XAxis dataKey="month" />
         <YAxis />
         <Tooltip />
-        <Legend />
         <Bar dataKey="cost" fill={COLORS[4]} isAnimationActive={true}>
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

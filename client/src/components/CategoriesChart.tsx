@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { PieChart, Pie, Cell, Legend, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, Legend, Tooltip, Bar, BarChart, XAxis, YAxis, LabelList } from 'recharts';
 import colors from 'plaid-threads/scss/colors';
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
 }
 
 export default function CategoriesChart(props: Props) {
+  const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const data = [];
   const labels = Object.keys(props.categories);
@@ -57,6 +58,21 @@ export default function CategoriesChart(props: Props) {
 
   const pieChartRef = useRef(null);
 
+  const CustomTooltip: React.FC<any> = ({ active, payload }) => {
+    console.log('CustomTooltip' + active + ' ' + payload);
+    if (active && payload && payload.length) {
+      const value = payload[0].value;
+      const percentage = (value / totalValue * 100).toFixed(2);
+      return (
+        <div className="custom-tooltip" style={{"backgroundColor": 'white'}}>
+          {`${payload[0].payload.name} : $${value.toLocaleString()}`} {`(${percentage}%)`}
+        </div>
+      );
+  }
+
+  return null;
+};
+
   useEffect(() => {
     const handleClickOutside = (event: { target: any }) => {
       console.log('handleClickOutside');
@@ -84,35 +100,52 @@ export default function CategoriesChart(props: Props) {
     <div className="holdingsList" ref={pieChartRef}>
       <h4 className="holdingsHeading">Spending Categories</h4>
       <div>Total: ${totalValue.toLocaleString()}</div>
-      <PieChart width={400} height={400}>
-        <Legend />
-        <Tooltip />
-        <Pie
-          data={data}
-          cx="50%"
-          cy="50%"
-          paddingAngle={5}
-          label={renderLabel}
-          innerRadius={0}
-          outerRadius={130}
-          dataKey="value"
-          onMouseEnter={onPieEnter}
-          onMouseLeave={onPieLeave}
-          isAnimationActive={true}
-        >
-          {data
-            .sort((a, b) => b.value - a.value)
-            .map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-                stroke={activeIndex === index ? 'black' : 'none'}
-                strokeWidth={activeIndex === index ? 1 : 1}
-                onClick={() => onPieChartClick(entry)}
-              />
-            ))}
-        </Pie>
-      </PieChart>
+      <button onClick={() => setChartType(chartType === 'pie' ? 'bar' : 'pie')}>
+        Switch to {chartType === 'pie' ? 'Bar Chart' : 'Pie Chart'}
+      </button>
+      {chartType === 'pie' ? (
+        <PieChart width={500} height={400}>
+          <Legend />
+          <Tooltip content={<CustomTooltip/>}/>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            paddingAngle={5}
+            label={renderLabel}
+            innerRadius={0}
+            outerRadius={130}
+            dataKey="value"
+            onMouseEnter={onPieEnter}
+            onMouseLeave={onPieLeave}
+            isAnimationActive={true}
+          >
+            {data
+              .sort((a, b) => b.value - a.value)
+              .map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                  stroke={activeIndex === index ? 'black' : 'none'}
+                  strokeWidth={activeIndex === index ? 1 : 1}
+                  onClick={() => onPieChartClick(entry)}
+                />
+              ))}
+          </Pie>
+        </PieChart>
+      ) : (
+          <BarChart width={500} height={400} data={data.sort((a, b) => b.value - a.value)} layout="vertical" margin={{ top: 5, right: 50, left: 50, bottom: 5 }}>
+            <XAxis type="number" />
+            <YAxis dataKey="name" type="category" />
+            <Tooltip content={<CustomTooltip/>}/>
+            <Bar dataKey="value">
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+              <LabelList dataKey={ renderLabel} position="right" />
+            </Bar>
+          </BarChart>
+      )}
     </div>
   );
 }
