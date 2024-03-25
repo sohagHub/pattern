@@ -27,11 +27,7 @@ export default function AccountCard(props: Props) {
 
   const toggleShowTransactions = () => {
     setTransactionsShown(shown => !shown);
-    if (!transactionsShown) {
-      props.onShowAccountTransactions(props.account.name);
-    } else {
-      props.onShowAccountTransactions('');
-    }
+    props.onShowAccountTransactions(props.account.name);
   };
 
   useEffect(() => {

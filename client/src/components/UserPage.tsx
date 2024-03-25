@@ -76,6 +76,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setSelectedAccount('');
   };
 
   const initiateLink = async () => {
