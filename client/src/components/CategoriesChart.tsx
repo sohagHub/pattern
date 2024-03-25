@@ -10,6 +10,19 @@ interface Props {
 }
 
 export default function CategoriesChart(props: Props) {
+  const widthCalculation = () => window.innerWidth < 800 ? window.innerWidth - 100 : 500;
+  const [chartWidth, setChartWidth] = useState(widthCalculation());
+
+  useEffect(() => {
+    const handleResize = () =>
+      setChartWidth(widthCalculation());
+
+    window.addEventListener('resize', handleResize);
+
+    // Clean up the event listener on component unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const data = [];
@@ -97,7 +110,7 @@ export default function CategoriesChart(props: Props) {
   }, [props]);
 
   const chartHeight = 400; // the height of your chart
-  const chartWidth = 500; // the width of your chart
+  //const chartWidth = 500; // the width of your chart
   const barHeight = chartHeight / data.length; // the height of the bars
   
   return (

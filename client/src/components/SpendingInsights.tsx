@@ -178,13 +178,13 @@ export default function SpendingInsights(props: Props) {
         </div>
       </div>
       <div className="monthlySpendingContainer">
-        <div className="userDataBox">
+        <div className="userDataBoxPieChart">
           <CategoriesChart
             categories={categoriesObject}
             onCategoryClick={onCategoryClick}
           />
         </div>
-        <div className="userDataBox">
+        <div className="userDataBoxVendor">
           <div className="holdingsList">
             <h4 className="holdingsHeading">Vendors</h4>
             <div className="spendingInsightData">

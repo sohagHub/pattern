@@ -28,6 +28,44 @@ body {
   }
 }
 
+.container {
+  display: flex;
+  flex-direction: row; /* Ensures the children (left and right sections) are laid out in a row */
+  width: 100%; /* Use the full width of the parent */
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+    width: 100vw; // 100% width of the viewport width
+  }
+}
+
+.left-section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: left;
+  margin-right: 20px;
+  width: 25%; /* 30% width of the container */
+
+  @media (max-width: 800px) {
+    width: 100%;
+    margin-right: 0;
+  }
+}
+
+.right-section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: right;
+  width: 70%; /* 70% width of the container */
+
+  @media (max-width: 800px) {
+    width: 100%;
+    margin-right: 0;
+  }
+}
+
 /*
 
 shared styles
@@ -450,13 +488,10 @@ net worth
   min-height: 30 * $unit;
   border: $border;
   margin-right: 2 * $unit;
-}
 
-.userDataBoxBarChart {
-  width: 140 * $unit;
-  min-height: 30 * $unit;
-  border: $border;
-  margin-right: 2 * $unit;
+  @media (max-width: 800px) {
+    margin-right: 0;
+  }
 }
 
 .holdingsList {
@@ -506,6 +541,11 @@ Monthly Spending
 
 .monthlySpendingContainer {
   display: flex;
+  
+  @media (max-width: 800px) {
+    margin-right: 0;
+    flex-direction: column;
+  }
 }
 
 .monthlySpendingHeading {
@@ -526,10 +566,44 @@ Monthly Spending
 
 .spendingInsightData {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 2.5fr 1.5fr;
   overflow-y: auto;
   max-height: 400px;
   grid-row-gap: 1px; // Adjust the value as per your requirement
+}
+
+.userDataBoxPieChart {
+  width: 69 * $unit;
+  min-height: 30 * $unit;
+  border: $border;
+  margin-right: 2 * $unit;
+
+  @media (max-width: 800px) {
+    margin-right: 0;
+  }
+}
+
+.userDataBoxVendor {
+  width: 69 * $unit;
+  min-height: 30 * $unit;
+  border: $border;
+  margin-right: 2 * $unit;
+
+  @media (max-width: 800px) {
+    width: 100%;
+    margin-right: 0;
+  }
+}
+
+.userDataBoxBarChart {
+  width: 140 * $unit;
+  min-height: 30 * $unit;
+  border: $border;
+  margin-right: 2 * $unit;
+
+  @media (max-width: 800px) {
+    margin-right: 0;
+  }
 }
 
 /*
@@ -659,41 +733,6 @@ ErrorMessage
 .page-input {
   text-justify: center;
   width: auto;
-}
-
-.container {
-  display: flex;
-  flex-direction: row; /* Ensures the children (left and right sections) are laid out in a row */
-  width: 100%; /* Use the full width of the parent */
-
-  @media (max-width: 800px) {
-    flex-direction: column;
-  }
-}
-
-.left-section {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: left;
-  margin-right: 20px;
-  width: 25%; /* 30% width of the container */
-
-  @media (max-width: 800px) {
-    width: 100%;
-  }
-}
-
-.right-section {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: right;
-  width: 70%; /* 70% width of the container */
-
-  @media (max-width: 800px) {
-    width: 100%;
-  }
 }
 
 .nice-button {

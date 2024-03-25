@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BarChart,
   Bar,
@@ -20,6 +20,20 @@ interface Props {
 }
 
 export default function MonthlyCostChart(props: Props) {
+  const widthCalculation = () =>
+    window.innerWidth < 1000 ? window.innerWidth - 70 : 1000;
+
+  const [chartWidth, setChartWidth] = useState(widthCalculation());
+
+  useEffect(() => {
+    const handleResize = () => setChartWidth(widthCalculation());
+
+    window.addEventListener('resize', handleResize);
+
+    // Clean up the event listener on component unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const data = props.monthlyCosts.map(item => ({
     ...item,
     cost: Math.round(item.cost),
@@ -44,7 +58,7 @@ export default function MonthlyCostChart(props: Props) {
     <div className="costList">
       <h4 className="costHeading">Monthly Costs</h4>
       <BarChart
-        width={1000}
+        width={chartWidth}
         height={300}
         data={data}
         margin={{
