@@ -9,6 +9,7 @@ interface Props {
   transactions: TransactionType[];
   numOfItems: number;
   onMonthClick: (month: string) => void;
+  onCategoryClick: (category: string) => void;
   selectedMonth: string;
 }
 
@@ -53,6 +54,11 @@ export default function SpendingInsights(props: Props) {
   const selectedMonth = props.selectedMonth;
 
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+
+  const onCategoryClick = (category: string) => {
+    setSelectedCategory(category);
+    props.onCategoryClick(category);
+  };
 
   const getOneMonthTransactions = (
     transactions: TransactionType[],
@@ -175,7 +181,7 @@ export default function SpendingInsights(props: Props) {
         <div className="userDataBox">
           <CategoriesChart
             categories={categoriesObject}
-            onCategoryClick={setSelectedCategory}
+            onCategoryClick={onCategoryClick}
           />
         </div>
         <div className="userDataBox">

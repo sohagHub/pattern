@@ -155,15 +155,21 @@ export default function TransactionsTable(props: Props) {
     andTerms.push(...andString.trim().toLowerCase().split(/\s+/).filter(term => term));
 
     // Function to check if a transaction matches a given term
-    const matchesTerm = (tx: TransactionType, term: string): boolean => (
-      // eslint-disable-next-line prettier/prettier
-      tx.name?.toLowerCase().includes(term) ||
-      tx.category?.toLowerCase().includes(term) ||
-      tx.subcategory?.toLowerCase().includes(term) ||
-      tx.account_name?.toLowerCase().includes(term) ||
-      tx.amount?.toString().toLowerCase().includes(term) ||
-      tx.date?.toLowerCase().includes(term)
-    );
+    const matchesTerm = (tx: TransactionType, term: string): boolean => {
+      if (term.startsWith('category:')) {
+        return tx.category.toLowerCase().includes(term.slice(9));
+      }
+
+      return (
+        // eslint-disable-next-line prettier/prettier
+        tx.name?.toLowerCase().includes(term) ||
+        tx.category?.toLowerCase().includes(term) ||
+        tx.subcategory?.toLowerCase().includes(term) ||
+        tx.account_name?.toLowerCase().includes(term) ||
+        tx.amount?.toString().toLowerCase().includes(term) ||
+        tx.date?.toLowerCase().includes(term)
+      )
+    };
 
     // Filter transactions based on AND, OR, NOT logic
     let filteredTransactions = props.transactions.filter(tx => {

@@ -60,6 +60,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const { generateLinkToken, linkTokens } = useLink();
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedAccount, setSelectedAccount] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [isExpanded, setIsExpanded] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -290,6 +291,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                 numOfItems={numOfItems}
                 transactions={transactions}
                 onMonthClick={setSelectedMonth}
+                onCategoryClick={setSelectedCategory}
                 selectedMonth={selectedMonth}
               />
             </>
@@ -312,7 +314,9 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
               filterText={
                 (selectedMonth ? "'" + selectedMonth + "'" : '') +
                 ' ' +
-                (selectedAccount ? "'" + selectedAccount + "'" : '')
+                (selectedAccount ? "'" + selectedAccount + "'" : '') +
+                ' ' +
+                (selectedCategory ? "'category:" + selectedCategory + "'" : '')
               }
             />
             <Modal
