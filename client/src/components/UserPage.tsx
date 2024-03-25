@@ -64,6 +64,11 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const setSelectedAccountAndOpenModal = (accountId: string) => {
+    setSelectedAccount(accountId);
+    openModal();
+  };
+
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -222,7 +227,9 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                         <ItemCard
                           item={item}
                           userId={userId}
-                          onShowAccountTransactions={setSelectedAccount}
+                          onShowAccountTransactions={
+                            setSelectedAccountAndOpenModal
+                          }
                         />
                       </div>
                     ))}
@@ -308,6 +315,16 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                 (selectedAccount ? "'" + selectedAccount + "'" : '')
               }
             />
+            <Modal
+              className="transactions-modal"
+              isOpen={isModalOpen}
+              onRequestClose={closeModal}
+            >
+              <TransactionsTable
+                transactions={transactions}
+                filterText={selectedAccount}
+              />
+            </Modal>
           </div>
         </div>
       </div>
