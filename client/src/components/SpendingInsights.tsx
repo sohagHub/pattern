@@ -164,6 +164,14 @@ export default function SpendingInsights(props: Props) {
     <div>
       <h2 className="monthlySpendingHeading">Monthly Spending</h2>
       <div className="monthlySpendingContainer">
+        <div className="userDataBoxBarChart">
+          <MonthlyCostChart
+            monthlyCosts={monthlyCosts}
+            onMonthClick={props.onMonthClick}
+          />
+        </div>
+      </div>
+      <div className="monthlySpendingContainer">
         <div className="userDataBox">
           <CategoriesChart
             categories={categoriesObject}
@@ -185,14 +193,6 @@ export default function SpendingInsights(props: Props) {
                 ))}
             </div>
           </div>
-        </div>
-      </div>
-      <div className="monthlySpendingContainer">
-        <div className="userDataBoxBarChart">
-          <MonthlyCostChart
-            monthlyCosts={monthlyCosts}
-            onMonthClick={props.onMonthClick}
-          />
         </div>
       </div>
     </div>
