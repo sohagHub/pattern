@@ -77,7 +77,9 @@ export default function MonthlyCostChart(props: Props) {
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
-          <LabelList dataKey="costString" position="top" fill={COLORS[5]} />
+          {chartWidth > 500 && (
+            <LabelList dataKey="costString" position="top" fill={COLORS[5]} />
+          )}
         </Bar>
       </BarChart>
     </div>
