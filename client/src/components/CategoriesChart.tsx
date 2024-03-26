@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function CategoriesChart(props: Props) {
-  const widthCalculation = () => window.innerWidth < 800 ? window.innerWidth - 100 : 500;
+  const widthCalculation = () => window.innerWidth < 1000 ? window.innerWidth - 100 : 500;
   const [chartWidth, setChartWidth] = useState(widthCalculation());
 
   useEffect(() => {

@@ -482,6 +482,7 @@ net worth
 
   @media (max-width: $breakpoint-vertical) {
     flex-direction: column;
+    width: 100%;
   }
 }
 
@@ -490,6 +491,11 @@ net worth
   min-height: 20 * $unit;
   border: $border;
   margin-right: 2 * $unit;
+
+  @media (max-width: $breakpoint-vertical) {
+    flex-direction: column;
+    width: 100%;
+  }
 }
 
 .userDataBox {
@@ -500,6 +506,7 @@ net worth
 
   @media (max-width: $breakpoint-vertical) {
     margin-right: 0;
+    width: 100%;
   }
 }
 
