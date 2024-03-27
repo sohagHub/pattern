@@ -37,7 +37,7 @@ body {
   width: 100%; /* Use the full width of the parent */
 
   @media (max-width: $breakpoint-vertical) {
-    flex-direction: column;
+    flex-direction: column-reverse;
     width: 100vw; // 100% width of the viewport width
   }
 }
