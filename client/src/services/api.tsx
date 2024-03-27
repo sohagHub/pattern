@@ -108,8 +108,11 @@ export const addRuleForUser = (userId: number, rule: any) => {
   return api.post(`/services/${userId}/rule`, rule);
 };
 
-export const deleteRuleById = (id: number) =>
-  api.delete(`/services/rule/${id}`);
+export const updateRuleForUserById = (userId: number, id: number, rule: any) =>
+  api.put(`/services/${userId}/rule/${id}`, rule);
+
+export const deleteRuleForUserById = (userId: number, id: number) =>
+  api.delete(`/services/${userId}/rule/${id}`);
 
 export const applyRulesForUser = (userId: number) =>
   api.put(`/services/updateTransactionsByRule/${userId}`);

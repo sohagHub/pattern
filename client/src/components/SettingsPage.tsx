@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import {
   getRulesByUser,
   addRuleForUser,
-  deleteRuleById,
+  updateRuleForUserById,
+  deleteRuleForUserById,
 } from '../services/api';
 import { useCurrentUser } from '../services';
 
@@ -37,23 +38,55 @@ const SettingsPage = () => {
     setNewRule({ ...newRule, [event.target.name]: event.target.value });
   };
 
+  // Modify the handleFormSubmit handler to also handle updates
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    addRuleForUser(userState.currentUser.id, newRule).then(response => {
-      if (response.data.status === 'ok') {
-        refreshRules();
-        setNewRule({});
-      }
-    });
+    if (editingRule && editingRule.id) {
+      // If we're editing an existing rule, call the update API endpoint
+      updateRuleForUserById(
+        userState.currentUser.id,
+        editingRule.id,
+        newRule
+      ).then(response => {
+        if (response.data.status === 'ok') {
+          refreshRules();
+          setNewRule({});
+          setEditingRule({}); // Clear the editing rule
+        }
+      });
+    } else {
+      // If we're adding a new rule, call the add API endpoint
+      addRuleForUser(userState.currentUser.id, newRule).then(response => {
+        if (response.data.status === 'ok') {
+          refreshRules();
+          setNewRule({});
+        }
+      });
+    }
   };
 
   const handleDelete = (id: number) => {
-    deleteRuleById(id).then(response => {
+    deleteRuleForUserById(userState.currentUser.id, id).then(response => {
       if (response.data.status === 'ok') {
         setRules(rules.filter(rule => rule.id !== id));
       }
     });
   };
+
+  // Add a new state variable to hold the rule being edited
+  const [editingRule, setEditingRule] = useState<Partial<Rule>>({});
+
+  // Add a new handler for the Edit button
+  const handleEdit = (rule: Rule) => {
+    setEditingRule(rule);
+  };
+
+  // Populate the form with the data from the editing rule when it's set
+  useEffect(() => {
+    if (editingRule) {
+      setNewRule(editingRule);
+    }
+  }, [editingRule]);
 
   return (
     <div>
@@ -126,6 +159,7 @@ const SettingsPage = () => {
               <td>{rule.new_category}</td>
               <td>{rule.new_subcategory}</td>
               <td>
+                <button onClick={() => handleEdit(rule)}>Edit</button>
                 <button onClick={() => handleDelete(rule.id)}>Delete</button>
               </td>
             </tr>
@@ -138,6 +172,9 @@ const SettingsPage = () => {
 
 export default SettingsPage;
 
+function then(arg0: (response: any) => void) {
+  throw new Error('Function not implemented.');
+}
 /* give me a simple table view that can be updated or new row can be added and deleted for the following table
 
 CREATE TABLE transaction_rules_table
