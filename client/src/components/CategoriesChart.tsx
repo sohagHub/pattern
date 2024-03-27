@@ -117,10 +117,9 @@ export default function CategoriesChart(props: Props) {
   return (
     <div className="holdingsList" ref={pieChartRef}>
       <h4 className="holdingsHeading">Spending Categories</h4>
-      <div>{props.selectedMonth}</div>
-      <div>Total: ${totalValue.toLocaleString()}</div>
+      <div>{props.selectedMonth}, Total: ${totalValue.toLocaleString()}</div>
       <button onClick={() => setChartType(chartType === 'pie' ? 'bar' : 'pie')}>
-        Switch to {chartType === 'pie' ? 'Bar Chart' : 'Pie Chart'}
+        Switch to {chartType === 'pie' ? '📊' : '🍕'}
       </button>
       {chartType === 'pie' ? (
         <PieChart width={chartWidth} height={chartHeight}>
@@ -181,6 +180,7 @@ export default function CategoriesChart(props: Props) {
             ))}
           </BarChart>
       )}
+      
     </div>
   );
 }
