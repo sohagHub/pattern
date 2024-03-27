@@ -19,14 +19,14 @@ interface Props {
 // export default ClientMetrics;
 export default function AccountCard(props: Props) {
   const [transactions, setTransactions] = useState([]);
-  const [transactionsShown, setTransactionsShown] = useState(false);
+  //const [transactionsShown, setTransactionsShown] = useState(false);
 
   const { transactionsByAccount, getTransactionsByAccount } = useTransactions();
 
   const { id } = props.account;
 
   const toggleShowTransactions = () => {
-    setTransactionsShown(shown => !shown);
+    //setTransactionsShown(shown => !shown);
     props.onShowAccountTransactions(props.account.name);
   };
 
