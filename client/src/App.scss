@@ -602,10 +602,10 @@ Monthly Spending
 }
 
 .userDataBoxVendor {
-  width: 69 * $unit;
+  width: 100%;
   min-height: 30 * $unit;
   border: $border;
-  margin-right: 2 * $unit;
+  //margin-right: 2 * $unit;
 
   @media (max-width: $breakpoint-vertical) {
     width: 100%;
@@ -614,10 +614,10 @@ Monthly Spending
 }
 
 .userDataBoxBarChart {
-  width: 140 * $unit;
+  width: 100%;
   min-height: 30 * $unit;
   border: $border;
-  margin-right: 2 * $unit;
+  //margin-right: 2 * $unit;
 
   @media (max-width: $breakpoint-vertical) {
     margin-right: 0;
