@@ -61,7 +61,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedAccount, setSelectedAccount] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(window.innerWidth > 1000);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
