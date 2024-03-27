@@ -315,7 +315,7 @@ const deleteRule = async (ruleId) => {
 
 const retrieveRulesByUserId = async (userId) => {
   const query = {
-    text: 'SELECT * FROM transaction_rules_table WHERE user_id = $1 ORDER BY serial ASC',
+    text: 'SELECT * FROM transaction_rules_table WHERE user_id = $1 ORDER BY serial ASC, id ASC',
     values: [userId],
   };
   const { rows: rules } = await db.query(query);

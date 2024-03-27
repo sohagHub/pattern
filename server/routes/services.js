@@ -89,7 +89,7 @@ router.put(
 );
 
 router.put(
-  '/rule/:id',
+  '/:userId/rule/:id',
   asyncWrapper(async (req, res) => {
     console.log(req.body);
     const id = req.params.id;
@@ -99,9 +99,9 @@ router.put(
     item.name = req.body.name ? req.body.name : item.name;
     item.category = req.body.category ? req.body.category : item.category;
     item.subcategory = req.body.subcategory ? req.body.subcategory : item.subcategory;
-    item.newName = req.body.newName ? req.body.newName : item.newName;
-    item.newCategory = req.body.newCategory ? req.body.newCategory : item.newCategory;
-    item.newSubcategory = req.body.newSubcategory ? req.body.newSubcategory : item.newSubcategory;
+    item.newName = req.body.new_name ? req.body.new_name : item.new_name;
+    item.newCategory = req.body.new_category ? req.body.new_category : item.new_category;
+    item.newSubcategory = req.body.new_subcategory ? req.body.new_subcategory : item.new_subcategory;
     item.serial = req.body.serial ? req.body.serial : item.serial;
 
     await updateRule(item);
@@ -139,12 +139,13 @@ router.post(
 );
 
 router.delete(
-  '/rule/:id',
+  '/:userId/rule/:id',
   asyncWrapper(async (req, res) => {
-  const id = req.params.id;
-  await deleteRule(id);
-  res.json({ status: 'ok' });
-}));
+    const id = req.params.id;
+    await deleteRule(id);
+    res.json({ status: 'ok' });
+  })
+);
 
 router.put(
   '/updateTransactionsByRule/:userId',
