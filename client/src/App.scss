@@ -593,7 +593,7 @@ Monthly Spending
   width: 69 * $unit;
   min-height: 30 * $unit;
   border: $border;
-  margin-right: 2 * $unit;
+  //margin-right: 2 * $unit;
 
   @media (max-width: $breakpoint-vertical) {
     margin-right: 0;
