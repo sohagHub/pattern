@@ -1,5 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { PieChart, Pie, Cell, Legend, Tooltip, Bar, BarChart, XAxis, YAxis, LabelList } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+  Tooltip,
+  Bar,
+  BarChart,
+  XAxis,
+  YAxis,
+  LabelList,
+} from 'recharts';
 import colors from 'plaid-threads/scss/colors';
 
 interface Props {
@@ -11,12 +22,12 @@ interface Props {
 }
 
 export default function CategoriesChart(props: Props) {
-  const widthCalculation = () => window.innerWidth < 1000 ? window.innerWidth - 100 : 500;
+  const widthCalculation = () =>
+    window.innerWidth < 1000 ? window.innerWidth - 100 : 500;
   const [chartWidth, setChartWidth] = useState(widthCalculation());
 
   useEffect(() => {
-    const handleResize = () =>
-      setChartWidth(widthCalculation());
+    const handleResize = () => setChartWidth(widthCalculation());
 
     window.addEventListener('resize', handleResize);
 
@@ -68,6 +79,7 @@ export default function CategoriesChart(props: Props) {
     // Here, you can also use entry data to perform more complex actions,
     // like setting state, showing modal with more details, etc.
     props.onCategoryClick(entry.name);
+    setSelectedCategory(entry.name);
   };
 
   const pieChartRef = useRef(null);
@@ -76,18 +88,19 @@ export default function CategoriesChart(props: Props) {
     console.log('CustomTooltip' + active + ' ' + payload);
     if (active && payload && payload.length) {
       const value = payload[0].value;
-      const percentage = (value / totalValue * 100).toFixed(2);
+      const percentage = ((value / totalValue) * 100).toFixed(2);
       return (
-        <div className="custom-tooltip" style={{"backgroundColor": 'white'}}>
-          {`${payload[0].payload.name} : $${value.toLocaleString()}`} {`(${percentage}%)`}
+        <div className="custom-tooltip" style={{ backgroundColor: 'white' }}>
+          {`${payload[0].payload.name} : $${value.toLocaleString()}`}{' '}
+          {`(${percentage}%)`}
         </div>
       );
-  }
+    }
+    return null;
+  };
 
-  return null;
-};
-
-  useEffect(() => {
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  /*useEffect(() => {
     const handleClickOutside = (event: { target: any }) => {
       console.log('handleClickOutside');
 
@@ -108,23 +121,44 @@ export default function CategoriesChart(props: Props) {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [props]);
+  }, [props]);*/
 
   const chartHeight = 400; // the height of your chart
   //const chartWidth = 500; // the width of your chart
   const barHeight = chartHeight / data.length; // the height of the bars
-  
+
   return (
     <div className="holdingsList" ref={pieChartRef}>
       <h4 className="holdingsHeading">Spending Categories</h4>
-      <div>{props.selectedMonth}, Total: ${totalValue.toLocaleString()}</div>
-      <button onClick={() => setChartType(chartType === 'pie' ? 'bar' : 'pie')}>
-        Switch to {chartType === 'pie' ? '📊' : '🍕'}
-      </button>
+      <div className="categoryChartButtonDiv">
+        <div>
+          {props.selectedMonth}, Total: ${totalValue.toLocaleString()}
+          <br />
+          <button
+            onClick={() => setChartType(chartType === 'pie' ? 'bar' : 'pie')}
+          >
+            Switch to {chartType === 'pie' ? '📊' : '🍕'}
+          </button>
+        </div>
+        <div>
+          {selectedCategory && (
+            <button
+              className="clearSelectionButton"
+              onClick={() => {
+                props.onCategoryClick('');
+                setSelectedCategory('');
+              }}
+            >
+              Clear Selection
+            </button>
+          )}
+        </div>
+      </div>
+
       {chartType === 'pie' ? (
         <PieChart width={chartWidth} height={chartHeight}>
           <Legend />
-          <Tooltip content={<CustomTooltip/>}/>
+          <Tooltip content={<CustomTooltip />} />
           <Pie
             data={data}
             cx="50%"
@@ -152,35 +186,44 @@ export default function CategoriesChart(props: Props) {
           </Pie>
         </PieChart>
       ) : (
-          <BarChart width={chartWidth} height={chartHeight} data={data.sort((a, b) => b.value - a.value)} layout="vertical" margin={{ top: 5, right: 50, left: 50, bottom: 5 }}>
-            <XAxis type="number" />
-            <YAxis dataKey="name" type="category" />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="value" onMouseEnter={onPieEnter} onMouseLeave={onPieLeave}>
-              {data.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                  stroke={activeIndex === index ? 'black' : 'none'}
-                  strokeWidth={activeIndex === index ? 2 : 1}
-                  onClick={() => onPieChartClick(entry)}
-                />
-              ))}
-              <LabelList dataKey={ renderLabel} position="right" />
-            </Bar>
+        <BarChart
+          width={chartWidth}
+          height={chartHeight}
+          data={data.sort((a, b) => b.value - a.value)}
+          layout="vertical"
+          margin={{ top: 5, right: 50, left: 50, bottom: 5 }}
+        >
+          <XAxis type="number" />
+          <YAxis dataKey="name" type="category" />
+          <Tooltip content={<CustomTooltip />} />
+          <Bar
+            dataKey="value"
+            onMouseEnter={onPieEnter}
+            onMouseLeave={onPieLeave}
+          >
             {data.map((entry, index) => (
-              <rect
-                x={0}
-                y={index * 40} // adjust this value based on your bar width and gap
-                width={chartWidth} // adjust this value based on your chart width
-                height={barHeight} // adjust this value based on your bar width
-                fill="transparent"
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+                stroke={activeIndex === index ? 'black' : 'none'}
+                strokeWidth={activeIndex === index ? 2 : 1}
                 onClick={() => onPieChartClick(entry)}
               />
             ))}
-          </BarChart>
+            <LabelList dataKey={renderLabel} position="right" />
+          </Bar>
+          {data.map((entry, index) => (
+            <rect
+              x={0}
+              y={index * 40} // adjust this value based on your bar width and gap
+              width={chartWidth} // adjust this value based on your chart width
+              height={barHeight} // adjust this value based on your bar width
+              fill="transparent"
+              onClick={() => onPieChartClick(entry)}
+            />
+          ))}
+        </BarChart>
       )}
-      
     </div>
   );
 }

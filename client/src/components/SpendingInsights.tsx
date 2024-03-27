@@ -57,6 +57,11 @@ export default function SpendingInsights(props: Props) {
   const onCategoryClick = (category: string) => {
     setSelectedCategory(category);
     props.onCategoryClick(category);
+    if (category) {
+      props.onMonthClick(selectedMonth);
+    } else {
+      props.onMonthClick('');
+    }
   };
 
   const getOneMonthTransactions = (

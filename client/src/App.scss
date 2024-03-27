@@ -629,6 +629,16 @@ Monthly Spending
   }
 }
 
+.categoryChartButtonDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.clearSelectionButton {
+  @extend .nice-button;
+}
+
 /*
 
 Loading
