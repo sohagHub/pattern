@@ -293,7 +293,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                 transactions={transactions}
                 onMonthClick={setSelectedMonth}
                 onCategoryClick={setSelectedCategory}
-                selectedMonth={selectedMonth}
+                //selectedMonth={selectedMonth}
               />
             </>
           )}

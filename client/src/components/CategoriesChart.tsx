@@ -6,6 +6,7 @@ interface Props {
   categories: {
     [key: string]: number;
   };
+  selectedMonth: string;
   onCategoryClick: (category: string) => void;
 }
 
@@ -116,6 +117,7 @@ export default function CategoriesChart(props: Props) {
   return (
     <div className="holdingsList" ref={pieChartRef}>
       <h4 className="holdingsHeading">Spending Categories</h4>
+      <div>{props.selectedMonth}</div>
       <div>Total: ${totalValue.toLocaleString()}</div>
       <button onClick={() => setChartType(chartType === 'pie' ? 'bar' : 'pie')}>
         Switch to {chartType === 'pie' ? 'Bar Chart' : 'Pie Chart'}

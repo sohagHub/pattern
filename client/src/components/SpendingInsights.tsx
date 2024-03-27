@@ -10,7 +10,6 @@ interface Props {
   numOfItems: number;
   onMonthClick: (month: string) => void;
   onCategoryClick: (category: string) => void;
-  selectedMonth: string;
 }
 
 interface Categories {
@@ -51,7 +50,7 @@ const months: MonthMap = {
 export default function SpendingInsights(props: Props) {
   // grab transactions from most recent month and filter out transfers and payments
   const transactions = props.transactions;
-  const selectedMonth = props.selectedMonth;
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
 
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
@@ -86,6 +85,9 @@ export default function SpendingInsights(props: Props) {
           transactions,
           getMonthYear(oneMonthAgo)
         );
+        setSelectedMonth(getMonthYear(oneMonthAgo));
+      } else {
+        setSelectedMonth(getMonthYear(today));
       }
     }
     return result;
@@ -166,6 +168,11 @@ export default function SpendingInsights(props: Props) {
     return namesArray;
   }, [namesObject]);
 
+  const onMonthClickSetMonth = (month: string) => {
+    props.onMonthClick(month);
+    setSelectedMonth(month);
+  };
+
   return (
     <div>
       <h2 className="monthlySpendingHeading">Monthly Spending</h2>
@@ -173,7 +180,7 @@ export default function SpendingInsights(props: Props) {
         <div className="userDataBoxBarChart">
           <MonthlyCostChart
             monthlyCosts={monthlyCosts}
-            onMonthClick={props.onMonthClick}
+            onMonthClick={onMonthClickSetMonth}
           />
         </div>
       </div>
@@ -181,6 +188,7 @@ export default function SpendingInsights(props: Props) {
         <div className="userDataBoxPieChart">
           <CategoriesChart
             categories={categoriesObject}
+            selectedMonth={selectedMonth}
             onCategoryClick={onCategoryClick}
           />
         </div>
