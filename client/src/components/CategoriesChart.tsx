@@ -213,8 +213,16 @@ export default function CategoriesChart(props: Props) {
               <Cell
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}
-                stroke={activeIndex === index ? 'black' : 'none'}
-                strokeWidth={activeIndex === index ? 2 : 1}
+                stroke={
+                  activeIndex === index || entry.name === selectedCategory
+                    ? 'black'
+                    : 'none'
+                }
+                strokeWidth={
+                  activeIndex === index || entry.name === selectedCategory
+                    ? 1.5
+                    : 1
+                }
                 onClick={() => onPieChartClick(entry)}
               />
             ))}
