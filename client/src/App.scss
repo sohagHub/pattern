@@ -4,7 +4,6 @@ $threads-font-path: '~plaid-threads/fonts';
 
 $border: 1px solid $black200;
 $breakpoint-vertical: 1000px;
-$breakpoint-no-left: 1700px;
 //
 /*
 
@@ -24,11 +23,14 @@ body {
   margin-right: auto;
   margin-left: auto;
   padding: 1 * $unit 40 * $unit 0 40 * $unit;
+  justify-content: center;
 
-  @media (max-width: $breakpoint-no-left) {
+  @media (max-width: $breakpoint-vertical) {
     padding: 1 * $unit 0 0 0;
-    margin-left: 0;
+    margin-right: auto;
+    margin-left: 5 * $unit;
   }
+  
 }
 
 .container {
