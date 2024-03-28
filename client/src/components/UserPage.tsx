@@ -61,7 +61,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedAccount, setSelectedAccount] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [isExpanded, setIsExpanded] = useState(window.innerWidth > 1000);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -168,6 +168,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
     }
   };
 
+  /*
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 1000) {
@@ -182,7 +183,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
     // Clean up the event listener on component unmount
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
+  */
   document.getElementsByTagName('body')[0].style.overflow = 'auto'; // to override overflow:hidden from link pane
   return (
     <div>
