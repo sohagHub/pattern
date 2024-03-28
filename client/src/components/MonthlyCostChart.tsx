@@ -55,7 +55,7 @@ export default function MonthlyCostChart(props: Props) {
   };
 
   return (
-    <div className="costList">
+    <div className="holdingsListMonthlyCost">
       <h4 className="costHeading">Monthly Costs</h4>
       <BarChart
         width={chartWidth}

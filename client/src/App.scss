@@ -27,10 +27,8 @@ body {
 
   @media (max-width: $breakpoint-vertical) {
     padding: 1 * $unit 0 0 0;
-    margin-right: auto;
-    margin-left: 5 * $unit;
+    margin-left: 3 * $unit;
   }
-  
 }
 
 .container {
@@ -517,6 +515,31 @@ net worth
 
   .title {
     font-weight: bold;
+  }
+}
+
+.holdingsListCategories {
+  padding: 2 * $unit;
+
+  .title {
+    font-weight: bold;
+  }
+
+  @media (max-width: $breakpoint-vertical) {
+    padding: 1 * $unit;
+  }
+
+}
+
+.holdingsListMonthlyCost {
+  padding: 1 * $unit;
+
+  .title {
+    font-weight: bold;
+  }
+
+  @media (max-width: $breakpoint-vertical) {
+    padding: 1 * $unit;
   }
 }
 

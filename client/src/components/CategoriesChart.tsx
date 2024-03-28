@@ -128,7 +128,7 @@ export default function CategoriesChart(props: Props) {
   const barHeight = chartHeight / data.length; // the height of the bars
 
   return (
-    <div className="holdingsList" ref={pieChartRef}>
+    <div className="holdingsListCategories" ref={pieChartRef}>
       <h4 className="holdingsHeading">Spending Categories</h4>
       <div className="categoryChartButtonDiv">
         <div>
