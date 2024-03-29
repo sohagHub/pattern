@@ -168,22 +168,6 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
     }
   };
 
-  /*
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1000) {
-        setIsExpanded(false);
-      } else { 
-        setIsExpanded(true);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    // Clean up the event listener on component unmount
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-  */
   document.getElementsByTagName('body')[0].style.overflow = 'auto'; // to override overflow:hidden from link pane
   return (
     <div>
