@@ -191,12 +191,12 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
       </div>
       <div className="container">
         <div className="left-section">
-          <UserCard
+          {/*<UserCard
             user={user}
             userId={userId}
             removeButton={false}
             linkButton
-          />
+        />*/}
           <div>
             <>
               {numOfItems > 0 && (
