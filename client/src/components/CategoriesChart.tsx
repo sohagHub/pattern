@@ -10,8 +10,10 @@ import {
   XAxis,
   YAxis,
   LabelList,
+  CartesianGrid,
 } from 'recharts';
 import colors from 'plaid-threads/scss/colors';
+import { on } from 'events';
 
 interface Props {
   categories: {
@@ -58,6 +60,13 @@ export default function CategoriesChart(props: Props) {
     colors.green900,
     colors.black1000,
     colors.purple600,
+    //give me more colors
+    //colors.yellow800,
+    colors.red600,
+    colors.blue600,
+    colors.green800,
+    colors.black900,
+    colors.purple800,
   ];
 
   const renderLabel = (entry: { name: string; value: number }) => {
@@ -97,6 +106,11 @@ export default function CategoriesChart(props: Props) {
       );
     }
     return null;
+  };
+
+  const handleClick = (data: any) => {
+    console.log('handleClick: ' + data);
+    onPieChartClick({ name: data.activeLabel, value: 0 });
   };
 
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -200,7 +214,9 @@ export default function CategoriesChart(props: Props) {
           data={data.sort((a, b) => b.value - a.value)}
           layout="vertical"
           margin={{ top: 5, right: 50, left: 50, bottom: 5 }}
+          onClick={handleClick}
         >
+          <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" />
           <YAxis dataKey="name" type="category" />
           <Tooltip content={<CustomTooltip />} />
@@ -223,21 +239,15 @@ export default function CategoriesChart(props: Props) {
                     ? 1.5
                     : 1
                 }
-                onClick={() => onPieChartClick(entry)}
+                //onClick={() => onPieChartClick(entry)}
               />
             ))}
-            <LabelList dataKey={renderLabel} position="right" />
-          </Bar>
-          {data.map((entry, index) => (
-            <rect
-              x={0}
-              y={index * 40} // adjust this value based on your bar width and gap
-              width={chartWidth} // adjust this value based on your chart width
-              height={barHeight} // adjust this value based on your bar width
-              fill="transparent"
-              onClick={() => onPieChartClick(entry)}
+            <LabelList
+              dataKey={renderLabel}
+              position="right"
+              fill={COLORS[5]}
             />
-          ))}
+          </Bar>
         </BarChart>
       )}
     </div>
