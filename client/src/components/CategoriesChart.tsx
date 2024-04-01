@@ -149,6 +149,7 @@ export default function CategoriesChart(props: Props) {
           {props.selectedMonth}, Total: ${totalValue.toLocaleString()}
           <br />
           <button
+            className="switchChartTypeButton"
             onClick={() => setChartType(chartType === 'pie' ? 'bar' : 'pie')}
           >
             Switch to {chartType === 'pie' ? '📊' : '🍕'}
