@@ -21,23 +21,69 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  config.headers.Authorization = token ? `Bearer ${token}` : '';
+  //const token = localStorage.getItem('token');
+  //config.headers.Authorization = token ? `Bearer ${token}` : '';
   return config;
 });
+
+let isRefreshing = false;
+let failedQueue: {
+  resolve: (value: unknown) => void;
+  reject: (reason?: any) => void;
+}[] = [];
+
+const processQueue = (error: unknown, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
 
 api.interceptors.response.use(
   response => {
     return response;
   },
-  error => {
+  async error => {
+    const originalRequest = error.config;
     if (
       (error.response && error.response.status === 403) ||
       error.response.status === 401
     ) {
-      localStorage.removeItem('token');
-      window.location.href = '/';
+      if (
+        !originalRequest._retry &&
+        originalRequest.url !== '/sessions/refresh_token'
+      ) {
+        originalRequest._retry = true;
+
+        if (!isRefreshing) {
+          isRefreshing = true;
+          try {
+            await refreshAccessToken();
+            isRefreshing = false;
+            processQueue(null);
+          } catch (err) {
+            processQueue(err, null);
+            window.location.href = '/';
+          }
+        }
+
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(() => {
+            return api(originalRequest);
+          })
+          .catch(err => {
+            return Promise.reject(err);
+          });
+      }
     }
+
     return Promise.reject(error);
   }
 );
@@ -46,6 +92,8 @@ export default api;
 // currentUser
 export const getLoginUser = (username: string, password: string) =>
   api.post('/sessions', { username, password });
+
+export const refreshAccessToken = () => api.post('/sessions/refresh_token', {});
 
 // assets
 export const addAsset = (userId: number, description: string, value: number) =>
