@@ -22,7 +22,7 @@ body {
   max-width: 300 * $unit;
   margin-right: auto;
   margin-left: auto;
-  //padding: 1 * $unit 40 * $unit 0 40 * $unit;
+  padding: 1 * $unit 40 * $unit 1 * $unit 40 * $unit;
   justify-content: center;
 
   @media (max-width: $breakpoint-vertical) {
@@ -528,7 +528,6 @@ net worth
   @media (max-width: $breakpoint-vertical) {
     padding: 1 * $unit;
   }
-
 }
 
 .holdingsListMonthlyCost {
