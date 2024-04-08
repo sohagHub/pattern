@@ -49,7 +49,7 @@ body {
   justify-content: left;
   margin-right: 1 * $unit;
   width: 30%; /* 30% width of the container */
-  width: 50 * $unit;
+  width: 60 * $unit;
   //min-width: 50 * $unit;
 
   @media (max-width: $breakpoint-vertical) {
@@ -276,16 +276,13 @@ Item overview
   padding: (2 * $unit) 0 (2 * $unit) (2 * $unit);
   width: 95%;
   display: grid;
-  grid-template-columns: 8fr 6fr 9fr;
+  grid-template-columns: 40% 30% 30%;
 }
 
 .item-card__column-1 {
   display: flex;
   align-items: center;
-}
-
-.item-card__column-2 {
-  margin-top: $unit;
+  padding-right: 2 * $unit;
 }
 
 .item-card__img {

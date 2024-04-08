@@ -25,6 +25,12 @@ interface Props {
 }
 
 const ItemCard = (props: Props) => {
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    setTotal(props.item.total);
+  }, [props.item.total]);
+
   const [accounts, setAccounts] = useState<AccountType[]>([]);
   const [institution, setInstitution] = useState<Institution>({
     logo: '',
@@ -49,6 +55,12 @@ const ItemCard = (props: Props) => {
   const { id, plaid_institution_id, status } = props.item;
   const isSandbox = PLAID_ENV === 'sandbox';
   const isGoodState = status === 'good';
+
+  // Calculate the sum of all account numbers
+  const totalBalance = accounts.reduce(
+    (total, { current_balance }) => total + current_balance,
+    0
+  );
 
   useEffect(() => {
     const itemAccounts: AccountType[] = accountsByItem[id];
@@ -90,16 +102,9 @@ const ItemCard = (props: Props) => {
             />
             <p>{institution && institution.name}</p>
           </div>
-          <div className="item-card__column-2">
-            {isGoodState ? (
-              <Note info solid>
-                Updated
-              </Note>
-            ) : (
-              <Note error solid>
-                Login Required
-              </Note>
-            )}
+          <div className="item-card__column-3">
+            <h3 className="heading">BALANCE</h3>
+            <p>${Math.round(totalBalance).toLocaleString()}</p>
           </div>
           <div className="item-card__column-3">
             <h3 className="heading">LAST UPDATED</h3>

@@ -13,6 +13,7 @@ export interface ItemType {
   status: string;
   created_at: string;
   updated_at: string;
+  total: number;
 }
 
 export interface AccountType {
