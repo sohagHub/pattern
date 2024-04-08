@@ -56,12 +56,6 @@ const ItemCard = (props: Props) => {
   const isSandbox = PLAID_ENV === 'sandbox';
   const isGoodState = status === 'good';
 
-  // Calculate the sum of all account numbers
-  const totalBalance = accounts.reduce(
-    (total, { current_balance }) => total + current_balance,
-    0
-  );
-
   useEffect(() => {
     const itemAccounts: AccountType[] = accountsByItem[id];
     setAccounts(itemAccounts || []);
@@ -104,7 +98,7 @@ const ItemCard = (props: Props) => {
           </div>
           <div className="item-card__column-3">
             <h3 className="heading">BALANCE</h3>
-            <p>${Math.round(totalBalance).toLocaleString()}</p>
+            <p>${Math.round(props.item.total).toLocaleString()}</p>
           </div>
           <div className="item-card__column-3">
             <h3 className="heading">LAST UPDATED</h3>
