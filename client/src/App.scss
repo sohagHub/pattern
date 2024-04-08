@@ -23,7 +23,7 @@ body {
   margin-right: auto;
   margin-left: auto;
   padding: 1 * $unit 40 * $unit 1 * $unit 40 * $unit;
-  //justify-content: center;
+  justify-content: center;
 
   @media (max-width: $breakpoint-vertical) {
     padding: 1 * $unit 0 0 0;
@@ -82,6 +82,11 @@ shared styles
   border-bottom: 1px solid $black1000;
   margin-bottom: 1 * $unit;
   padding-bottom: 1 * $unit;
+  width: 91%;
+
+  @media (max-width: $breakpoint-vertical) {
+    width: 100%;
+  }
 }
 
 .box {
@@ -488,10 +493,10 @@ net worth
 }
 
 .userDataBoxAssets {
-  width: 65 * $unit;
+  width: 50%;
   min-height: 20 * $unit;
   border: $border;
-  margin-right: 2 * $unit;
+  //margin-right: 2 * $unit;
 
   @media (max-width: $breakpoint-vertical) {
     flex-direction: column;
