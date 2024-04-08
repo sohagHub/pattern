@@ -9,10 +9,11 @@ import TransactionModal from './TransactionModal';
 interface Props {
   transactions: TransactionType[];
   filterText: string;
+  rows?: number;
 }
 
 export default function TransactionsTable(props: Props) {
-  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [rowsPerPage, setRowsPerPage] = useState(props.rows || 20);
 
   // State to store the editable state and modified values for each field
   const [editableTransactions, setEditableTransactions] = useState<{

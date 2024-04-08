@@ -328,6 +328,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
               <TransactionsTable
                 transactions={transactions}
                 filterText={selectedAccount}
+                rows={10}
               />
             </Modal>
           </div>

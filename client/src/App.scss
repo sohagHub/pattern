@@ -898,17 +898,20 @@ ErrorMessage
 }
 
 .transactions-modal .Modal-module_modalPortalContent__3F_jp {
-  max-width: 70% !important;
+  max-width: 95% !important;
+  max-height: 95% !important;
   align-items: center;
+  overflow: auto;
 }
 
 .transactions-modal .transactions {
   width: 95%;
+  height: 95%;
 }
 
 .transactions-modal .table-filter-sort-container {
   //visibility: hidden;
-  width: 95%;
+  //width: 95%;
 }
 
 
