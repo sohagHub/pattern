@@ -51,7 +51,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const [assets, setAssets] = useState<AssetType[]>([]);
 
   const { transactionsByUser, getTransactionsByUser } = useTransactions();
-  const { getAccountsByUser, accountsByUser } = useAccounts();
+  const { getAccountsByUser, accountsByUser, accountsByItem } = useAccounts();
   const { assetsByUser, getAssetsByUser } = useAssets();
   const { usersById, getUserById } = useUsers();
   const { itemsByUser, getItemsByUser } = useItems();
@@ -159,6 +159,26 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   useEffect(() => {
     setToken(linkTokens.byUser[userId]);
   }, [linkTokens, userId, numOfItems]);
+
+  useEffect(() => {
+    // Assuming accountsByUser[userId] contains all accounts for the user
+    const newItems: ItemType[] = itemsByUser[userId] || [];
+
+    // Calculate total balance for each item
+    newItems.forEach(item => {
+      const itemAccounts = accountsByItem[item.id] || [];
+      const totalBalance = itemAccounts.reduce(
+        (acc, account) => acc + (account.current_balance || 0),
+        0
+      );
+      item.total = totalBalance; // Assign total balance to the item
+    });
+
+    // Sort items based on total balance
+    const orderedItems = newItems.sort((a, b) => b.total! - a.total!);
+
+    setItems(orderedItems);
+  }, [accountsByItem, itemsByUser, userId]);
 
   const handleSyncClick = async () => {
     try {
