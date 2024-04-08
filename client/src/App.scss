@@ -373,55 +373,7 @@ transactions-table
   border-bottom: $border;
 }
 
-.transactions-table {
-  padding: 0 (1 * $unit);
-  width: 100%;
-  border-collapse: collapse; // Add this line to collapse borders
-}
 
-.transactions-table th {
-  font-size: 2 * $unit;
-  font-weight: 600;
-  padding: 1 * $unit;
-  text-align: left; // Align text to the left
-  background-color: #9fc6f0; // Add a background color to the header
-}
-
-.transactions-table thead tr {
-  border-bottom: $border;
-  text-align: left;
-}
-
-.transactions-body {
-  height: auto;
-  overflow-y: auto;
-  overflow-x: hidden;
-  text-align: left;
-}
-
-.table-date {
-  width: 12%;
-}
-
-.table-account_name {
-  width: 18%;
-}
-
-.table-name {
-  width: 30%;
-}
-
-.table-category {
-  width: 12%;
-}
-
-.table-subcategory {
-  width: 18%;
-}
-
-.table-amount {
-  width: 10%;
-}
 
 .table-category-select {
   width: 100%; /* Full width */
@@ -500,7 +452,7 @@ net worth
 
   @media (max-width: $breakpoint-vertical) {
     flex-direction: column;
-    width: 100%;
+    width: 95%;
   }
 }
 
@@ -569,7 +521,7 @@ net worth
 .personalAsset {
   display: grid;
   grid-template-columns: 5fr 5fr;
-  width: 90 * $unit;
+  width: 100%;
 
   .title {
     font-weight: bold;
@@ -577,6 +529,11 @@ net worth
 
   .dataItem {
     margin-bottom: 0;
+  }
+
+  @media (max-width: $breakpoint-vertical) {
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
   }
 }
 
