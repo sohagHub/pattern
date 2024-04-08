@@ -488,7 +488,7 @@ net worth
 }
 
 .userDataBoxAssets {
-  width: 69 * $unit;
+  width: 65 * $unit;
   min-height: 20 * $unit;
   border: $border;
   margin-right: 2 * $unit;
@@ -563,7 +563,8 @@ net worth
 .data,
 .personalAsset {
   display: grid;
-  grid-template-columns: 5fr 5fr 1fr;
+  grid-template-columns: 5fr 5fr;
+  width: 90 * $unit;
 
   .title {
     font-weight: bold;
@@ -915,52 +916,72 @@ ErrorMessage
 }
 
 .transactions-table {
+  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
   overflow: hidden;
   box-shadow: 0 0 1 * $unit rgba(0, 0, 0, 0.1);
-}
 
-.transactions-table th,
-.transactions-table td {
-  padding: 2 * $unit;
-  background-color: #ffffff;
-  border-bottom: 0.1 * $unit solid #c3c3c3;
-}
-
-.transactions-table th {
-  text-align: left;
-}
-
-.transactions-table td {
-  text-align: left;
-}
-
-.transactions-table tr:hover {
-  background-color: #f3f3f3;
-}
-
-/* Responsive table */
-@media only screen and (max-width: $breakpoint-vertical) {
-  .transactions-table th:nth-child(1) {
-    display: table-cell; // Show the first th
-    text-align: left;
+  th,
+  td {
+    padding: 2 * $unit;
+    background-color: #ffffff;
+    border-bottom: 0.1 * $unit solid #c3c3c3;
+    width: 10%;
   }
 
-  .transactions-table td:nth-child(1) {
-    display: table-cell; // Show the first td
-    text-align: left;
-  }
-
-  .transactions-table td:nth-child(2),
-  th:nth-child(2),
-  .transactions-table td:nth-child(3),
+  td:nth-child(3),
   th:nth-child(3) {
-    display: none; // Hide the second and third td
+    width: 40%;
+  }
+  td:nth-child(4),
+  th:nth-child(4) {
+    width: 20%;
   }
 
-  .transactions-table td:nth-child(5) {
-    //display: table-cell;  // Show the fifth td
+  th {
+    text-align: left;
+  }
+
+  td {
+    text-align: left;
+  }
+
+  tr:hover {
+    background-color: #f3f3f3;
+  }
+
+  /* Responsive table */
+  @media only screen and (max-width: $breakpoint-vertical) {
+    th:nth-child(1) {
+      display: table-cell; // Show the first th
+      text-align: left;
+    }
+
+    td:nth-child(1) {
+      display: table-cell; // Show the first td
+      text-align: left;
+    }
+
+    td:nth-child(2),
+    th:nth-child(2),
+    td:nth-child(3),
+    th:nth-child(3) {
+      display: none; // Hide the second and third td
+    }
+
+    td:nth-child(1),
+    th:nth-child(1) {
+      width: 40%;
+    }
+    td:nth-child(4),
+    th:nth-child(4) {
+      width: 20%;
+    }
+    td:nth-child(5),
+    th:nth-child(5) {
+      width: 20%;
+    }
   }
 }
 
