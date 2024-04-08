@@ -4,6 +4,7 @@ import { currencyFilter } from '../util';
 import { TransactionType } from './types';
 import { updateTransactionById } from '../services/api';
 import useTransactions from '../services/transactions';
+import TransactionModal from './TransactionModal';
 
 interface Props {
   transactions: TransactionType[];
@@ -292,35 +293,40 @@ export default function TransactionsTable(props: Props) {
     );
   }
 
-  type FieldName = 'date' | 'account_name' | 'name' | 'category' | 'subcategory' | 'amount';
-  type EditableField = Exclude<FieldName, 'date' | 'amount' | 'account_name'>; // Assuming 'date', 'amount', 'account_name' are not editable
+  // Then, inside your component
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentTransaction, setCurrentTransaction] = useState<TransactionType | null>(null);
 
-  const renderEditableCell = (tx: TransactionType, field: FieldName, type: string = "text", readOnly: boolean = false) => {    
-    const isEditableField = field === 'name' || field === 'category' || field === 'subcategory';
-    const isEditableTransaction = isEditableField && editableTransactions[tx.id];
-    const editableValue = isEditableTransaction ? editableTransactions[tx.id][field as EditableField] : undefined;
-    // eslint-disable-next-line prettier/prettier
-    let value = editableValue ?? tx[field];
-    if (field === 'amount') {
-      value = currencyFilter(Number(value));
-    }
-    
-    return (
-      <td className={`table-${field}`}>
-        <input
-          className="nice-input"
-          type={type}
-          value={field === 'date' ? tx.date.slice(0, 10) : value}
-          onChange = {readOnly || !isEditableField ? undefined : (e: React.ChangeEvent<HTMLInputElement>) => handleInputChange(tx.id, field, e.target.value)}
-          onBlur   = {readOnly || !isEditableField ? undefined : () => saveChanges(tx.id, field as keyof TransactionType, String(value))}
-          readOnly = {readOnly}
-          style={{ textAlign: field === 'amount' ? 'right' : 'left' }}
-        />
-      </td>
-    );
+  // Function to open the modal with a transaction
+  const handleRowDoubleClick = (transaction: TransactionType) => {
+    setCurrentTransaction(transaction);
+    setIsModalOpen(true);
   };
 
+  // Function to handle saving changes from the modal
+  const handleSaveChanges = async (transaction: TransactionType) => {
+    setIsModalOpen(false);
+    // Call API to save changes
+    await updateTransactionById(transaction.id, transaction);
+    // Update local state or refetch transactions as necessary
+    dispatch({
+      type: 'UPDATE_TRANSACTION',
+      payload: {
+        id: transaction.id,
+        updates: transaction,
+      },
+    });
+  };
 
+  // This function is called when the modal is closed
+  const handleClose = () => {
+    // Reset the state of the currentTransaction
+    setCurrentTransaction(null);
+
+    // Close the modal
+    setIsModalOpen(false);
+  };
+  
   return (
     <div className="transactions">
       {/* New inputs for filter term and sort direction */}
@@ -358,48 +364,46 @@ export default function TransactionsTable(props: Props) {
           <option value={100}>100</option>
         </select>
       </div>
+
       <table className="transactions-table">
-        <thead className="transactions-header">
+        <thead>
           <tr>
-            <th className="table-date">Date</th>
-            <th className="table-account">Account</th>
-            <th className="table-name">Name</th>
-            <th className="table-category">
-              Category
-              <select className="table-category-select" onChange={handleCategoryFilterChange} value={categoryFilter}>
-                <option value="All">All</option>
-                {uniqueCategories.map(category => (
-                  <option key={category} value={category}>{category}</option>
-                ))}
-              </select>
-            </th>
-            <th className="table-category">Subcategory</th>
-            <th className="table-amount">Amount</th>
+            <th className="mobile-only">Date & Details</th>
+            <th>Date</th>
+            <th>Details</th>
+            <th>Category</th>
+            <th>Amount</th>
           </tr>
         </thead>
-        <tbody className="transactions-body">
+        <tbody>
           {currentTransactions.map(tx => (
-            <tr key={tx.id} className="transactions-data-rows">
-              {renderEditableCell(tx, 'date', 'text', true)}  {/* Date, readOnly */}
-              {renderEditableCell(tx, 'account_name', 'text', true)}  {/* Account, readOnly */}
-              {renderEditableCell(tx, 'name')}
-              {renderEditableCell(tx, 'category')}
-              {renderEditableCell(tx, 'subcategory')}
-              {renderEditableCell(tx, 'amount', 'text', true)} {/* Amount, readOnly */}
-            </tr>
-          ))}
-        </tbody>
+            <tr key={tx.id} onDoubleClick={() => { handleRowDoubleClick(tx) }}>
+                  <td className="mobile-only">{tx.date.slice(0, 10)}<br/><strong>{tx.name}</strong><br />{tx.account_name}</td>
+                  <td >{tx.date.slice(0, 10)}</td>
+                  <td ><strong>{tx.name}</strong><br />Account: {tx.account_name}</td>
+                  <td ><strong>{tx.category}</strong><br />{tx.subcategory}</td>
+                  <td ><strong>{currencyFilter(tx.amount)}</strong></td>
+                </tr>
+              ))}
+            </tbody>
       </table>
+
+      <TransactionModal
+        transaction={currentTransaction}
+        isOpen={isModalOpen}
+        onSave={handleSaveChanges}
+        onCancel={handleClose}
+      />
       
       <div className="pagination">
         {filteredTransactions.length > rowsPerPage && (
           <ul className="pagination-list">
-            {/* BEGIN: ed8c6549bwf9 */}
             {renderPagination()}
-            {/* END: ed8c6549bwf9 */}
           </ul>
         )}
       </div>
+
+
     </div>
   );
 }
