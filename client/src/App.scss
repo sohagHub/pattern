@@ -23,7 +23,7 @@ body {
   margin-right: auto;
   margin-left: auto;
   padding: 1 * $unit 40 * $unit 1 * $unit 40 * $unit;
-  justify-content: center;
+  //justify-content: center;
 
   @media (max-width: $breakpoint-vertical) {
     padding: 1 * $unit 0 0 0;
@@ -47,9 +47,10 @@ body {
   flex-direction: column-reverse;
   align-items: stretch;
   justify-content: left;
-  margin-right: 20px;
+  margin-right: 1 * $unit;
   width: 30%; /* 30% width of the container */
-  max-width: 400px;
+  width: 50 * $unit;
+  //min-width: 50 * $unit;
 
   @media (max-width: $breakpoint-vertical) {
     width: 100%;
@@ -675,7 +676,6 @@ Monthly Spending
   cursor: pointer;
   padding: 0 * $unit 1 * $unit 0 * $unit 1 * $unit;
   border-radius: 0.5 * $unit;
-
 }
 
 /*
@@ -815,7 +815,7 @@ ErrorMessage
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 1.1em;
+  font-size: 2 * $unit;
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 4px;
@@ -827,7 +827,7 @@ ErrorMessage
 
 .add-account-button {
   width: 99%;
-  font-size: 1.1em;
+  font-size: 2 * $unit;
   // get all from nice-button without having to repeat
   @extend .nice-button;
 }
@@ -914,12 +914,11 @@ ErrorMessage
   //width: 95%;
 }
 
-
 .transactions-table {
   width: 100%;
   border-collapse: collapse;
   overflow: hidden;
-  box-shadow: 0 0 1*$unit rgba(0,0,0,0.1);
+  box-shadow: 0 0 1 * $unit rgba(0, 0, 0, 0.1);
 }
 
 .transactions-table th,
@@ -944,19 +943,20 @@ ErrorMessage
 /* Responsive table */
 @media only screen and (max-width: $breakpoint-vertical) {
   .transactions-table th:nth-child(1) {
-    display: table-cell;  // Show the first th
+    display: table-cell; // Show the first th
     text-align: left;
   }
 
   .transactions-table td:nth-child(1) {
-    display: table-cell;  // Show the first td
+    display: table-cell; // Show the first td
     text-align: left;
   }
 
-  .transactions-table td:nth-child(2), th:nth-child(2),
-  .transactions-table td:nth-child(3), th:nth-child(3) {
-    display: none;  // Hide the second and third td
-    
+  .transactions-table td:nth-child(2),
+  th:nth-child(2),
+  .transactions-table td:nth-child(3),
+  th:nth-child(3) {
+    display: none; // Hide the second and third td
   }
 
   .transactions-table td:nth-child(5) {
@@ -1019,8 +1019,8 @@ ErrorMessage
     cursor: pointer;
     transition: background-color 0.3s ease;
 
-    &[type="submit"] {
-      background-color: #4CAF50; /* Green */
+    &[type='submit'] {
+      background-color: #4caf50; /* Green */
       color: white;
 
       &:hover {
@@ -1028,7 +1028,7 @@ ErrorMessage
       }
     }
 
-    &[type="button"] {
+    &[type='button'] {
       background-color: #f44336; /* Red */
       color: white;
 
