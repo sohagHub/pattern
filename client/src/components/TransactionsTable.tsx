@@ -372,7 +372,14 @@ export default function TransactionsTable(props: Props) {
             <th className="mobile-only">Date & Details</th>
             <th>Date</th>
             <th>Details</th>
-            <th>Category</th>
+            <th>Category<span> </span>
+              <select className='table-category-select' onChange={handleCategoryFilterChange} value={categoryFilter}>
+                <option value="All">All</option>
+                {uniqueCategories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+            </th>
             <th>Amount</th>
           </tr>
         </thead>
