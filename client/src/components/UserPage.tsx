@@ -167,15 +167,18 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
     // Calculate total balance for each item
     newItems.forEach(item => {
       const itemAccounts = accountsByItem[item.id] || [];
-      const totalBalance = itemAccounts.reduce(
-        (acc, account) => acc + (account.current_balance || 0),
-        0
-      );
+      const totalBalance = itemAccounts.reduce((acc, account) => {
+        if (account.type === 'credit' || account.type === 'loan') {
+          return acc - (account.current_balance || 0);
+        } else { //if (account.type === 'depository') {
+          return acc + (account.current_balance || 0);
+        }
+      }, 0);
       item.total = totalBalance; // Assign total balance to the item
     });
 
     // Sort items based on total balance
-    const orderedItems = newItems.sort((a, b) => b.total! - a.total!);
+    const orderedItems = newItems.sort((a, b) => a.total! - b.total!);
 
     setItems(orderedItems);
   }, [accountsByItem, itemsByUser, userId]);
