@@ -28,9 +28,10 @@ export default function NetWorth(props: Props) {
     'savings',
     'cd',
     'money market',
+    'paypal',
   ]);
-  const investment: number = addAllAccounts(['ira', '401k']);
-  const loan: number = addAllAccounts(['student', 'mortgage']);
+  const investment: number = addAllAccounts(['ira', '401k', 'brokerage']);
+  const loan: number = addAllAccounts(['student', 'mortgage', 'loan']);
   const credit: number = addAllAccounts(['credit card']);
 
   const personalAssetValue = props.personalAssets.reduce((a, b) => {

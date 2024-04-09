@@ -38,7 +38,10 @@ export interface AccountType {
     | '401k'
     | 'student'
     | 'mortgage'
-    | 'credit card';
+    | 'credit card'
+    | 'loan'
+    | 'brokerage'
+    | 'paypal';
   created_at: string;
   updated_at: string;
 }
