@@ -773,6 +773,10 @@ ErrorMessage
 .rule-link-button {
   width: 99%;
   text-align: left;
+  height: 7 * $unit;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 
   // get all from nice-button without having to repeat
   @extend .nice-button;
