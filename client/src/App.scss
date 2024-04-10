@@ -550,7 +550,7 @@ Monthly Spending
   grid-template-columns: 2.5fr 1.5fr;
   overflow-y: auto;
   max-height: 70 * $unit;
-  grid-row-gap: 1 * $unit; // Adjust the value as per your requirement
+  grid-row-gap: 0.1 * $unit; // Adjust the value as per your requirement
 
   @media (max-width: $breakpoint-vertical) {
     margin-right: 0;

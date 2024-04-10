@@ -64,7 +64,7 @@ export default function MonthlyCostChart(props: Props) {
         margin={{
           top: 20,
           right: 20,
-          left: 20,
+          left: 5,
           bottom: 10,
         }}
       >
