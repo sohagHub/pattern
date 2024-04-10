@@ -547,7 +547,7 @@ Monthly Spending
 
 .spendingInsightData {
   display: grid;
-  grid-template-columns: 2.5fr 1.5fr;
+  grid-template-columns: 2.5fr 1fr;
   overflow-y: auto;
   max-height: 70 * $unit;
   grid-row-gap: 0.1 * $unit; // Adjust the value as per your requirement
