@@ -21,7 +21,7 @@ interface Props {
 
 export default function MonthlyCostChart(props: Props) {
   const widthCalculation = () =>
-    window.innerWidth < 1000 ? window.innerWidth - 70 : 1000;
+    window.innerWidth < 1000 ? window.innerWidth - 70 : 1100;
 
   const [chartWidth, setChartWidth] = useState(widthCalculation());
 

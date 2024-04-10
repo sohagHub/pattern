@@ -25,7 +25,7 @@ interface Props {
 
 export default function CategoriesChart(props: Props) {
   const widthCalculation = () =>
-    window.innerWidth < 1000 ? window.innerWidth - 100 : 500;
+    window.innerWidth < 1000 ? window.innerWidth - 100 : 600;
   const [chartWidth, setChartWidth] = useState(widthCalculation());
 
   useEffect(() => {
@@ -58,18 +58,33 @@ export default function CategoriesChart(props: Props) {
     colors.red900,
     colors.blue900,
     colors.green900,
-    colors.black1000,
-    colors.purple600,
+    //colors.black1000,
+    colors.purple900,
     //give me more colors
     //colors.yellow800,
     colors.red600,
     colors.blue600,
     colors.green800,
-    colors.black900,
+    //colors.black900,
     colors.purple800,
+    colors.purple600,
   ];
 
   const renderLabel = (entry: { name: string; value: number }) => {
+    const percentage = ((entry.value / totalValue) * 100).toFixed(2);
+    return `${entry.name} $${entry.value.toLocaleString()} (${percentage}%)`;
+  };
+
+  const renderLabelNameValue = (entry: { name: string; value: number }) => {
+    return `${entry.name} $${entry.value.toLocaleString()}`;
+  };
+
+  const renderLabelNamePercentage = (entry: { name: string; value: number }) => {
+    const percentage = ((entry.value / totalValue) * 100).toFixed(2);
+    return `${entry.name} (${percentage}%)`;
+  };
+
+  const renderLabelValue = (entry: { name: string; value: number }) => {
     return `$${entry.value.toLocaleString()}`;
   };
 
@@ -114,32 +129,8 @@ export default function CategoriesChart(props: Props) {
   };
 
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  /*useEffect(() => {
-    const handleClickOutside = (event: { target: any }) => {
-      console.log('handleClickOutside');
 
-      if (
-        pieChartRef.current &&
-        // eslint-disable-next-line prettier/prettier
-        !(pieChartRef.current as any)?.contains(event.target as Node)
-      ) {
-        console.log('You clicked outside of the pie chart!');
-        props.onCategoryClick('');
-      }
-    };
-
-    // Add the event listener when the component mounts
-    document.addEventListener('mousedown', handleClickOutside);
-
-    // Remove the event listener when the component unmounts
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [props]);*/
-
-  const chartHeight = 400; // the height of your chart
-  //const chartWidth = 500; // the width of your chart
-  const barHeight = chartHeight / data.length; // the height of the bars
+  const chartHeight = 500; // the height of your chart
 
   return (
     <div className="holdingsListCategories" ref={pieChartRef}>
@@ -172,19 +163,18 @@ export default function CategoriesChart(props: Props) {
 
       {chartType === 'pie' ? (
         <PieChart width={chartWidth} height={chartHeight}>
-          <Legend />
           <Tooltip content={<CustomTooltip />} />
           <Pie
             data={data}
             cx="50%"
             cy="50%"
             paddingAngle={5}
-            label={renderLabel}
+            label={renderLabelNameValue}
             innerRadius={0}
-            outerRadius={130}
+            outerRadius={160}
             dataKey="value"
-            onMouseEnter={onPieEnter}
-            onMouseLeave={onPieLeave}
+            //onMouseEnter={onPieEnter}
+            //onMouseLeave={onPieLeave}
             isAnimationActive={true}
           >
             {data
@@ -214,17 +204,17 @@ export default function CategoriesChart(props: Props) {
           height={chartHeight}
           data={data.sort((a, b) => b.value - a.value)}
           layout="vertical"
-          margin={{ top: 5, right: 50, left: 50, bottom: 5 }}
+          margin={{ top: 5, right: 30, left: 60, bottom: 5 }}
           onClick={handleClick}
         >
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="1 1" />
           <XAxis type="number" />
-          <YAxis dataKey="name" type="category" />
+          <YAxis dataKey="name" type="category" hide={true} />
           <Tooltip content={<CustomTooltip />} />
           <Bar
             dataKey="value"
-            onMouseEnter={onPieEnter}
-            onMouseLeave={onPieLeave}
+            //onMouseEnter={onPieEnter}
+            //onMouseLeave={onPieLeave}
           >
             {data.map((entry, index) => (
               <Cell
@@ -243,10 +233,16 @@ export default function CategoriesChart(props: Props) {
                 //onClick={() => onPieChartClick(entry)}
               />
             ))}
+
             <LabelList
-              dataKey={renderLabel}
+              dataKey="name"
               position="right"
-              fill={COLORS[5]}
+              fill={colors.black}
+            />
+            <LabelList
+              dataKey={renderLabelValue}
+              position="left"
+              fill={colors.black}
             />
           </Bar>
         </BarChart>

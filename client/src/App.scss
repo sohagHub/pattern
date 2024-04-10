@@ -520,6 +520,7 @@ Monthly Spending
 
 .monthlySpendingContainer {
   display: flex;
+  //flex-direction: column;
 
   @media (max-width: $breakpoint-vertical) {
     margin-right: 0;
@@ -548,13 +549,13 @@ Monthly Spending
   display: grid;
   grid-template-columns: 2.5fr 1.5fr;
   overflow-y: auto;
-  max-height: 450px;
-  grid-row-gap: 1px; // Adjust the value as per your requirement
+  max-height: 70 * $unit;
+  grid-row-gap: 1 * $unit; // Adjust the value as per your requirement
 
   @media (max-width: $breakpoint-vertical) {
     margin-right: 0;
     width: 100%;
-    max-height: 600px;
+    max-height: 70 * $unit;
   }
 }
 
