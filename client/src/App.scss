@@ -112,6 +112,10 @@ shared styles
 .header {
   display: flex;
   justify-content: space-between;
+
+  @media (max-width: 350px) {
+    flex-direction: column;
+  }
 }
 
 .value {
@@ -149,14 +153,49 @@ Content at the top of the view
 
 */
 
+.everpresent-header-container {
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  align-items: flex-start; /* Align children to the start of the cross axis */
+}
+
 .everpresent-content__heading {
-  margin-bottom: 1 * $unit;
+  margin-bottom: 0 * $unit;
 }
 
 .everpresent-content__subheading {
   font-size: 1 * $unit;
   font-weight: 300;
   line-height: 1 * $unit;
+}
+
+nav {
+  align-self: flex-end;
+  margin-top: 0.1 * $unit;
+  border: none;
+  margin: 0;
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    border: 0;
+    margin: 0;
+    //gap: 20px;
+
+    li {
+      display: inline;
+
+      a {
+        text-decoration: none;
+        color: #007bff;
+
+        &:hover {
+          color: #0056b3;
+        }
+      }
+    }
+  }
 }
 
 /*
@@ -276,7 +315,7 @@ Item overview
   padding: (2 * $unit) 0 (2 * $unit) (2 * $unit);
   width: 95%;
   display: grid;
-  grid-template-columns: 40% 30% 30%;
+  grid-template-columns: 45% 30% 25%;
 }
 
 .item-card__column-1 {
