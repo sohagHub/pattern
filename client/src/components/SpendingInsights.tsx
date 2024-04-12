@@ -29,6 +29,11 @@ const isCostCategory = (category: string): boolean => {
   return !excludedCategories.includes(category);
 };
 
+const isIncomeCategory = (category: string): boolean => {
+  const includedCategory = ['Interest', 'Income', 'Investment'];
+  return includedCategory.includes(category);
+};
+
 type MonthMap = { [key: string]: string };
 
 // Mapping of month names to month numbers
@@ -106,16 +111,22 @@ export default function SpendingInsights(props: Props) {
       //   cost: number;
       // }[]; to MonthlyCostChart
       transactions.reduce((acc: any[], tx) => {
-        if (!isCostCategory(tx.category)) {
+        if (!isCostCategory(tx.category) && !isIncomeCategory(tx.category)) {
           return acc;
         }
+
+        const cost = isCostCategory(tx.category) ? tx.amount : 0;
+        const income = isIncomeCategory(tx.category) ? tx.amount : 0;
+
         const date = new Date(tx.date);
         const monthYear = getMonthYear(date);
         const index = acc.findIndex(item => item.month === monthYear);
+
         if (index === -1) {
-          acc.push({ month: monthYear, cost: tx.amount });
+          acc.push({ month: monthYear, cost: cost, income: income });
         } else {
-          acc[index].cost = acc[index].cost + tx.amount;
+          acc[index].cost = acc[index].cost + cost;
+          acc[index].income = acc[index].income - income;
         }
 
         // sort the acc by year and month
@@ -180,7 +191,7 @@ export default function SpendingInsights(props: Props) {
 
   return (
     <div>
-      <h2 className="monthlySpendingHeading">Monthly Spending</h2>
+      <h2 className="monthlySpendingHeading">Trends</h2>
       <div className="monthlySpendingContainer">
         <div className="userDataBoxBarChart">
           <MonthlyCostChart

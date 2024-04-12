@@ -512,6 +512,19 @@ net worth
   @media (max-width: $breakpoint-vertical) {
     padding: 1 * $unit;
   }
+
+  .costHeading {
+    //font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .totalTrendsTop {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
 }
 
 .assetsHeaderContainer {

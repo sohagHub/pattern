@@ -9,17 +9,23 @@ import {
   Cell,
   LabelList,
 } from 'recharts';
-import colors from 'plaid-threads/scss/colors';
+import { COLORS } from '../util';
 
 interface Props {
   monthlyCosts: {
     month: string;
     cost: number;
+    income: number;
   }[];
   onMonthClick: (month: string) => void;
 }
 
 export default function MonthlyCostChart(props: Props) {
+  const [showIncome, setShowIncome] = useState(false);
+  const toggleIncome = () => {
+    setShowIncome(!showIncome);
+  };
+
   const widthCalculation = () =>
     window.innerWidth < 1000 ? window.innerWidth - 70 : 1100;
 
@@ -37,26 +43,31 @@ export default function MonthlyCostChart(props: Props) {
   const data = props.monthlyCosts.map(item => ({
     ...item,
     cost: Math.round(item.cost),
+    income: Math.round(item.income),
     costString: `$${Math.round(item.cost).toLocaleString()}`,
+    incomeString: `$${Math.round(item.income).toLocaleString()}`,
   }));
 
-  const COLORS = [
-    colors.yellow900,
-    colors.red900,
-    colors.blue900,
-    colors.green900,
-    colors.black1000,
-    colors.purple600,
-  ];
+  const onIncomeBarClick = (data: any, index: any, event: any) => {
+    const month = data.month;
+    props.onMonthClick(month);
+  };
 
-  const handleClick = (data: any, event: any) => {
+  const onCostBarClick = (data: any, index: any, event: any) => {
     const month = data.month;
     props.onMonthClick(month);
   };
 
   return (
     <div className="holdingsListMonthlyCost">
-      <h4 className="costHeading">Monthly Costs</h4>
+      <div className="totalTrendsTop">
+        <h4 className="costHeading"> </h4>
+        <label>
+          <input type="checkbox" checked={showIncome} onChange={toggleIncome} />{' '}
+          Income
+        </label>
+      </div>
+
       <BarChart
         width={chartWidth}
         height={300}
@@ -72,17 +83,36 @@ export default function MonthlyCostChart(props: Props) {
         <XAxis dataKey="month" />
         <YAxis />
         <Tooltip />
-        <Bar
-          dataKey="cost"
-          fill={COLORS[4]}
-          isAnimationActive={true}
-          onClick={handleClick}
-        >
+        {showIncome && (
+          <Bar
+            dataKey="income"
+            isAnimationActive={true}
+            onClick={onIncomeBarClick}
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[(index % 4) + 5]} />
+            ))}
+            {chartWidth > 500 && (
+              <LabelList
+                dataKey="incomeString"
+                position="top"
+                angle={-45}
+                fill={COLORS[4]}
+              />
+            )}
+          </Bar>
+        )}
+        <Bar dataKey="cost" isAnimationActive={true} onClick={onCostBarClick}>
           {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            <Cell key={`cell-${index}`} fill={COLORS[index % 4]} />
           ))}
           {chartWidth > 500 && (
-            <LabelList dataKey="costString" position="top" fill={COLORS[5]} />
+            <LabelList
+              dataKey="costString"
+              position="top"
+              angle={-45}
+              fill={COLORS[4]}
+            />
           )}
         </Bar>
       </BarChart>
