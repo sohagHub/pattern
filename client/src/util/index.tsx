@@ -8,6 +8,7 @@ import {
 } from 'react-plaid-link';
 
 import { postLinkEvent as apiPostLinkEvent } from '../services/api';
+import colors from 'plaid-threads/scss/colors';
 
 /**
  * @desc small helper for pluralizing words for display given a number of items
@@ -124,3 +125,17 @@ export const logExit = async (
     status,
   });
 };
+
+export const COLORS = [
+  colors.yellow900,
+  colors.red900,
+  colors.blue900,
+  colors.green900,
+  colors.purple900,
+  //give me more colors
+  colors.yellow600,
+  colors.red600,
+  colors.blue600,
+  colors.green600,
+  //colors.purple600,
+];
