@@ -10,6 +10,7 @@ import {
   LabelList,
 } from 'recharts';
 import { COLORS } from '../util';
+import colors from 'plaid-threads/scss/colors';
 
 interface Props {
   monthlyCosts: {
@@ -101,12 +102,12 @@ export default function MonthlyCostChart(props: Props) {
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[(index % 4) + 5]} />
             ))}
-            {chartWidth > 500 && (
+            {chartWidth > 900 && (
               <LabelList
                 dataKey="incomeString"
-                position="top"
-                angle={-45}
-                fill={COLORS[4]}
+                position="outside"
+                angle={-90}
+                fill={colors.black800}
               />
             )}
           </Bar>
@@ -115,12 +116,12 @@ export default function MonthlyCostChart(props: Props) {
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % 4]} />
           ))}
-          {chartWidth > 500 && (
+          {chartWidth > 900 && (
             <LabelList
               dataKey="costString"
-              position="top"
-              angle={-45}
-              fill={COLORS[4]}
+              position="outside"
+              angle={-90}
+              fill={colors.black900}
             />
           )}
         </Bar>
