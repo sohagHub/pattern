@@ -46,13 +46,15 @@ export default function NetWorth(props: Props) {
   };
 
   return (
-    <div className="netWorthContainer">
-      <h2 className="netWorthHeading">Net Worth</h2>
+    <div className="netWorthContainerBox">
+      <div className="netWorthContainerHead">
+        <h2 className="netWorthHeading">Net Worth</h2>
+        <h4 className="netWorthDollars">
+          {currencyFilter(assets - liabilities)}
+        </h4>
+      </div>
       {!props.assetsOnly && (
         <>
-          <h4 className="netWorthDollars">
-            {currencyFilter(assets - liabilities)}
-          </h4>
           <div className="holdingsContainer">
             <div className="userDataBoxAssets">
               <div className="holdingsList">
@@ -74,7 +76,9 @@ export default function NetWorth(props: Props) {
                   {props.personalAssets.map(asset => (
                     <div className="personalAsset">
                       <p className="dataItem">{asset.description}</p>
-                      <p className="dataItem">{currencyFilter(asset.value)}</p>
+                      <p className="dataItem">
+                        {currencyFilter(asset.value)}
+                      </p>
                       <p>
                         <IconButton
                           accessibilityLabel="Navigation"
@@ -99,13 +103,10 @@ export default function NetWorth(props: Props) {
                   {/* 3 columns */}
                   <h4 className="holdingsHeading">Liabilities</h4>
                   <p>{''}</p>
-
                   <p className="dataItem">Credit Cards</p>{' '}
                   <p className="dataItem">{currencyFilter(credit)}</p>
-
                   <p className="dataItem">Loans</p>
                   <p className="dataItem">{currencyFilter(loan)}</p>
-
                 </div>
               </div>
             </div>
@@ -131,7 +132,9 @@ export default function NetWorth(props: Props) {
                   {props.personalAssets.map(asset => (
                     <div className="personalAsset">
                       <p className="dataItem">{asset.description}</p>
-                      <p className="dataItem">{currencyFilter(asset.value)}</p>
+                      <p className="dataItem">
+                        {currencyFilter(asset.value)}
+                      </p>
                       <p>
                         <IconButton
                           accessibilityLabel="Navigation"

@@ -82,7 +82,7 @@ shared styles
   border-bottom: 1px solid $black1000;
   margin-bottom: 1 * $unit;
   padding-bottom: 1 * $unit;
-  width: 99%;
+  width: 100%;
 
   @media (max-width: $breakpoint-vertical) {
     width: 100%;
@@ -437,7 +437,13 @@ net worth
   text-transform: uppercase;
 }
 
-.netWorthContainer {
+.netWorthContainerBox {
+  .netWorthContainerHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1 * $unit;
+  }
   .netWorthDollars {
     margin-top: $unit;
     margin-bottom: $unit;
