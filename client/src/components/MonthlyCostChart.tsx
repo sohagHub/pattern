@@ -62,10 +62,19 @@ export default function MonthlyCostChart(props: Props) {
     <div className="holdingsListMonthlyCost">
       <div className="totalTrendsTop">
         <h4 className="costHeading"> </h4>
-        <label>
-          <input type="checkbox" checked={showIncome} onChange={toggleIncome} />{' '}
-          Income
-        </label>
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              checked={showIncome}
+              onChange={toggleIncome}
+            />{' '}
+            Income
+          </label>
+          <label>
+            <input type="checkbox" checked={true} /> Spending
+          </label>
+        </div>
       </div>
 
       <BarChart
