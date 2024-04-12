@@ -288,9 +288,11 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
               Apply Rules
             </Button>
             <br />
-            <Link to="/settings" className="rule-link-button">
-              Show Rules
-            </Link>
+            {
+             //<Link to="/settings" className="rule-link-button">
+             // Show Rules
+             //</Link>
+            }
           </div>
         </div>
 
