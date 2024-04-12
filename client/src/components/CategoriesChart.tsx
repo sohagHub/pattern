@@ -12,8 +12,8 @@ import {
   LabelList,
   CartesianGrid,
 } from 'recharts';
+import { COLORS } from '../util';
 import colors from 'plaid-threads/scss/colors';
-import { on } from 'events';
 
 interface Props {
   categories: {
@@ -53,23 +53,6 @@ export default function CategoriesChart(props: Props) {
     totalValue += roundedValue;
   }
 
-  const COLORS = [
-    colors.yellow900,
-    colors.red900,
-    colors.blue900,
-    colors.green900,
-    //colors.black1000,
-    colors.purple900,
-    //give me more colors
-    //colors.yellow800,
-    colors.red600,
-    colors.blue600,
-    colors.green800,
-    //colors.black900,
-    colors.purple800,
-    colors.purple600,
-  ];
-
   const renderLabel = (entry: { name: string; value: number }) => {
     const percentage = ((entry.value / totalValue) * 100).toFixed(2);
     return `${entry.name} $${entry.value.toLocaleString()} (${percentage}%)`;
@@ -79,10 +62,6 @@ export default function CategoriesChart(props: Props) {
     return `${entry.name} $${entry.value.toLocaleString()}`;
   };
 
-  const renderLabelNamePercentage = (entry: { name: string; value: number }) => {
-    const percentage = ((entry.value / totalValue) * 100).toFixed(2);
-    return `${entry.name} (${percentage}%)`;
-  };
 
   const renderLabelValue = (entry: { name: string; value: number }) => {
     return `$${entry.value.toLocaleString()}`;
@@ -134,7 +113,7 @@ export default function CategoriesChart(props: Props) {
 
   return (
     <div className="holdingsListCategories" ref={pieChartRef}>
-      <h4 className="holdingsHeading">Spending Categories</h4>
+      <h4 className="holdingsHeading">Categories</h4>
       <div className="categoryChartButtonDiv">
         <div>
           {props.selectedMonth}, Total: ${totalValue.toLocaleString()}
@@ -234,11 +213,7 @@ export default function CategoriesChart(props: Props) {
               />
             ))}
 
-            <LabelList
-              dataKey="name"
-              position="right"
-              fill={colors.black}
-            />
+            <LabelList dataKey="name" position="right" fill={colors.black} />
             <LabelList
               dataKey={renderLabelValue}
               position="left"
