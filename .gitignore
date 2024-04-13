@@ -68,3 +68,4 @@ dist/
 .idea
 
 *.pem
+nginx-config.txt
