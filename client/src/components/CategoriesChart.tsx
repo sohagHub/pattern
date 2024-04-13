@@ -148,8 +148,6 @@ export default function CategoriesChart(props: Props) {
             innerRadius={0}
             outerRadius={160}
             dataKey="value"
-            //onMouseEnter={onPieEnter}
-            //onMouseLeave={onPieLeave}
             isAnimationActive={true}
           >
             {data
@@ -205,7 +203,6 @@ export default function CategoriesChart(props: Props) {
                     ? 1.5
                     : 1
                 }
-                //onClick={() => onPieChartClick(entry)}
               />
             ))}
 
