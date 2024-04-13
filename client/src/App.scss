@@ -858,33 +858,33 @@ ErrorMessage
 .custom-table {
   width: 100%;
   border-collapse: collapse;
-}
 
-.custom-table th,
-.custom-table td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
+  th,
+  td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
 
-.custom-table th {
-  background-color: #f2f2f2;
-}
+  th {
+    background-color: #f2f2f2;
+  }
 
-.custom-table .transactions-data-rows:nth-child(even) {
-  background-color: #f9f9f9;
-}
+  .transactions-data-rows:nth-child(even) {
+    background-color: #f9f9f9;
+  }
 
-.custom-table button {
-  padding: 4px 8px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
+  button {
+    padding: 4px 8px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
 
-.custom-table button:hover {
-  background-color: #45a049;
+  button:hover {
+    background-color: #45a049;
+  }
 }
 
 .input_login {
