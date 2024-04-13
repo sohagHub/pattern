@@ -18,9 +18,15 @@ export default function Sockets() {
     socket.current.on('SYNC_HAPPENED', ({ itemId, userId, log } = {}) => {
       const msg = `${log}`;
       console.log(msg);
+      //toast(msg);
+    });
+
+    socket.current.on('SYNC_COMPLETED', ({ itemId, userId, log } = {}) => {
+      const msg = `${log}`;
+      console.log(msg);
       toast(msg);
-      getAccountsByItem(itemId);
-      getTransactionsByItem(itemId);
+      //getAccountsByItem(itemId);
+      //getTransactionsByItem(itemId);
       getTransactionsByUser(userId);
     });
 

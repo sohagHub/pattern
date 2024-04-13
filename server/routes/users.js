@@ -219,6 +219,11 @@ router.post(
       console.error(err);
       res.json({ status: 'error' });
     }
+    
+    req.io.emit('SYNC_COMPLETED', {
+      userId: userId,
+      log: 'Full sync completed',
+    });
   })
 );
 
