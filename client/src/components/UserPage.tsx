@@ -170,7 +170,8 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
       const totalBalance = itemAccounts.reduce((acc, account) => {
         if (account.type === 'credit' || account.type === 'loan') {
           return acc - (account.current_balance || 0);
-        } else { //if (account.type === 'depository') {
+        } else {
+          //if (account.type === 'depository') {
           return acc + (account.current_balance || 0);
         }
       }, 0);
@@ -289,9 +290,9 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
             </Button>
             <br />
             {
-             //<Link to="/settings" className="rule-link-button">
-             // Show Rules
-             //</Link>
+              //<Link to="/settings" className="rule-link-button">
+              // Show Rules
+              //</Link>
             }
           </div>
         </div>
@@ -334,7 +335,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
             </>
           )}
           <div>
-            <h2 className="header">Transactions</h2>
+            <h2 className="transaction-header">Transactions</h2>
             <TransactionsTable
               transactions={transactions}
               filterText={

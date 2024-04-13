@@ -7,7 +7,7 @@ interface Props {
 const Banner = (props: Props) => {
   return (
     <div id="banner" className="bottom-border-content">
-      <div className="header">
+      <div className="banner-header">
         <h2 className="everpresent-content__heading">ST Finance</h2>
         <nav>
           <ul>
