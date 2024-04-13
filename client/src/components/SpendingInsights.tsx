@@ -30,7 +30,7 @@ const isCostCategory = (category: string): boolean => {
 };
 
 const isIncomeCategory = (category: string): boolean => {
-  const includedCategory = ['Interest', 'Income', 'Investment'];
+  const includedCategory = ['Interest', 'Income'];
   return includedCategory.includes(category);
 };
 
@@ -56,6 +56,7 @@ export default function SpendingInsights(props: Props) {
   // grab transactions from most recent month and filter out transfers and payments
   const transactions = props.transactions;
   const [selectedMonth, setSelectedMonth] = useState<string>('');
+  const [selectedType, setSelectedType] = useState<string>('');
 
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
@@ -71,11 +72,19 @@ export default function SpendingInsights(props: Props) {
 
   const getOneMonthTransactions = (
     transactions: TransactionType[],
-    targetMonthYear: string
+    targetMonthYear: string,
+    type: string
   ): TransactionType[] => {
     return transactions.filter(tx => {
       const date = new Date(tx.date);
       const monthYear = getMonthYear(date);
+      if (type === 'IncomeType') {
+        if (isIncomeCategory(tx.category) && monthYear === targetMonthYear) {
+          return true;
+        }
+        return false;
+      }
+
       return isCostCategory(tx.category) && monthYear === targetMonthYear;
     });
   };
@@ -87,13 +96,22 @@ export default function SpendingInsights(props: Props) {
     );
     let result;
     if (selectedMonth) {
-      result = getOneMonthTransactions(transactions, selectedMonth);
+      result = getOneMonthTransactions(
+        transactions,
+        selectedMonth,
+        selectedType
+      );
     } else {
-      result = getOneMonthTransactions(transactions, getMonthYear(today));
+      result = getOneMonthTransactions(
+        transactions,
+        getMonthYear(today),
+        selectedType
+      );
       if (result.length <= 0) {
         result = getOneMonthTransactions(
           transactions,
-          getMonthYear(oneMonthAgo)
+          getMonthYear(oneMonthAgo),
+          selectedType
         );
         setSelectedMonth(getMonthYear(oneMonthAgo));
       } else {
@@ -101,7 +119,7 @@ export default function SpendingInsights(props: Props) {
       }
     }
     return result;
-  }, [selectedMonth, transactions]);
+  }, [selectedMonth, selectedType, transactions]);
 
   const monthlyCosts = useMemo(
     () =>
@@ -123,7 +141,7 @@ export default function SpendingInsights(props: Props) {
         const index = acc.findIndex(item => item.month === monthYear);
 
         if (index === -1) {
-          acc.push({ month: monthYear, cost: cost, income: income });
+          acc.push({ month: monthYear, cost: cost, income: -income });
         } else {
           acc[index].cost = acc[index].cost + cost;
           acc[index].income = acc[index].income - income;
@@ -143,7 +161,7 @@ export default function SpendingInsights(props: Props) {
           }
           return aYear - bYear;
         });
-        console.log('acc', acc);
+        //console.log('acc', acc);
         return acc;
       }, []),
 
@@ -152,6 +170,7 @@ export default function SpendingInsights(props: Props) {
 
   // create category and name objects from transactions
   const categoriesObject = useMemo((): Categories => {
+    //console.log('monthlyTransactions', monthlyTransactions);
     return monthlyTransactions.reduce((obj: Categories, tx) => {
       tx.category in obj
         ? (obj[tx.category] = tx.amount + obj[tx.category])
@@ -171,10 +190,17 @@ export default function SpendingInsights(props: Props) {
         : (obj[tx.name] = tx.amount);
       return obj;
     }, {});
-  }, [monthlyTransactions, selectedCategory]);
+  }, [categoriesObject, monthlyTransactions, selectedCategory]);
 
   // sort names by spending totals
   const sortedNames = useMemo(() => {
+    // if selectedType is IncomeType, convert all values to positive
+    if (selectedType === 'IncomeType') {
+      for (const name in namesObject) {
+        namesObject[name] = Math.abs(namesObject[name]);
+      }
+    }
+
     const namesArray = [];
     for (const name in namesObject) {
       namesArray.push([name, namesObject[name]]);
@@ -182,11 +208,12 @@ export default function SpendingInsights(props: Props) {
     namesArray.sort((a: any[], b: any[]) => b[1] - a[1]);
     //namesArray.splice(5); // top 5
     return namesArray;
-  }, [namesObject]);
+  }, [namesObject, selectedType]);
 
-  const onMonthClickSetMonth = (month: string) => {
+  const onMonthClickSetMonth = (month: string, type: string) => {
     props.onMonthClick(month);
     setSelectedMonth(month);
+    setSelectedType(type);
   };
 
   return (
@@ -205,6 +232,7 @@ export default function SpendingInsights(props: Props) {
           <CategoriesChart
             categories={categoriesObject}
             selectedMonth={selectedMonth}
+            selectedType={selectedType}
             onCategoryClick={onCategoryClick}
           />
         </div>
@@ -214,7 +242,7 @@ export default function SpendingInsights(props: Props) {
             <div className="spendingInsightData">
               <p className="title">Vendor</p> <p className="title">Amount</p>
               {sortedNames
-                .filter((vendor: any[]) => Number(vendor[1]) > 0)
+                .filter((vendor: any[]) => Number(vendor[1]) !== 0)
                 .map((vendor: any[], index) => (
                   <>
                     <div>{vendor[0]}</div>

@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import { COLORS } from '../util';
 import colors from 'plaid-threads/scss/colors';
+import { set } from 'lodash';
 
 interface Props {
   monthlyCosts: {
@@ -18,7 +19,7 @@ interface Props {
     cost: number;
     income: number;
   }[];
-  onMonthClick: (month: string) => void;
+  onMonthClick: (month: string, type: string) => void;
 }
 
 export default function MonthlyCostChart(props: Props) {
@@ -45,18 +46,26 @@ export default function MonthlyCostChart(props: Props) {
     ...item,
     cost: Math.round(item.cost),
     income: Math.round(item.income),
-    costString: `$${Math.round(item.cost).toLocaleString()}`,
+    costString: `-$${Math.round(item.cost).toLocaleString()}`,
     incomeString: `$${Math.round(item.income).toLocaleString()}`,
   }));
 
   const onIncomeBarClick = (data: any, index: any, event: any) => {
     const month = data.month;
-    props.onMonthClick(month);
+    props.onMonthClick(month, 'IncomeType');
+    event.stopPropagation();
   };
 
   const onCostBarClick = (data: any, index: any, event: any) => {
     const month = data.month;
-    props.onMonthClick(month);
+    props.onMonthClick(month, '');
+    event.stopPropagation();
+  };
+
+  const onBarClick = (data: any, index: any, event: any) => {
+    if (data == null) return;
+    const month = data.activeLabel;
+    props.onMonthClick(month, '');
   };
 
   return (
@@ -88,6 +97,7 @@ export default function MonthlyCostChart(props: Props) {
           left: 5,
           bottom: 10,
         }}
+        onClick={onBarClick}
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="month" />

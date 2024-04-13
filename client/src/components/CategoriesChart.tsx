@@ -20,10 +20,12 @@ interface Props {
     [key: string]: number;
   };
   selectedMonth: string;
+  selectedType: string;
   onCategoryClick: (category: string) => void;
 }
 
 export default function CategoriesChart(props: Props) {
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const widthCalculation = () =>
     window.innerWidth < 1000 ? window.innerWidth - 100 : 600;
   const [chartWidth, setChartWidth] = useState(widthCalculation());
@@ -39,40 +41,36 @@ export default function CategoriesChart(props: Props) {
 
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const data = [];
+  let data = [];
   const labels = Object.keys(props.categories);
   const values = Object.values(props.categories);
   let totalValue = 0;
 
   for (let i = 0; i < labels.length; i++) {
-    if (values[i] <= 0) {
+    if (values[i] <= 0 && props.selectedType !== 'IncomeType') {
       continue;
     }
     const roundedValue = Math.round(values[i]);
     data.push({ name: labels[i], value: roundedValue });
-    totalValue += roundedValue;
+    totalValue += values[i];
   }
 
-  const renderLabel = (entry: { name: string; value: number }) => {
-    const percentage = ((entry.value / totalValue) * 100).toFixed(2);
-    return `${entry.name} $${entry.value.toLocaleString()} (${percentage}%)`;
-  };
+  if (props.selectedType === 'IncomeType') {
+    // change all data values to positive
+    data = data.map(entry => {
+      return { name: entry.name, value: Math.abs(entry.value) };
+    });
+    totalValue = Math.abs(totalValue);
+  }
+  totalValue = Math.round(totalValue);
 
   const renderLabelNameValue = (entry: { name: string; value: number }) => {
+    //const percentage = ((entry.value / totalValue) * 100).toFixed(2);
     return `${entry.name} $${entry.value.toLocaleString()}`;
   };
 
-
   const renderLabelValue = (entry: { name: string; value: number }) => {
     return `$${entry.value.toLocaleString()}`;
-  };
-
-  const onPieEnter = (_: any, index: number) => {
-    setActiveIndex(index);
-  };
-
-  const onPieLeave = () => {
-    setActiveIndex(null);
   };
 
   // Event handler for click events on pie chart segments
@@ -88,7 +86,7 @@ export default function CategoriesChart(props: Props) {
   const pieChartRef = useRef(null);
 
   const CustomTooltip: React.FC<any> = ({ active, payload }) => {
-    console.log('CustomTooltip' + active + ' ' + payload);
+    //console.log('CustomTooltip' + active + ' ' + payload);
     if (active && payload && payload.length) {
       const value = payload[0].value;
       const percentage = ((value / totalValue) * 100).toFixed(2);
@@ -106,8 +104,6 @@ export default function CategoriesChart(props: Props) {
     console.log('handleClick: ' + data);
     onPieChartClick({ name: data.activeLabel, value: 0 });
   };
-
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   const chartHeight = 500; // the height of your chart
 
