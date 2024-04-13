@@ -1024,24 +1024,24 @@ ErrorMessage
   border-radius: 1 * $unit;
   width: 80%;
   max-width: 60 * $unit;
-}
 
-.modal-content div {
-  margin-bottom: 1 * $unit;
-}
+  div {
+    margin-bottom: 1 * $unit;
+  }
 
-.modal-content label {
-  display: block;
-  margin-bottom: 1 * $unit;
-  font-weight: bold;
-}
+  label {
+    display: block;
+    margin-bottom: 1 * $unit;
+    font-weight: bold;
+  }
 
-.modal-content input {
-  width: 100%;
-  padding: 1 * $unit;
-  border-radius: 1 * $unit;
-  border: 0.2 * $unit solid #ccc;
-  font-size: 2 * $unit;
+  input {
+    width: 100%;
+    padding: 1 * $unit;
+    border-radius: 1 * $unit;
+    border: 0.2 * $unit solid #ccc;
+    font-size: 2 * $unit;
+  }
 }
 
 .modal-button-container {
@@ -1074,5 +1074,27 @@ ErrorMessage
         background-color: #da190b;
       }
     }
+  }
+}
+
+
+.custom-tooltip {
+  background-color: #f9f9f9;
+  border: 0.2 * $unit solid #ddd;
+  border-radius: 1 * $unit;
+  padding: 1 * $unit;
+  font-size: 2 * $unit;
+
+  .label {
+    margin-bottom: 1 * $unit;
+    font-weight: bold;
+  }
+
+  .intro {
+    color: #888;
+  }
+
+  .desc {
+    color: #333;
   }
 }

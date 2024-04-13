@@ -42,9 +42,25 @@ export default function MonthlyCostChart(props: Props) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const CustomTooltip: React.FC<any> = ({ active, payload }) => {
+    if (active && payload && payload.length && payload[0].payload) {
+      const value = payload[0].payload;
+      return (
+        <div className="custom-tooltip">
+          {value.month}
+          {showIncome && <br />}
+          {showIncome && `Income: ${value.incomeString}`}
+          <br />
+          Spending: {value.costString}
+        </div>
+      );
+    }
+    return null;
+  };
+
   const data = props.monthlyCosts.map(item => ({
     ...item,
-    cost: Math.round(item.cost),
+    spending: Math.round(item.cost),
     income: Math.round(item.income),
     costString: `-$${Math.round(item.cost).toLocaleString()}`,
     incomeString: `$${Math.round(item.income).toLocaleString()}`,
@@ -102,7 +118,7 @@ export default function MonthlyCostChart(props: Props) {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="month" />
         <YAxis />
-        <Tooltip />
+        <Tooltip content={<CustomTooltip />} />
         {showIncome && (
           <Bar
             dataKey="income"
@@ -122,7 +138,11 @@ export default function MonthlyCostChart(props: Props) {
             )}
           </Bar>
         )}
-        <Bar dataKey="cost" isAnimationActive={true} onClick={onCostBarClick}>
+        <Bar
+          dataKey="spending"
+          isAnimationActive={true}
+          onClick={onCostBarClick}
+        >
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % 4]} />
           ))}
