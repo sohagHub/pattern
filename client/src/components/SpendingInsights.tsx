@@ -238,9 +238,9 @@ export default function SpendingInsights(props: Props) {
         </div>
         <div className="userDataBoxVendor">
           <div className="holdingsList">
-            <h4 className="holdingsHeading">Vendors</h4>
+            <h4 className="holdingsHeading">{selectedType === 'IncomeType' ? 'Income' : 'Spending'} Sources</h4>
             <div className="spendingInsightData">
-              <p className="title">Vendor</p> <p className="title">Amount</p>
+              <p className="title">Source</p> <p className="title">Amount</p>
               {sortedNames
                 .filter((vendor: any[]) => Number(vendor[1]) !== 0)
                 .map((vendor: any[], index) => (
