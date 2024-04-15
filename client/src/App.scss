@@ -980,7 +980,7 @@ ErrorMessage
 }
 
 .transactions-table {
-  //table-layout: fixed;
+  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
   overflow: hidden;
@@ -1021,6 +1021,7 @@ ErrorMessage
 
   /* Responsive table */
   @media only screen and (max-width: $breakpoint-vertical) {
+    table-layout: unset;
     th:nth-child(1) {
       display: table-cell; // Show the first th
       text-align: left;
