@@ -301,7 +301,10 @@ export default function TransactionsTable(props: Props) {
   // Function to open the modal with a transaction
   const handleRowDoubleClick = (transaction: TransactionType) => {
     setCurrentTransaction(transaction);
-    setIsModalOpen(true);
+    if (isModalOpen) {
+      setCurrentTransaction(null);
+    }
+    setIsModalOpen(!isModalOpen);
   };
 
   // Function to handle saving changes from the modal
@@ -385,15 +388,29 @@ export default function TransactionsTable(props: Props) {
         </thead>
         <tbody>
           {currentTransactions.map(tx => (
-            <tr key={tx.id} onDoubleClick={() => { handleRowDoubleClick(tx) }}>
+            <>
+              <tr key={tx.id} onClick={() => { handleRowDoubleClick(tx) }}>
                   <td className="mobile-only">{tx.date.slice(0, 10)}<br/><strong>{tx.name}</strong><br />{tx.account_name}</td>
                   <td >{tx.date.slice(0, 10)}</td>
                   <td ><strong>{tx.name}</strong><br />Account: {tx.account_name}</td>
                   <td ><strong>{tx.category}</strong><br />{tx.subcategory}</td>
                   <td ><strong>{currencyFilter(tx.amount)}</strong></td>
+              </tr>
+              {currentTransaction && currentTransaction.id === tx.id && (
+                <tr>
+                  <td colSpan={4}>
+                    <TransactionModal
+                      transaction={currentTransaction}
+                      isOpen={isModalOpen}
+                      onSave={handleSaveChanges}
+                      onCancel={handleClose}
+                    />
+                  </td>
                 </tr>
-              ))}
-            </tbody>
+              )}
+            </>
+          ))}
+        </tbody>
       </table>
 
       <TransactionModal
