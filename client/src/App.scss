@@ -1106,20 +1106,20 @@ ErrorMessage
     transition: background-color 0.3s ease;
 
     &[type='submit'] {
-      background-color: #4caf50; /* Green */
-      color: white;
+      background-color: #cbeccc; /* Green */
+      color: rgb(0, 0, 0);
 
       &:hover {
-        background-color: #45a049;
+        background-color: #8fef92;
       }
     }
 
     &[type='button'] {
-      background-color: #f44336; /* Red */
-      color: white;
+      background-color: #eed7d5; /* Red */
+      color: rgb(0, 0, 0);
 
       &:hover {
-        background-color: #da190b;
+        background-color: #ebb5b2;
       }
     }
   }

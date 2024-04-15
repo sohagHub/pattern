@@ -1,6 +1,7 @@
 // TransactionModal.tsx
 import React, { FC, useState, useEffect } from 'react';
 import { TransactionType } from './types';
+import RuleForm from './RuleForm';
 
 interface TransactionModalProps {
   transaction: TransactionType | null;
@@ -15,6 +16,8 @@ const TransactionModal: FC<TransactionModalProps> = ({
   onSave,
   onCancel,
 }) => {
+  const [showRuleForm, setShowRuleForm] = useState(false);
+
   const [
     editedTransaction,
     setEditedTransaction,
@@ -28,6 +31,10 @@ const TransactionModal: FC<TransactionModalProps> = ({
 
   const handleSave = () => {
     if (editedTransaction) onSave(editedTransaction);
+  };
+  
+  const onCreateRule = () => {
+      setShowRuleForm(true);
   };
 
   return (
@@ -102,9 +109,22 @@ const TransactionModal: FC<TransactionModalProps> = ({
         </div>
         <div className="modal-button-container">
             <button type="submit" onClick={handleSave}>Save</button>
+            <button type="button" onClick={onCreateRule}>Create Rule</button>
             <button type="button" onClick={onCancel}>Cancel</button>
         </div>
       </div>
+          {showRuleForm &&
+              <RuleForm
+                initialRule={{
+                    name: editedTransaction?.name || '',
+                    new_name: editedTransaction?.name || '',
+                    new_category: editedTransaction?.category || '',
+                    new_subcategory: editedTransaction?.subcategory || ''
+                }}
+                onCancel={() => setShowRuleForm(false)}
+                onSubmit={() => setShowRuleForm(false)}
+              />
+          }
     </div>
   );
 };

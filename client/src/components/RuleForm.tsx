@@ -11,8 +11,8 @@ import {
 
 interface Props {
   initialRule: Partial<Rule>;
-  onSubmit: (rule: Partial<Rule>) => void;
-  onCancel: () => void;
+  onSubmit?: (rule: Partial<Rule>) => void;
+  onCancel?: () => void;
 }
 
 const RuleForm = (props: Props) => {
@@ -36,26 +36,24 @@ const RuleForm = (props: Props) => {
         .then()
         .then(response => {
           if (response.data.status === 'ok') {
-            props.onSubmit(rule);
+            if (props.onSubmit) props.onSubmit(rule);
           }
         });
     } else {
       // If we're adding a new rule, call the add API endpoint
       addRuleForUser(userState.currentUser.id, rule).then(response => {
         if (response.data.status === 'ok') {
-          props.onSubmit(rule);
+          if (props.onSubmit) props.onSubmit(rule);
         }
       });
     }
-
-    props.onSubmit(rule);
   };
 
   const onCancelClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     event.preventDefault();
-    props.onCancel();
+    if (props.onCancel) props.onCancel();
   };
 
   return (
