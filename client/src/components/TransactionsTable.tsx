@@ -412,13 +412,6 @@ export default function TransactionsTable(props: Props) {
           ))}
         </tbody>
       </table>
-
-      <TransactionModal
-        transaction={currentTransaction}
-        isOpen={isModalOpen}
-        onSave={handleSaveChanges}
-        onCancel={handleClose}
-      />
       
       <div className="pagination">
         {filteredTransactions.length > rowsPerPage && (
