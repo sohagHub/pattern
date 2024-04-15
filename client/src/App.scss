@@ -812,12 +812,13 @@ ErrorMessage
   color: white;
   padding: (1 * $unit) 0 (1 * $unit) (1 * $unit);
   text-align: center;
-  text-decoration: none;
   display: inline-block;
   font-size: 2 * $unit;
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 4px;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .centered {

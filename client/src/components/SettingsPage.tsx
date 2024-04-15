@@ -72,6 +72,7 @@ const SettingsPage = () => {
   const handleEdit = (rule: Rule) => {
     setEditingRule(rule);
     setShowRule(true);
+    setExpandedRowId(rule.id);
   };
 
   const onSubmit = (rule: Partial<Rule>) => {
@@ -79,24 +80,36 @@ const SettingsPage = () => {
     refreshRules();
     setEditingRule({});
     setShowRule(false);
+    setExpandedRowId(null);
   };
 
   const onCancel = () => {
     console.log('cancel');
     setEditingRule({});
     setShowRule(false);
+    setExpandedRowId(null);
   };
 
   const [showRule, setShowRule] = useState(false);
+  const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
 
   // Populate the form with the data from the editing rule when it's set
   useEffect(() => {
     setNewRule(editingRule);
   }, [editingRule]);
 
+  const onAddNewRuleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setShowRule(true);
+    setExpandedRowId(null);
+    setEditingRule({});
+  };
+
   return (
     <div>
-      {showRule && (
+      <button className={'add-account-button'} onClick={onAddNewRuleClick}>
+        Add New Rule
+      </button>
+      {showRule && expandedRowId === null && (
         <RuleForm
           initialRule={editingRule}
           onSubmit={onSubmit}
@@ -106,7 +119,7 @@ const SettingsPage = () => {
       <table className="custom-table">
         <thead>
           <tr>
-            <th>Serial</th>
+            <th>#</th>
             <th>Name</th>
             <th>Category</th>
             <th>Subcategory</th>
@@ -116,57 +129,73 @@ const SettingsPage = () => {
             <th>New Category</th>
             <th>New Subcategory</th>
             <th className="mobile-only">To</th>
-
+            <th>Serial</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {rules.map(rule => (
-            <tr key={rule.id}>
-              <td>{rule.serial}</td>
-              <td>{rule.name}</td>
-              <td>{rule.category}</td>
-              <td>{rule.subcategory}</td>
-              <td className="mobile-only">
+          {rules.map((rule, index) => (
+            <>
+              <tr key={rule.id}>
+                <td>{index + 1}</td>
+
+                <td>{rule.name}</td>
+                <td>{rule.category}</td>
+                <td>{rule.subcategory}</td>
+                <td className="mobile-only">
+                  <tr>
+                    <strong>{rule.name}</strong>
+                  </tr>
+                  <tr>
+                    Category:
+                    {rule.category || '-'}
+                  </tr>
+                  <tr>
+                    Subcategory:
+                    {rule.subcategory || '-'}
+                  </tr>
+                </td>
+                <td>{'=>'}</td>
+                <td>{rule.new_name}</td>
+                <td>{rule.new_category}</td>
+                <td>{rule.new_subcategory}</td>
+                <td className="mobile-only">
+                  <tr>
+                    <strong>{rule.new_name}</strong>
+                  </tr>
+                  <tr>{rule.new_category}</tr>
+                  <tr>{rule.new_subcategory}</tr>
+                </td>
+                <td>{rule.serial}</td>
+                <td>
+                  <button
+                    className={`rule-table-button`}
+                    onClick={() => handleEdit(rule)}
+                  >
+                    Edit
+                  </button>
+                  <br />
+                  <button
+                    className={'rule-table-button'}
+                    onClick={() => handleDelete(rule.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+
+              {showRule && expandedRowId === rule.id && (
                 <tr>
-                  <strong>{rule.name}</strong>
+                  <td colSpan={10}>
+                    <RuleForm
+                      initialRule={editingRule}
+                      onSubmit={onSubmit}
+                      onCancel={onCancel}
+                    />
+                  </td>
                 </tr>
-                <tr>
-                  Category:
-                  {rule.category || '-'}
-                </tr>
-                <tr>
-                  Subcategory:
-                  {rule.subcategory || '-'}
-                </tr>
-              </td>
-              <td>{'=>'}</td>
-              <td>{rule.new_name}</td>
-              <td>{rule.new_category}</td>
-              <td>{rule.new_subcategory}</td>
-              <td className="mobile-only">
-                <tr>
-                  <strong>{rule.new_name}</strong>
-                </tr>
-                <tr>{rule.new_category}</tr>
-                <tr>{rule.new_subcategory}</tr>
-              </td>
-              <td>
-                <button
-                  className="rule-table-button"
-                  onClick={() => handleEdit(rule)}
-                >
-                  Edit
-                </button>
-                <br />
-                <button
-                  className="rule-table-button"
-                  onClick={() => handleDelete(rule.id)}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
+              )}
+            </>
           ))}
         </tbody>
       </table>
