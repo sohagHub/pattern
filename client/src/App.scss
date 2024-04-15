@@ -885,6 +885,56 @@ ErrorMessage
   button:hover {
     background-color: #45a049;
   }
+
+  /* Responsive table */
+  @media only screen and (max-width: $breakpoint-vertical) {
+    th:nth-child(1) {
+      display: table-cell; // Show the first th
+      text-align: left;
+    }
+
+    td:nth-child(1) {
+      display: table-cell; // Show the first td
+      text-align: left;
+    }
+
+    td:nth-child(2),
+    th:nth-child(2),
+    td:nth-child(3),
+    th:nth-child(3),
+    td:nth-child(4),
+    th:nth-child(4),
+    td:nth-child(7),
+    th:nth-child(7),
+    td:nth-child(8),
+    th:nth-child(8),
+    td:nth-child(9),
+    th:nth-child(9) {
+      display: none; // Hide the second and third td
+    }
+
+    td:nth-child(5),
+    th:nth-child(5),
+    td:nth-child(10),
+    th:nth-child(10) {
+      display: table-cell;
+      width: 40%;
+    }
+    td:nth-child(4),
+    th:nth-child(4) {
+      width: 20%;
+    }
+    td:nth-child(5),
+    th:nth-child(5) {
+      width: 20%;
+    }
+  }
+}
+
+.rule-table-button {
+  width: 8 * $unit;
+  height: 3 * $unit;
+  margin: 0.1 * $unit;
 }
 
 .input_login {
@@ -1077,7 +1127,6 @@ ErrorMessage
   }
 }
 
-
 .custom-tooltip {
   background-color: #f9f9f9;
   border: 0.2 * $unit solid #ddd;
@@ -1096,5 +1145,23 @@ ErrorMessage
 
   .desc {
     color: #333;
+  }
+}
+
+.rule-form {
+  //display: flex;
+  //flex-direction: column;
+  gap: 0.5 * $unit;
+
+  input {
+    padding: 0.1 * $unit;
+    font-size: 2 * $unit;
+    border: 0.2 * $unit solid #ddd;
+    border-radius: 1 * $unit;
+
+    &:focus {
+      border-color: #888;
+      outline: none;
+    }
   }
 }

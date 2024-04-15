@@ -7,17 +7,8 @@ import {
   deleteRuleForUserById,
 } from '../services/api';
 import { useCurrentUser } from '../services';
-
-interface Rule {
-  id: number;
-  serial: number;
-  name: string;
-  category: string;
-  subcategory: string;
-  new_name: string;
-  new_category: string;
-  new_subcategory: string;
-}
+import { Rule } from '../util/types';
+import RuleForm from './RuleForm';
 
 const SettingsPage = () => {
   const { userState } = useCurrentUser();
@@ -81,6 +72,12 @@ const SettingsPage = () => {
     setEditingRule(rule);
   };
 
+  const onSubmit = (rule: Partial<Rule>) => {
+    console.log(rule);
+    refreshRules();
+    setEditingRule({});
+  };
+
   // Populate the form with the data from the editing rule when it's set
   useEffect(() => {
     if (editingRule) {
@@ -90,51 +87,9 @@ const SettingsPage = () => {
 
   return (
     <div>
-      <form onSubmit={handleFormSubmit}>
-        <input
-          name="serial"
-          value={newRule.serial || ''}
-          onChange={handleInputChange}
-          placeholder="Serial"
-        />
-        <input
-          name="name"
-          value={newRule.name || ''}
-          onChange={handleInputChange}
-          placeholder="Name"
-        />
-        <input
-          name="category"
-          value={newRule.category || ''}
-          onChange={handleInputChange}
-          placeholder="Category"
-        />
-        <input
-          name="subcategory"
-          value={newRule.subcategory || ''}
-          onChange={handleInputChange}
-          placeholder="Subcategory"
-        />
-        <input
-          name="new_name"
-          value={newRule.new_name || ''}
-          onChange={handleInputChange}
-          placeholder="New Name"
-        />
-        <input
-          name="new_category"
-          value={newRule.new_category || ''}
-          onChange={handleInputChange}
-          placeholder="New Category"
-        />
-        <input
-          name="new_subcategory"
-          value={newRule.new_subcategory || ''}
-          onChange={handleInputChange}
-          placeholder="New Subcategory"
-        />
-        <button type="submit">Add new rule</button>
-      </form>
+      {editingRule && (
+        <RuleForm initialRule={editingRule} onSubmit={onSubmit} />
+      )}
       <table className="custom-table">
         <thead>
           <tr>
@@ -142,9 +97,13 @@ const SettingsPage = () => {
             <th>Name</th>
             <th>Category</th>
             <th>Subcategory</th>
+            <th className="mobile-only">From</th>
+            <th />
             <th>New Name</th>
             <th>New Category</th>
             <th>New Subcategory</th>
+            <th className="mobile-only">To</th>
+
             <th>Actions</th>
           </tr>
         </thead>
@@ -155,12 +114,44 @@ const SettingsPage = () => {
               <td>{rule.name}</td>
               <td>{rule.category}</td>
               <td>{rule.subcategory}</td>
+              <td className="mobile-only">
+                <tr>
+                  <strong>{rule.name}</strong>
+                </tr>
+                <tr>
+                  Category:
+                  {rule.category || '-'}
+                </tr>
+                <tr>
+                  Subcategory:
+                  {rule.subcategory || '-'}
+                </tr>
+              </td>
+              <td>{'=>'}</td>
               <td>{rule.new_name}</td>
               <td>{rule.new_category}</td>
               <td>{rule.new_subcategory}</td>
+              <td className="mobile-only">
+                <tr>
+                  <strong>{rule.new_name}</strong>
+                </tr>
+                <tr>{rule.new_category}</tr>
+                <tr>{rule.new_subcategory}</tr>
+              </td>
               <td>
-                <button onClick={() => handleEdit(rule)}>Edit</button>
-                <button onClick={() => handleDelete(rule.id)}>Delete</button>
+                <button
+                  className="rule-table-button"
+                  onClick={() => handleEdit(rule)}
+                >
+                  Edit
+                </button>
+                <br />
+                <button
+                  className="rule-table-button"
+                  onClick={() => handleDelete(rule.id)}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
