@@ -9,6 +9,7 @@ import {
 import { useCurrentUser } from '../services';
 import { Rule } from '../util/types';
 import RuleForm from './RuleForm';
+import { set } from 'lodash';
 
 const SettingsPage = () => {
   const { userState } = useCurrentUser();
@@ -70,25 +71,37 @@ const SettingsPage = () => {
   // Add a new handler for the Edit button
   const handleEdit = (rule: Rule) => {
     setEditingRule(rule);
+    setShowRule(true);
   };
 
   const onSubmit = (rule: Partial<Rule>) => {
     console.log(rule);
     refreshRules();
     setEditingRule({});
+    setShowRule(false);
   };
+
+  const onCancel = () => {
+    console.log('cancel');
+    setEditingRule({});
+    setShowRule(false);
+  };
+
+  const [showRule, setShowRule] = useState(false);
 
   // Populate the form with the data from the editing rule when it's set
   useEffect(() => {
-    if (editingRule) {
-      setNewRule(editingRule);
-    }
+    setNewRule(editingRule);
   }, [editingRule]);
 
   return (
     <div>
-      {editingRule && (
-        <RuleForm initialRule={editingRule} onSubmit={onSubmit} />
+      {showRule && (
+        <RuleForm
+          initialRule={editingRule}
+          onSubmit={onSubmit}
+          onCancel={onCancel}
+        />
       )}
       <table className="custom-table">
         <thead>

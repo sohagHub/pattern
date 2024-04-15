@@ -12,6 +12,7 @@ import {
 interface Props {
   initialRule: Partial<Rule>;
   onSubmit: (rule: Partial<Rule>) => void;
+  onCancel: () => void;
 }
 
 const RuleForm = (props: Props) => {
@@ -50,53 +51,96 @@ const RuleForm = (props: Props) => {
     props.onSubmit(rule);
   };
 
+  const onCancelClick = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    event.preventDefault();
+    props.onCancel();
+  };
+
   return (
     <form className="rule-form" onSubmit={handleFormSubmit}>
-      <input
-        name="serial"
-        value={rule.serial || ''}
-        onChange={handleInputChange}
-        placeholder="Serial"
-      />
-      <input
-        name="name"
-        value={rule.name || ''}
-        onChange={handleInputChange}
-        placeholder="Name"
-      />
-      <input
-        name="category"
-        value={rule.category || ''}
-        onChange={handleInputChange}
-        placeholder="Category"
-      />
-      <input
-        name="subcategory"
-        value={rule.subcategory || ''}
-        onChange={handleInputChange}
-        placeholder="Subcategory"
-      />
-      <input
-        name="new_name"
-        value={rule.new_name || ''}
-        onChange={handleInputChange}
-        placeholder="New Name"
-      />
-      <input
-        name="new_category"
-        value={rule.new_category || ''}
-        onChange={handleInputChange}
-        placeholder="New Category"
-      />
-      <input
-        name="new_subcategory"
-        value={rule.new_subcategory || ''}
-        onChange={handleInputChange}
-        placeholder="New Subcategory"
-      />
-      <button type="submit">Add new rule</button>
+      <div className="serial-row">
+        <label htmlFor="serial">Serial</label>
+        <input
+          className="serial-input"
+          id="serial"
+          name="serial"
+          type="number"
+          value={rule.serial || ''}
+          onChange={handleInputChange}
+          placeholder="Serial"
+        />
+      </div>
+      <div className="form-row">
+        <div className="input-group details">
+          <label htmlFor="name">Name</label>
+          <input
+            id="name"
+            name="name"
+            value={rule.name || ''}
+            onChange={handleInputChange}
+            placeholder="Name"
+          />
+          <label htmlFor="category">Category</label>
+          <input
+            id="category"
+            name="category"
+            value={rule.category || ''}
+            onChange={handleInputChange}
+            placeholder="Category"
+          />
+          <label htmlFor="subcategory">Subcategory</label>
+          <input
+            id="subcategory"
+            name="subcategory"
+            value={rule.subcategory || ''}
+            onChange={handleInputChange}
+            placeholder="Subcategory"
+          />
+        </div>
+
+        <div className="conversion-sign">{'=>'}</div>
+
+        <div className="input-group new-details">
+          <label htmlFor="new_name">New Name</label>
+          <input
+            id="new_name"
+            name="new_name"
+            value={rule.new_name || ''}
+            onChange={handleInputChange}
+            placeholder="New Name"
+          />
+          <label htmlFor="new_category">New Category</label>
+          <input
+            id="new_category"
+            name="new_category"
+            value={rule.new_category || ''}
+            onChange={handleInputChange}
+            placeholder="New Category"
+          />
+          <label htmlFor="new_subcategory">New Subcategory</label>
+          <input
+            id="new_subcategory"
+            name="new_subcategory"
+            value={rule.new_subcategory || ''}
+            onChange={handleInputChange}
+            placeholder="New Subcategory"
+          />
+        </div>
+      </div>
+
+      <div className="button-row">
+        <button type="button" onClick={onCancelClick}>
+          Cancel
+        </button>
+        <button type="submit">Submit</button>
+      </div>
     </form>
   );
+
+
+
 };
 
 export default RuleForm;

@@ -176,7 +176,7 @@ nav {
   margin-top: 0.1 * $unit;
   border: none;
   margin: 0;
-  
+
   ul {
     list-style-type: none;
     padding: 0;
@@ -1149,19 +1149,95 @@ ErrorMessage
 }
 
 .rule-form {
-  //display: flex;
-  //flex-direction: column;
-  gap: 0.5 * $unit;
+  display: flex;
+  flex-direction: column;
+  gap: 1 * $unit;
+  padding: 2 * $unit;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-  input {
-    padding: 0.1 * $unit;
-    font-size: 2 * $unit;
-    border: 0.2 * $unit solid #ddd;
-    border-radius: 1 * $unit;
+  .serial-row {
+    display: flex;
+    justify-content: center;
+    gap: 1 * $unit;
 
-    &:focus {
-      border-color: #888;
-      outline: none;
+    label {
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+
+    input {
+        padding: 1 * $unit;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        &:focus {
+          outline: none;
+          border-color: #0056b3;
+          box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.25);
+        }
+      }
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 3fr 0.5fr 3fr;
+    gap: 10px;
+    align-items: center;
+
+    .input-group {
+      display: grid;
+      gap: 5px;
+
+      label {
+        font-weight: bold;
+        display: block;
+      }
+
+      input {
+        padding: 1 * $unit;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        &:focus {
+          outline: none;
+          border-color: #0056b3;
+          box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.25);
+        }
+      }
+    }
+
+    .conversion-sign {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  }
+
+  .button-row {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      color: #fff;
+      background-color: #007bff;
+      border-radius: 4px;
+      cursor: pointer;
+      &:hover {
+        background-color: #0056b3;
+      }
+
+      &:first-child {
+        background-color: #dc3545;
+        &:hover {
+          background-color: #c82333;
+        }
+      }
     }
   }
 }
