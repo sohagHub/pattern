@@ -168,6 +168,12 @@ router.put(
 
       justUpdateTransactions([transaction]);
     }
+    
+    req.io.emit('SYNC_COMPLETED', {
+      userId: userId,
+      log: 'Rules are applied',
+    });
+
     console.log('done');
     res.json({ status: 'ok' });
   })
