@@ -218,7 +218,9 @@ export default function SpendingInsights(props: Props) {
 
   return (
     <div>
-      <h2 className="monthlySpendingHeading">Trends</h2>
+      <h4 className="monthlySpendingHeading">
+        <strong>Trends</strong>
+      </h4>
       <div className="monthlySpendingContainer">
         <div className="userDataBoxBarChart">
           <MonthlyCostChart
@@ -238,7 +240,9 @@ export default function SpendingInsights(props: Props) {
         </div>
         <div className="userDataBoxVendor">
           <div className="holdingsList">
-            <h4 className="holdingsHeading">{selectedType === 'IncomeType' ? 'Income' : 'Spending'} Sources</h4>
+            <h5 className="holdingsHeading">
+              {selectedType === 'IncomeType' ? 'Income' : 'Spending'} Sources
+            </h5>
             <div className="spendingInsightData">
               <p className="title">Source</p> <p className="title">Amount</p>
               {sortedNames

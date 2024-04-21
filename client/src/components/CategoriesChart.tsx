@@ -109,9 +109,9 @@ export default function CategoriesChart(props: Props) {
 
   return (
     <div className="holdingsListCategories" ref={pieChartRef}>
-      <h4 className="holdingsHeading">
+      <h5 className="holdingsHeading">
         {props.selectedType === 'IncomeType' ? 'Income' : 'Spending'} Categories
-      </h4>
+      </h5>
       <div className="categoryChartButtonDiv">
         <div>
           {props.selectedMonth}, Total: ${totalValue.toLocaleString()}

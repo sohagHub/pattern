@@ -48,9 +48,11 @@ export default function NetWorth(props: Props) {
   return (
     <div className="netWorthContainerBox">
       <div className="netWorthContainerHead">
-        <h2 className="netWorthHeading">Net Worth</h2>
+        <h4 className="netWorthHeading">
+          <strong>Net Worth</strong>
+        </h4>
         <h4 className="netWorthDollars">
-          {currencyFilter(assets - liabilities)}
+          <strong>{currencyFilter(assets - liabilities)}</strong>
         </h4>
       </div>
       {!props.assetsOnly && (
