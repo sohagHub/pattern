@@ -22,7 +22,7 @@ body {
   max-width: 300 * $unit;
   margin-right: auto;
   margin-left: auto;
-  padding: 1 * $unit 40 * $unit 1 * $unit 40 * $unit;
+  padding: 1 * $unit 20 * $unit 1 * $unit 20 * $unit;
   justify-content: center;
 
   @media (max-width: $breakpoint-vertical) {
