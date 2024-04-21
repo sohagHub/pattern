@@ -14,6 +14,7 @@ const {
   retrieveTransactionsByUserId,
   retrieveUserById,
   retrieveRulesByUserId,
+  updateNetWorth,
 } = require('../db/queries');
 const { asyncWrapper } = require('../middleware');
 const {
@@ -173,8 +174,9 @@ router.get(
 router.post(
   '/:userId/transactions/sync',
   asyncWrapper(async (req, res) => {
-    try {
-      const { userId } = req.params;
+    const { userId } = req.params;
+
+    try {  
       const items = await retrieveItemsByUser(userId);
 
       let institution;
@@ -220,6 +222,10 @@ router.post(
       res.json({ status: 'error' });
     }
     
+    console.log('Sync completed. Now update net worth');
+    await updateNetWorth(userId);
+    console.log('Net worth updated');
+
     req.io.emit('SYNC_COMPLETED', {
       userId: userId,
       log: 'Full sync completed',

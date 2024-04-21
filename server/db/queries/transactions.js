@@ -33,7 +33,7 @@ const createOrUpdateTransactions = async transactions => {
 
     // if pending is true, we don't want to update the transaction
     if (pending) {
-      console.log('Skipping pending transaction:', transaction);
+      //console.log('Skipping pending transaction:', transaction);
       return;
     }
     

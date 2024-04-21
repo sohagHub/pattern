@@ -43,6 +43,8 @@ const {
   deleteAssetByAssetId,
 } = require('./assets');
 
+const { updateNetWorth } = require('./netWorth');
+
 module.exports = {
   // accounts
   createAccounts,
@@ -81,4 +83,6 @@ module.exports = {
   deleteAssetByAssetId,
   // link events
   createLinkEvent,
+  // net worth
+  updateNetWorth,
 };
