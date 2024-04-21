@@ -11,8 +11,14 @@ const Banner = (props: Props) => {
         <h2 className="everpresent-content__heading">ST Finance</h2>
         <nav>
           <ul>
-            <li>
-              <Link to="/Settings">Settings</Link>
+            <li className="nav-item">
+              <Link to="/user/">Home</Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/transactions">Transactions</Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/settings">Settings</Link>
             </li>
           </ul>
         </nav>

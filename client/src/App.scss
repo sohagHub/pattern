@@ -120,6 +120,11 @@ shared styles
   }
 }
 
+.nav-item {
+  display: inline-block;
+  margin-right: 1 * $unit;
+}
+
 .value {
   text-overflow: ellipsis;
   overflow-x: hidden;

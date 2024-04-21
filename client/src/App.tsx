@@ -10,6 +10,7 @@ import {
   OAuthLink,
   UserList,
   SettingsPage,
+  TransactionPage,
 } from './components';
 import { AccountsProvider } from './services/accounts';
 import { InstitutionsProvider } from './services/institutions';
@@ -50,6 +51,10 @@ function App() {
                           <Route path="/oauth-link" component={OAuthLink} />
                           <Route path="/admin" component={UserList} />
                           <Route path="/settings" component={SettingsPage} />
+                          <Route
+                            path="/transactions"
+                            component={TransactionPage}
+                          />
                         </Switch>
                       </AssetsProvider>
                     </CurrentUserProvider>
