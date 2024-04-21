@@ -24,8 +24,22 @@ interface Props {
 
 export default function MonthlyCostChart(props: Props) {
   const [showIncome, setShowIncome] = useState(false);
+  const [showSpending, setShowSpending] = useState(true);
+
   const toggleIncome = () => {
     setShowIncome(!showIncome);
+    // if both are false, set spending to true
+    if (showIncome && !showSpending) {
+      setShowSpending(true);
+    }
+  };
+
+  const toggleSpending = () => {
+    setShowSpending(!showSpending);
+    // if both are false, set spending to true
+    if (!showIncome && showSpending) {
+      setShowSpending(true);
+    }
   };
 
   const widthCalculation = () =>
@@ -98,7 +112,12 @@ export default function MonthlyCostChart(props: Props) {
             Income
           </label>
           <label>
-            <input type="checkbox" checked={true} /> Spending
+            <input
+              type="checkbox"
+              checked={showSpending}
+              onChange={toggleSpending}
+            />{' '}
+            Spending
           </label>
         </div>
       </div>
@@ -138,23 +157,25 @@ export default function MonthlyCostChart(props: Props) {
             )}
           </Bar>
         )}
-        <Bar
-          dataKey="spending"
-          isAnimationActive={true}
-          onClick={onCostBarClick}
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % 4]} />
-          ))}
-          {chartWidth > 900 && (
-            <LabelList
-              dataKey="costString"
-              position="outside"
-              angle={-90}
-              fill={colors.black900}
-            />
-          )}
-        </Bar>
+        {showSpending && (
+          <Bar
+            dataKey="spending"
+            isAnimationActive={true}
+            onClick={onCostBarClick}
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % 4]} />
+            ))}
+            {chartWidth > 900 && (
+              <LabelList
+                dataKey="costString"
+                position="outside"
+                angle={-90}
+                fill={colors.black900}
+              />
+            )}
+          </Bar>
+        )}
       </BarChart>
     </div>
   );
