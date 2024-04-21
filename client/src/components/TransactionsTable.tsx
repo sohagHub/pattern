@@ -14,42 +14,7 @@ interface Props {
 
 export default function TransactionsTable(props: Props) {
   const [rowsPerPage, setRowsPerPage] = useState(props.rows || 20);
-
-  // State to store the editable state and modified values for each field
-  const [editableTransactions, setEditableTransactions] = useState<{
-    [key: string]: { name: string; category: string; subcategory: string };
-  }>({});
-
-  // Function to handle changes in input fields
-  const handleInputChange = (id: number, field: string, value: string) => {
-    setEditableTransactions(
-      (prev: {
-        [key: string]: { name: string; category: string; subcategory: string };
-      }) => ({
-        ...prev,
-        [id]: { ...prev[id], [field]: value },
-      })
-    );
-  };
-
   const { dispatch } = useTransactions();
-
-  // Define the save function
-  const saveChanges = async (
-    id: number,
-    field: keyof TransactionType,
-    value: string
-  ) => {
-    if (!value) {
-      return;
-    }
-    const response = await updateTransactionById(id, { [field]: value });
-    console.log(response);
-    dispatch({
-      type: 'UPDATE_TRANSACTION',
-      payload: { id, updates: { [field]: value } },
-    });
-  };
 
   // Pagination logic
   //const transactionsPerPage = 50; // Replace 10 with the desired number of transactions per page

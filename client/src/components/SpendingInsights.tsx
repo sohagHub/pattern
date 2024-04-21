@@ -190,7 +190,7 @@ export default function SpendingInsights(props: Props) {
         : (obj[tx.name] = tx.amount);
       return obj;
     }, {});
-  }, [categoriesObject, monthlyTransactions, selectedCategory]);
+  }, [monthlyTransactions, selectedCategory]);
 
   // sort names by spending totals
   const sortedNames = useMemo(() => {

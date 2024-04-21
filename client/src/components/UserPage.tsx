@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import Modal from 'plaid-threads/Modal';
 import sortBy from 'lodash/sortBy';
 import LoadingSpinner from 'plaid-threads/LoadingSpinner';
@@ -14,7 +14,7 @@ import {
   useItems,
   useAccounts,
   useTransactions,
-  useUsers,
+  //useUsers,
   useAssets,
   useLink,
 } from '../services';
@@ -27,7 +27,7 @@ import {
   SpendingInsights,
   NetWorth,
   ItemCard,
-  UserCard,
+  //UserCard,
   LoadingCallout,
   ErrorMessage,
 } from '.';
@@ -36,13 +36,6 @@ import {
 // account and transactions details for linked items
 
 const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
-  const [user, setUser] = useState({
-    id: 0,
-    username: '',
-    created_at: '',
-    updated_at: '',
-    token: '',
-  });
   const [items, setItems] = useState<ItemType[]>([]);
   const [token, setToken] = useState('');
   const [numOfItems, setNumOfItems] = useState(0);
@@ -53,7 +46,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const { transactionsByUser, getTransactionsByUser } = useTransactions();
   const { getAccountsByUser, accountsByUser, accountsByItem } = useAccounts();
   const { assetsByUser, getAssetsByUser } = useAssets();
-  const { usersById, getUserById } = useUsers();
+  //const { usersById, getUserById } = useUsers();
   const { itemsByUser, getItemsByUser } = useItems();
   const { userState } = useCurrentUser();
   const userId = Number(userState.currentUser.id);
@@ -90,16 +83,6 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
     // if done earlier, it may expire before enduser actually activates Link to add a bank.
     await applyRulesForUser(userId);
   };
-
-  // update data store with user
-  useEffect(() => {
-    getUserById(userId, false);
-  }, [getUserById, userId]);
-
-  // set state user from data store
-  useEffect(() => {
-    setUser(usersById[userId] || {});
-  }, [usersById, userId]);
 
   useEffect(() => {
     // This gets transactions from the database only.
