@@ -1,20 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
-import {
-  getRulesByUser,
-  addRuleForUser,
-  updateRuleForUserById,
-  deleteRuleForUserById,
-} from '../services/api';
+import { getRulesByUser, deleteRuleForUserById } from '../services/api';
 import { useCurrentUser } from '../services';
 import { Rule } from '../util/types';
 import RuleForm from './RuleForm';
-import { set } from 'lodash';
 
 const SettingsPage = () => {
   const { userState } = useCurrentUser();
   const [rules, setRules] = useState<Rule[]>([]);
-  const [newRule, setNewRule] = useState<Partial<Rule>>({});
 
   const refreshRules = () =>
     getRulesByUser(userState.currentUser.id).then(response => {
@@ -25,37 +18,6 @@ const SettingsPage = () => {
     refreshRules();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewRule({ ...newRule, [event.target.name]: event.target.value });
-  };
-
-  // Modify the handleFormSubmit handler to also handle updates
-  const handleFormSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (editingRule && editingRule.id) {
-      // If we're editing an existing rule, call the update API endpoint
-      updateRuleForUserById(
-        userState.currentUser.id,
-        editingRule.id,
-        newRule
-      ).then(response => {
-        if (response.data.status === 'ok') {
-          refreshRules();
-          setNewRule({});
-          setEditingRule({}); // Clear the editing rule
-        }
-      });
-    } else {
-      // If we're adding a new rule, call the add API endpoint
-      addRuleForUser(userState.currentUser.id, newRule).then(response => {
-        if (response.data.status === 'ok') {
-          refreshRules();
-          setNewRule({});
-        }
-      });
-    }
-  };
 
   const handleDelete = (id: number) => {
     deleteRuleForUserById(userState.currentUser.id, id).then(response => {
@@ -93,12 +55,7 @@ const SettingsPage = () => {
   const [showRule, setShowRule] = useState(false);
   const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
 
-  // Populate the form with the data from the editing rule when it's set
-  useEffect(() => {
-    setNewRule(editingRule);
-  }, [editingRule]);
-
-  const onAddNewRuleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onAddNewRuleClick = () => {
     setShowRule(true);
     setExpandedRowId(null);
     setEditingRule({});
