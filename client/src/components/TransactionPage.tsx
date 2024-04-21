@@ -27,7 +27,7 @@ const TransactionPage = ({ match }: RouteComponentProps<RouteInfo>) => {
       <div>
         <Banner />
       </div>
-      <div >
+      <div>
         <div>
           <div>
             <h4 className="transaction-header">

@@ -4,6 +4,7 @@ import { getRulesByUser, deleteRuleForUserById } from '../services/api';
 import { useCurrentUser } from '../services';
 import { Rule } from '../util/types';
 import RuleForm from './RuleForm';
+import Banner from './Banner';
 
 const SettingsPage = () => {
   const { userState } = useCurrentUser();
@@ -63,6 +64,9 @@ const SettingsPage = () => {
 
   return (
     <div>
+      <div>
+        <Banner />
+      </div>
       <button className={'add-account-button'} onClick={onAddNewRuleClick}>
         Add New Rule
       </button>
