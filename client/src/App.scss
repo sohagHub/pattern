@@ -836,6 +836,11 @@ ErrorMessage
   font-size: 2 * $unit;
   // get all from nice-button without having to repeat
   @extend .nice-button;
+
+  // Add more styles here when hovering
+  &:hover {
+    background-color: #0056b3;
+  }
 }
 
 .rule-link-button {

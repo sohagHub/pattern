@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-import { getRulesByUser, deleteRuleForUserById } from '../services/api';
+import {
+  getRulesByUser,
+  deleteRuleForUserById,
+  applyRulesForUser,
+} from '../services/api';
 import { useCurrentUser } from '../services';
 import { Rule } from '../util/types';
 import RuleForm from './RuleForm';
@@ -62,14 +66,23 @@ const SettingsPage = () => {
     setEditingRule({});
   };
 
+  const applyRules = async () => {
+    await applyRulesForUser(userState.currentUser.id);
+  };
+
   return (
     <div>
       <div>
         <Banner />
       </div>
-      <button className={'add-account-button'} onClick={onAddNewRuleClick}>
-        Add New Rule
-      </button>
+      <div>
+        <button className={'add-account-button'} onClick={onAddNewRuleClick}>
+          Add New Rule
+        </button>
+        <button className={'add-account-button'} onClick={applyRules}>
+          Apply Rules
+        </button>
+      </div>
       {showRule && expandedRowId === null && (
         <RuleForm
           initialRule={editingRule}
