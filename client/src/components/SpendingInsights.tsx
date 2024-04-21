@@ -70,22 +70,21 @@ export default function SpendingInsights(props: Props) {
     }
   };
 
+  type DateMatcher = (date: Date) => boolean;
+
   const getOneMonthTransactions = (
     transactions: TransactionType[],
-    targetMonthYear: string,
+    dateMatcher: DateMatcher,
     type: string
   ): TransactionType[] => {
     return transactions.filter(tx => {
       const date = new Date(tx.date);
-      const monthYear = getMonthYear(date);
+
       if (type === 'IncomeType') {
-        if (isIncomeCategory(tx.category) && monthYear === targetMonthYear) {
-          return true;
-        }
-        return false;
+        return isIncomeCategory(tx.category) && dateMatcher(date);
       }
 
-      return isCostCategory(tx.category) && monthYear === targetMonthYear;
+      return isCostCategory(tx.category) && dateMatcher(date);
     });
   };
 
@@ -98,27 +97,26 @@ export default function SpendingInsights(props: Props) {
     if (selectedMonth) {
       result = getOneMonthTransactions(
         transactions,
-        selectedMonth,
+        date => getMonthYear(date) === selectedMonth,
         selectedType
       );
     } else {
       result = getOneMonthTransactions(
         transactions,
-        getMonthYear(today),
+        date => getMonthYear(date) === getMonthYear(today),
         selectedType
       );
       if (result.length <= 0) {
         result = getOneMonthTransactions(
           transactions,
-          getMonthYear(oneMonthAgo),
+          date => getMonthYear(date) === getMonthYear(oneMonthAgo),
           selectedType
         );
         setSelectedMonth(getMonthYear(oneMonthAgo));
-      } else {
-        setSelectedMonth(getMonthYear(today));
       }
     }
     return result;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMonth, selectedType, transactions]);
 
   const monthlyCosts = useMemo(
