@@ -24,8 +24,8 @@ export default function Sockets() {
     socket.current.on('SYNC_COMPLETED', ({ itemId, userId, log } = {}) => {
       const msg = `${log}`;
       console.log(msg);
-      toast(msg, { position: 'top' });
-      //getAccountsByItem(itemId);
+      toast(msg, { autoClose: false });
+      getAccountsByItem(itemId);
       //getTransactionsByItem(itemId);
       getTransactionsByUser(userId);
     });
@@ -34,8 +34,8 @@ export default function Sockets() {
       const msg = `${log} ${error}`;
       console.log(msg);
       toast(msg, { autoClose: false });
-      getAccountsByItem(itemId);
-      getTransactionsByItem(itemId);
+      //getAccountsByItem(itemId);
+      //getTransactionsByItem(itemId);
       //getTransactionsByUser(userId);
     });
 
