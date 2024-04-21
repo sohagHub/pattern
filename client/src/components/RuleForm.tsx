@@ -2,12 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useCurrentUser } from '../services';
 import { Rule } from '../util/types';
 
-import {
-  getRulesByUser,
-  addRuleForUser,
-  updateRuleForUserById,
-  deleteRuleForUserById,
-} from '../services/api';
+import { addRuleForUser, updateRuleForUserById } from '../services/api';
 
 interface Props {
   initialRule: Partial<Rule>;
@@ -136,9 +131,6 @@ const RuleForm = (props: Props) => {
       </div>
     </form>
   );
-
-
-
 };
 
 export default RuleForm;
