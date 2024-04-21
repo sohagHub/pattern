@@ -379,3 +379,50 @@ CREATE TRIGGER trg_update_snapshot
 BEFORE INSERT ON financial_snapshots
 FOR EACH ROW EXECUTE FUNCTION update_financial_snapshot();
 
+
+
+CREATE TABLE IF NOT EXISTS public.account_balance_history_table (
+  id SERIAL PRIMARY KEY,
+  account_id INT NOT NULL REFERENCES public.accounts_table(id) ON DELETE CASCADE,
+  balance_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  current_balance NUMERIC(28, 10),
+  available_balance NUMERIC(28, 10),
+  -- Include if tracking of available balance is also needed
+  UNIQUE (account_id, balance_date)
+);
+CREATE OR REPLACE FUNCTION fn_capture_balance_change() RETURNS TRIGGER AS $$
+DECLARE latest_snapshot RECORD;
+BEGIN -- Retrieve the most recent snapshot for comparison
+SELECT current_balance,
+  available_balance INTO latest_snapshot
+FROM public.account_balance_history_table
+WHERE account_id = NEW.id
+ORDER BY balance_date DESC
+LIMIT 1;
+-- Check if there is a need to create a new snapshot
+IF latest_snapshot IS NULL
+OR NEW.current_balance IS DISTINCT
+FROM latest_snapshot.current_balance
+  OR NEW.available_balance IS DISTINCT
+FROM latest_snapshot.available_balance THEN -- Insert snapshot into account_balance_history_table
+INSERT INTO public.account_balance_history_table (
+    account_id,
+    balance_date,
+    current_balance,
+    available_balance
+  )
+VALUES (
+    NEW.id,
+    NOW(),
+    NEW.current_balance,
+    NEW.available_balance
+  );
+END IF;
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+DROP TRIGGER IF EXISTS trg_capture_balance_update ON public.accounts_table;
+-- Remove old trigger if it exists
+CREATE TRIGGER trg_capture_balance_update
+AFTER
+UPDATE ON public.accounts_table FOR EACH ROW EXECUTE FUNCTION fn_capture_balance_change();
