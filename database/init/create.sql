@@ -323,3 +323,59 @@ SELECT id,
   updated_at,
   pass_word
 FROM users_table;
+
+
+CREATE TABLE IF NOT EXISTS financial_snapshots
+(
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users_table(id) ON DELETE CASCADE,
+  snapshot_date DATE NOT NULL,
+  total_assets NUMERIC(28, 10),
+  total_liabilities NUMERIC(28, 10),
+  net_worth NUMERIC(28, 10),
+  UNIQUE (user_id, snapshot_date)
+); 
+
+
+CREATE OR REPLACE FUNCTION update_financial_snapshot()
+RETURNS TRIGGER AS $$
+DECLARE
+  thirty_days_ago DATE;
+BEGIN
+  thirty_days_ago := CURRENT_DATE - INTERVAL '30 days';
+
+  -- Insert new snapshot or update existing snapshot for today
+  IF (NEW.snapshot_date = CURRENT_DATE) THEN
+    IF EXISTS (SELECT 1 FROM financial_snapshots WHERE user_id = NEW.user_id AND snapshot_date = CURRENT_DATE) THEN
+      -- Update existing snapshot for today
+      UPDATE financial_snapshots
+      SET total_assets = NEW.total_assets, total_liabilities = NEW.total_liabilities, net_worth = NEW.net_worth
+      WHERE user_id = NEW.user_id AND snapshot_date = CURRENT_DATE;
+      RETURN NULL; -- Prevent insertion of a new row
+    END IF;
+  END IF;
+
+  -- Perform cleanup for entries beyond 30 days
+  -- First, find the date of the last snapshot of each month for snapshots older than 30 days
+  -- Then, delete all other snapshots that are not these last snapshots and are older than 30 days
+  DELETE FROM financial_snapshots
+  WHERE user_id = NEW.user_id AND snapshot_date < thirty_days_ago
+    AND snapshot_date NOT IN (
+      SELECT MAX(snapshot_date)
+      FROM financial_snapshots
+      WHERE user_id = NEW.user_id 
+        AND snapshot_date < thirty_days_ago
+      GROUP BY DATE_TRUNC('month', snapshot_date)
+    );
+
+  -- Allow the insertion of the new row if not already inserted/updated for today
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Re-create the trigger (if it's already created, first drop it as below)
+DROP TRIGGER IF EXISTS trg_update_snapshot ON financial_snapshots;
+CREATE TRIGGER trg_update_snapshot
+BEFORE INSERT ON financial_snapshots
+FOR EACH ROW EXECUTE FUNCTION update_financial_snapshot();
+
