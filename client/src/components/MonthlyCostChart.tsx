@@ -101,7 +101,7 @@ export default function MonthlyCostChart(props: Props) {
   return (
     <div className="holdingsListMonthlyCost">
       <div className="totalTrendsTop">
-        <h4 className="costHeading"> </h4>
+        <h5 className="costHeading">Monthly {showIncome && 'Income'} { showIncome && showSpending && '&' } { showSpending && 'Spending' }</h5>
         <div>
           <label>
             <input
