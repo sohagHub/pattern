@@ -12,7 +12,7 @@ const Banner = (props: Props) => {
         <nav>
           <ul>
             <li className="nav-item">
-              <Link to="/user/">Home</Link>
+              <Link to="/home">Home</Link>
             </li>
             <li className="nav-item">
               <Link to="/transactions">Transactions</Link>

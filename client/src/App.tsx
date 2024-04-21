@@ -47,7 +47,7 @@ function App() {
                         <Sockets />
                         <Switch>
                           <Route exact path="/" component={Landing} />
-                          <Route path="/user/:userId" component={UserPage} />
+                          <Route path="/home" component={UserPage} />
                           <Route path="/oauth-link" component={OAuthLink} />
                           <Route path="/admin" component={UserList} />
                           <Route path="/settings" component={SettingsPage} />

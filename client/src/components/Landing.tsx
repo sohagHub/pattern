@@ -19,7 +19,7 @@ export default function Landing() {
   }, [setCurrentUser, userState.newUser]);
 
   const returnToCurrentUser = () => {
-    history.push(`/user/${userState.currentUser.id}`);
+    history.push(`/home`);
   };
   return (
     <div>
