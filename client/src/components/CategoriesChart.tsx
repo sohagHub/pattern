@@ -3,7 +3,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend,
   Tooltip,
   Bar,
   BarChart,
@@ -40,7 +39,7 @@ export default function CategoriesChart(props: Props) {
   }, []);
 
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [activeIndex] = useState<number | null>(null);
   let data = [];
   const labels = Object.keys(props.categories);
   const values = Object.values(props.categories);

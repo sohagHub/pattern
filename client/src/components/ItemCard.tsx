@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Note from 'plaid-threads/Note';
 import Touchable from 'plaid-threads/Touchable';
 import { InlineLink } from 'plaid-threads/InlineLink';
 import { Callout } from 'plaid-threads/Callout';
@@ -25,12 +24,6 @@ interface Props {
 }
 
 const ItemCard = (props: Props) => {
-  const [total, setTotal] = useState(0);
-
-  useEffect(() => {
-    setTotal(props.item.total);
-  }, [props.item.total]);
-
   const [accounts, setAccounts] = useState<AccountType[]>([]);
   const [institution, setInstitution] = useState<Institution>({
     logo: '',

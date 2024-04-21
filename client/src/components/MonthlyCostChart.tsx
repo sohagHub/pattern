@@ -11,7 +11,6 @@ import {
 } from 'recharts';
 import { COLORS } from '../util';
 import colors from 'plaid-threads/scss/colors';
-import { set } from 'lodash';
 
 interface Props {
   monthlyCosts: {
@@ -101,7 +100,10 @@ export default function MonthlyCostChart(props: Props) {
   return (
     <div className="holdingsListMonthlyCost">
       <div className="totalTrendsTop">
-        <h5 className="costHeading">Monthly {showIncome && 'Income'} { showIncome && showSpending && '&' } { showSpending && 'Spending' }</h5>
+        <h5 className="costHeading">
+          Monthly {showIncome && 'Income'} {showIncome && showSpending && '&'}{' '}
+          {showSpending && 'Spending'}
+        </h5>
         <div>
           <label>
             <input

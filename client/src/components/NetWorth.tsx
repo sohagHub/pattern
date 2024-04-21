@@ -78,9 +78,7 @@ export default function NetWorth(props: Props) {
                   {props.personalAssets.map(asset => (
                     <div className="personalAsset">
                       <p className="dataItem">{asset.description}</p>
-                      <p className="dataItem">
-                        {currencyFilter(asset.value)}
-                      </p>
+                      <p className="dataItem">{currencyFilter(asset.value)}</p>
                       <p>
                         <IconButton
                           accessibilityLabel="Navigation"
@@ -134,9 +132,7 @@ export default function NetWorth(props: Props) {
                   {props.personalAssets.map(asset => (
                     <div className="personalAsset">
                       <p className="dataItem">{asset.description}</p>
-                      <p className="dataItem">
-                        {currencyFilter(asset.value)}
-                      </p>
+                      <p className="dataItem">{currencyFilter(asset.value)}</p>
                       <p>
                         <IconButton
                           accessibilityLabel="Navigation"
