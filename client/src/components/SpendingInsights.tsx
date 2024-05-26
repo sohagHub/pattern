@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { currencyFilter } from '../util';
 import { CategoriesChart } from '.';
@@ -214,18 +214,52 @@ export default function SpendingInsights(props: Props) {
     setSelectedType(type);
   };
 
+  const [width, setWidth] = useState(0);
+  const spendingContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (spendingContainerRef.current) {
+      setWidth(spendingContainerRef.current.offsetWidth);
+      console.log(
+        'spendingContainerRef.current.offsetWidth',
+        spendingContainerRef.current.offsetWidth
+      );
+    }
+
+    const resizeObserver = new ResizeObserver(entries => {
+      if (!Array.isArray(entries) || !entries.length) {
+        return;
+      }
+      setWidth(entries[0].contentRect.width);
+      console.log('entries[0].contentRect.width', entries[0].contentRect.width);
+    });
+
+    if (spendingContainerRef.current) {
+      resizeObserver.observe(spendingContainerRef.current);
+    }
+
+    return () => {
+      if (spendingContainerRef.current) {
+        resizeObserver.unobserve(spendingContainerRef.current);
+      }
+    };
+  }, []); // Dependency array remains empty if no props/state affect sizing
+
   return (
     <div>
       <h4 className="monthlySpendingHeading">
         <strong>Trends</strong>
       </h4>
-      <div className="monthlySpendingContainer">
-        <div className="userDataBoxBarChart">
-          <MonthlyCostChart
-            monthlyCosts={monthlyCosts}
-            onMonthClick={onMonthClickSetMonth}
-          />
-        </div>
+      <div ref={spendingContainerRef} className="monthlySpendingContainer">
+        {width > 0 && (
+          <div className="userDataBoxBarChart">
+            <MonthlyCostChart
+              monthlyCosts={monthlyCosts}
+              onMonthClick={onMonthClickSetMonth}
+              width={width}
+            />
+          </div>
+        )}
       </div>
       <div className="monthlySpendingContainer">
         <div className="userDataBoxPieChart">

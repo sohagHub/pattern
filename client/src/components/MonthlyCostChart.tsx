@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   BarChart,
   Bar,
@@ -19,6 +19,7 @@ interface Props {
     income: number;
   }[];
   onMonthClick: (month: string, type: string) => void;
+  width: number;
 }
 
 export default function MonthlyCostChart(props: Props) {
@@ -41,10 +42,16 @@ export default function MonthlyCostChart(props: Props) {
     }
   };
 
-  const widthCalculation = () =>
-    window.innerWidth < 1000 ? window.innerWidth - 70 : 1100;
+  const widthCalculation = useCallback(() => {
+    console.log('window.innerWidth', window.innerWidth, props.width);
+    if (props.width === 0) {
+      return 1100;
+    } else {
+      return props.width * 0.95;
+    }
+  }, [props.width]);
 
-  const [chartWidth, setChartWidth] = useState(widthCalculation());
+  const [chartWidth, setChartWidth] = useState(() => widthCalculation());
 
   useEffect(() => {
     const handleResize = () => setChartWidth(widthCalculation());
@@ -53,7 +60,7 @@ export default function MonthlyCostChart(props: Props) {
 
     // Clean up the event listener on component unmount
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [props.width, chartWidth, widthCalculation]);
 
   const CustomTooltip: React.FC<any> = ({ active, payload }) => {
     if (active && payload && payload.length && payload[0].payload) {
