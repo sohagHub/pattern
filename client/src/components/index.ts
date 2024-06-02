@@ -5,6 +5,7 @@ export { default as DuplicateItemToastMessage } from './DuplicateItemToast';
 export { default as ItemCard } from './ItemCard';
 export { default as UserPage } from './UserPage';
 export { default as TransactionPage } from './TransactionPage';
+export { default as TrendsPage } from './TrendsPage';
 export { default as Landing } from './Landing';
 export { default as LaunchLink } from './LaunchLink';
 export { default as MoreDetails } from './MoreDetails';

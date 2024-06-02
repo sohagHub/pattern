@@ -18,6 +18,9 @@ const Banner = (props: Props) => {
               <Link to="/transactions">Transactions</Link>
             </li>
             <li className="nav-item">
+              <Link to="/trends">Trends</Link>
+            </li>
+            <li className="nav-item">
               <Link to="/settings">Settings</Link>
             </li>
           </ul>

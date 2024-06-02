@@ -11,6 +11,7 @@ import {
   UserList,
   SettingsPage,
   TransactionPage,
+  TrendsPage,
 } from './components';
 import { AccountsProvider } from './services/accounts';
 import { InstitutionsProvider } from './services/institutions';
@@ -55,6 +56,7 @@ function App() {
                             path="/transactions"
                             component={TransactionPage}
                           />
+                          <Route path="/trends" component={TrendsPage} />
                         </Switch>
                       </AssetsProvider>
                     </CurrentUserProvider>
