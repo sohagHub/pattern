@@ -10,10 +10,15 @@ interface Props {
   numOfItems: number;
   onMonthClick: (month: string) => void;
   onCategoryClick: (category: string) => void;
+  onSubCategoryClick: (subCategory: string) => void;
 }
 
 interface Categories {
   [key: string]: number;
+}
+
+interface SubCategories {
+  [key: string]: Categories;
 }
 
 // Function to check if a transaction category is excluded
@@ -59,6 +64,7 @@ export default function SpendingInsights(props: Props) {
   const [selectedType, setSelectedType] = useState<string>('');
 
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
 
   const onCategoryClick = (category: string) => {
     setSelectedCategory(category);
@@ -66,6 +72,20 @@ export default function SpendingInsights(props: Props) {
     if (category) {
       props.onMonthClick(selectedMonth);
     } else {
+      props.onMonthClick('');
+      setSelectedSubCategory('');
+      props.onSubCategoryClick('');
+    }
+  };
+
+  const onSubCategoryClick = (category: string) => {
+    setSelectedSubCategory(category);
+    props.onSubCategoryClick(category);
+    if (category) {
+      props.onMonthClick(selectedMonth);
+    } else {
+      setSelectedCategory('');
+      props.onCategoryClick('');
       props.onMonthClick('');
     }
   };
@@ -177,9 +197,31 @@ export default function SpendingInsights(props: Props) {
     }, {});
   }, [monthlyTransactions]);
 
+  const subcategoriesObject = useMemo((): SubCategories => {
+    const newSubcategoriesObject: SubCategories = {};
+
+    monthlyTransactions.forEach((tx: TransactionType) => {
+      if (!newSubcategoriesObject[tx.category]) {
+        newSubcategoriesObject[tx.category] = {};
+      }
+
+      if (tx.subcategory in newSubcategoriesObject[tx.category]) {
+        newSubcategoriesObject[tx.category][tx.subcategory] += tx.amount;
+      } else {
+        newSubcategoriesObject[tx.category][tx.subcategory] = tx.amount;
+      }
+    });
+
+    return newSubcategoriesObject;
+  }, [monthlyTransactions]);
+
   const namesObject = useMemo((): Categories => {
     return monthlyTransactions.reduce((obj: Categories, tx) => {
       if (selectedCategory && tx.category !== selectedCategory) {
+        return obj;
+      }
+
+      if (selectedSubCategory && tx.subcategory !== selectedSubCategory) {
         return obj;
       }
 
@@ -188,7 +230,7 @@ export default function SpendingInsights(props: Props) {
         : (obj[tx.name] = tx.amount);
       return obj;
     }, {});
-  }, [monthlyTransactions, selectedCategory]);
+  }, [monthlyTransactions, selectedCategory, selectedSubCategory]);
 
   // sort names by spending totals
   const sortedNames = useMemo(() => {
@@ -240,10 +282,19 @@ export default function SpendingInsights(props: Props) {
 
     return () => {
       if (spendingContainerRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         resizeObserver.unobserve(spendingContainerRef.current);
       }
     };
   }, []); // Dependency array remains empty if no props/state affect sizing
+
+  const hasAtLeastTwoSubcategories = () => {
+    return (
+      subcategoriesObject &&
+      subcategoriesObject[selectedCategory] &&
+      Object.keys(subcategoriesObject[selectedCategory]).length >= 2
+    );
+  };
 
   return (
     <div>
@@ -263,11 +314,29 @@ export default function SpendingInsights(props: Props) {
       </div>
       <div className="monthlySpendingContainer">
         <div className="userDataBoxPieChart">
+          {console.log(
+            'selectedCategory: {}, categoriesObject:{},',
+            selectedCategory,
+            Object.keys(subcategoriesObject)
+          )}
           <CategoriesChart
-            categories={categoriesObject}
+            categories={
+              selectedCategory && hasAtLeastTwoSubcategories()
+                ? subcategoriesObject[selectedCategory]
+                : categoriesObject
+            }
             selectedMonth={selectedMonth}
             selectedType={selectedType}
-            onCategoryClick={onCategoryClick}
+            onCategoryClick={
+              selectedCategory && hasAtLeastTwoSubcategories()
+                ? onSubCategoryClick
+                : onCategoryClick
+            }
+            viewType={
+              selectedCategory && hasAtLeastTwoSubcategories()
+                ? 'subcategory'
+                : 'main'
+            }
           />
         </div>
         <div className="userDataBoxVendor">

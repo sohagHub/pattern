@@ -123,8 +123,12 @@ export default function TransactionsTable(props: Props) {
 
     // Function to check if a transaction matches a given term
     const matchesTerm = (tx: TransactionType, term: string): boolean => {
-      if (term.startsWith('category:')) {
+      if (term.toLowerCase().startsWith('category:')) {
         return tx.category.toLowerCase().includes(term.slice(9));
+      }
+
+      if (term.toLowerCase().startsWith('subcategory:')) {
+        return tx.subcategory.toLowerCase().includes(term.slice(12));
       }
 
       return (

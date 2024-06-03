@@ -21,6 +21,7 @@ interface Props {
   selectedMonth: string;
   selectedType: string;
   onCategoryClick: (category: string) => void;
+  viewType: string;
 }
 
 export default function CategoriesChart(props: Props) {
@@ -109,7 +110,8 @@ export default function CategoriesChart(props: Props) {
   return (
     <div className="holdingsListCategories" ref={pieChartRef}>
       <h5 className="holdingsHeading">
-        {props.selectedType === 'IncomeType' ? 'Income' : 'Spending'} Categories
+        {props.selectedType === 'IncomeType' ? 'Income' : 'Spending'}{' '}
+        {props.viewType === 'main' ? 'Categories' : 'Sub-Categories'}
       </h5>
       <div className="categoryChartButtonDiv">
         <div>

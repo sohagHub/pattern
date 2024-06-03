@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import Modal from 'plaid-threads/Modal';
 import sortBy from 'lodash/sortBy';
-import LoadingSpinner from 'plaid-threads/LoadingSpinner';
-import Callout from 'plaid-threads/Callout';
-import Button from 'plaid-threads/Button';
 import { applyRulesForUser, syncAllForUser } from '../services/api';
 import { TransactionsTable } from '.';
 import { useCurrentUser } from '../services';
@@ -19,23 +16,12 @@ import {
   useLink,
 } from '../services';
 
-import { pluralize } from '../util';
-
-import {
-  Banner,
-  LaunchLink,
-  SpendingInsights,
-  NetWorth,
-  ItemCard,
-  //UserCard,
-  LoadingCallout,
-  ErrorMessage,
-} from '.';
+import { Banner, SpendingInsights } from '.';
 
 // provides view of user's net worth, spending by category and allows them to explore
 // account and transactions details for linked items
 
-const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
+const UserPage = () => {
   const [items, setItems] = useState<ItemType[]>([]);
   const [token, setToken] = useState('');
   const [numOfItems, setNumOfItems] = useState(0);
@@ -50,39 +36,23 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const { itemsByUser, getItemsByUser } = useItems();
   const { userState } = useCurrentUser();
   const userId = Number(userState.currentUser.id);
-  const { generateLinkToken, linkTokens } = useLink();
+  const { linkTokens } = useLink();
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedAccount, setSelectedAccount] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
   const [isExpanded, setIsExpanded] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const setSelectedAccountAndOpenModal = (accountId: string) => {
-    setSelectedAccount(accountId);
-    openModal();
-  };
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedAccount('');
   };
 
-  const initiateLink = async () => {
-    // only generate a link token upon a click from enduser to add a bank;
-    // if done earlier, it may expire before enduser actually activates Link to add a bank.
-    await generateLinkToken(userId, null);
-  };
 
-  const applyRules = async () => {
-    // only generate a link token upon a click from enduser to add a bank;
-    // if done earlier, it may expire before enduser actually activates Link to add a bank.
-    await applyRulesForUser(userId);
-  };
 
   useEffect(() => {
     // This gets transactions from the database only.
@@ -167,13 +137,6 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
     setItems(orderedItems);
   }, [accountsByItem, itemsByUser, userId]);
 
-  const handleSyncClick = async () => {
-    try {
-      await syncAllForUser(userId); //syncAll();
-    } catch (error) {
-      console.error('Sync failed', error);
-    }
-  };
 
   const [selectedItem, setSelectedItem] = useState('item1');
 
@@ -202,6 +165,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                 transactions={transactions}
                 onMonthClick={setSelectedMonth}
                 onCategoryClick={setSelectedCategory}
+                onSubCategoryClick={setSelectedSubCategory}
                 //selectedMonth={selectedMonth}
               />
             </>
@@ -217,9 +181,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                 ' ' +
                 (selectedAccount ? "'" + selectedAccount + "'" : '') +
                 ' ' +
-                (selectedCategory
-                  ? "'category:" + selectedCategory + "'"
-                  : '')
+                (selectedCategory ? "'category:" + selectedCategory + "'" : '')
               }
             />
             <Modal

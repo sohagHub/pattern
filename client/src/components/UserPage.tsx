@@ -54,6 +54,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedAccount, setSelectedAccount] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
   const [isExpanded, setIsExpanded] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -302,6 +303,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                 transactions={transactions}
                 onMonthClick={setSelectedMonth}
                 onCategoryClick={setSelectedCategory}
+                onSubCategoryClick={setSelectedSubCategory}
                 //selectedMonth={selectedMonth}
               />
             </>
@@ -328,7 +330,13 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                 ' ' +
                 (selectedAccount ? "'" + selectedAccount + "'" : '') +
                 ' ' +
-                (selectedCategory ? "'category:" + selectedCategory + "'" : '')
+                (selectedCategory
+                  ? "'category:" + selectedCategory + "'"
+                  : '') +
+                ' ' +
+                (selectedSubCategory
+                  ? "'subcategory:" + selectedSubCategory + "'"
+                  : '')
               }
             />
             <Modal
