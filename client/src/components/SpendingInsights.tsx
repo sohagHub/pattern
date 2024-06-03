@@ -340,7 +340,7 @@ export default function SpendingInsights(props: Props) {
           />
         </div>
         <div className="userDataBoxVendor">
-          <div className="holdingsList">
+          <div className="holdingsListVendor">
             <h5 className="holdingsHeading">
               {selectedType === 'IncomeType' ? 'Income' : 'Spending'} Sources
             </h5>

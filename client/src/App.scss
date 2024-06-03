@@ -504,6 +504,16 @@ net worth
   }
 }
 
+.holdingsListVendor {
+  padding: 2 * $unit;
+
+  .title {
+    font-weight: bold;
+    margin-top: 1 * $unit;
+    margin-bottom: 1 * $unit;
+  }
+}
+
 .holdingsListCategories {
   padding: 2 * $unit;
 
