@@ -686,10 +686,11 @@ Monthly Spending
 }
 
 .switchChartTypeButton {
-  background-color: #08f800;
+  font-size: 2 * $unit;
+  background-color: #fefffe;
   border: none;
   cursor: pointer;
-  padding: 0 * $unit 1 * $unit 0 * $unit 1 * $unit;
+  padding: 1 * $unit 1 * $unit 0 * $unit 1 * $unit;
   border-radius: 0.5 * $unit;
 }
 

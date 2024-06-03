@@ -126,6 +126,7 @@ export default function SpendingInsights(props: Props) {
         date => getMonthYear(date) === getMonthYear(today),
         selectedType
       );
+      setSelectedMonth(getMonthYear(today));
       if (result.length <= 0) {
         result = getOneMonthTransactions(
           transactions,

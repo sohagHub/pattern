@@ -121,7 +121,7 @@ export default function CategoriesChart(props: Props) {
             className="switchChartTypeButton"
             onClick={() => setChartType(chartType === 'pie' ? 'bar' : 'pie')}
           >
-            Switch to {chartType === 'pie' ? '📊' : '🍕'}
+            {chartType === 'pie' ? '📊' : '🍕'}
           </button>
         </div>
         <div>
