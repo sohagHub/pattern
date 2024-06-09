@@ -4,6 +4,7 @@ import { currencyFilter } from '../util';
 import { CategoriesChart } from '.';
 import { TransactionType } from './types';
 import MonthlyCostChart from './MonthlyCostChart';
+import LineChartComponent from './LineChart';
 
 interface Props {
   transactions: TransactionType[];
@@ -40,6 +41,16 @@ const isIncomeCategory = (category: string): boolean => {
 };
 
 type MonthMap = { [key: string]: string };
+interface CategoryCosts {
+  [monthYear: string]: {
+    [category: string]: {
+      total: number;
+      subcategories: {
+        [subcategory: string]: number;
+      };
+    };
+  };
+}
 
 // Mapping of month names to month numbers
 const months: MonthMap = {
@@ -187,6 +198,55 @@ export default function SpendingInsights(props: Props) {
     [transactions]
   );
 
+  const categoryCosts = useMemo<CategoryCosts>(() => {
+    const unsortedCategoryCosts = transactions.reduce(
+      (acc: CategoryCosts, tx) => {
+        if (!isCostCategory(tx.category)) {
+          return acc;
+        }
+
+        const date = new Date(tx.date);
+        const monthYear = getMonthYear(date);
+
+        if (!acc[monthYear]) {
+          acc[monthYear] = {};
+        }
+
+        if (!acc[monthYear][tx.category]) {
+          acc[monthYear][tx.category] = { total: 0, subcategories: {} };
+        }
+
+        acc[monthYear][tx.category].total += tx.amount;
+
+        if (tx.subcategory) {
+          if (!acc[monthYear][tx.category].subcategories[tx.subcategory]) {
+            acc[monthYear][tx.category].subcategories[tx.subcategory] = 0;
+          }
+
+          acc[monthYear][tx.category].subcategories[tx.subcategory] +=
+            tx.amount;
+        }
+
+        return acc;
+      },
+      {}
+    );
+    const sortedEntries = Object.entries(unsortedCategoryCosts).sort((a, b) => {
+      const aMonth = a[0].split(' ')[0];
+      const aYear = a[0].split(' ')[1];
+      const bMonth = b[0].split(' ')[0];
+      const bYear = b[0].split(' ')[1];
+      const aMonthNumber = months[aMonth];
+      const bMonthNumber = months[bMonth];
+      if (aYear === bYear) {
+        return Number(aMonthNumber) - Number(bMonthNumber);
+      }
+      return Number(aYear) - Number(bYear);
+    });
+
+    return Object.fromEntries(sortedEntries);
+  }, [transactions]);
+
   // create category and name objects from transactions
   const categoriesObject = useMemo((): Categories => {
     //console.log('monthlyTransactions', monthlyTransactions);
@@ -297,6 +357,83 @@ export default function SpendingInsights(props: Props) {
     );
   };
 
+  const lines = selectedCategory
+    ? selectedSubCategory
+      ? [selectedSubCategory]
+      : [selectedCategory] //Array.from(new Set(Object.keys(categoryCosts).flatMap(monthYear => Object.keys(categoryCosts[monthYear][selectedCategory]?.subcategories || {})))))
+    : Array.from(
+        new Set(
+          Object.keys(categoryCosts).flatMap(monthYear =>
+            Object.keys(categoryCosts[monthYear])
+          )
+        )
+      ).sort();
+
+  //console.log('lines', lines);
+
+  let data1 = Object.keys(categoryCosts).map(monthYear => ({
+    monthYear,
+    ...Object.fromEntries(
+      Object.entries(categoryCosts[monthYear]).map(
+        ([category, categoryData]) => [
+          selectedSubCategory ? selectedSubCategory : category,
+          selectedSubCategory
+            ? categoryData.subcategories[selectedSubCategory] || 0
+            : categoryData.total,
+        ]
+      )
+    ),
+  }));
+
+  type MonthData = { monthYear: string; [key: string]: number | string };
+
+  const data: MonthData[] = Object.keys(categoryCosts).map(monthYear => {
+    const monthData: MonthData = { monthYear };
+
+    Object.entries(categoryCosts[monthYear]).forEach(
+      ([category, categoryData]) => {
+        // Add category total
+        monthData[category] = Math.round(categoryData.total);
+
+        // Add subcategory totals
+        Object.entries(categoryData.subcategories || {}).forEach(
+          ([subCategory, subCategoryTotal]) => {
+            monthData[`${subCategory}`] = Math.round(subCategoryTotal);
+          }
+        );
+      }
+    );
+
+    return monthData;
+  });
+
+  console.log('data', data1);
+
+  const sortDataByMonthYear = (
+    data: any[],
+    months: { [key: string]: number }
+  ) => {
+    return [...data].sort((a, b) => {
+      // a and b are like "Jan 2021"
+      const aMonth = a.monthYear.split(' ')[0];
+      const aYear = a.monthYear.split(' ')[1];
+      const bMonth = b.monthYear.split(' ')[0];
+      const bYear = b.monthYear.split(' ')[1];
+      const aMonthNumber = months[aMonth];
+      const bMonthNumber = months[bMonth];
+      if (aYear === bYear) {
+        return Number(aMonthNumber) - Number(bMonthNumber);
+      }
+      return Number(aYear) - Number(bYear);
+    });
+  };
+
+  const sortedData = sortDataByMonthYear(data, (months as unknown) as {
+    [key: string]: number;
+  });
+
+  console.log('sortedData', sortedData);
+
   return (
     <div>
       <h4 className="monthlySpendingHeading">
@@ -359,6 +496,12 @@ export default function SpendingInsights(props: Props) {
           </div>
         </div>
       </div>
+      {/*console.log('data', sortedData*/}
+      {selectedType !== 'IncomeType' && (
+        <div className="userDataBoxBarChart">
+          <LineChartComponent data={sortedData} lines={lines} width={width} />
+        </div>
+      )}
     </div>
   );
 }
