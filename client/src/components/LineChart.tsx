@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   LineChart,
   BarChart,
@@ -19,45 +19,50 @@ interface LineChartProps {
   data: any[];
   lines: string[];
   width?: number;
+  indexForColor?: number;
 }
 
 const LineChartComponent: React.FC<LineChartProps> = ({
   data,
   lines,
   width = 500,
+  indexForColor = -1,
 }) => {
   const height = 300;
   const [activeLine, setActiveLine] = useState<string | null>(null);
-  const [chartType, setChartType] = useState<'line' | 'area' | 'bar'>('bar');
+  const [chartType, setChartType] = useState<'line' | 'bar'>('bar');
 
   const toggleChartType = () => {
-    setChartType(prevType => (prevType === 'area' ? 'bar' : 'area'));
+    setChartType(prevType => (prevType === 'line' ? 'bar' : 'line'));
   };
 
-  // Get all unique categories
-  const allCategories = Array.from(new Set(data.flatMap(Object.keys)));
-  console.log(allCategories);
+  const chartRef = useRef<HTMLDivElement>(null);
 
-  // Ensure each data object has all categories
-  const processedData = data.map(obj => {
-    const newObj = { ...obj };
-    allCategories.forEach(category => {
-      if (!(category in newObj)) {
-        newObj[category] = 0;
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        chartRef.current &&
+        !chartRef.current.contains(event.target as Node)
+      ) {
+        setActiveLine(null);
       }
-    });
-    return newObj;
-  });
-  //console.log('processedData', processedData);
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div>
+    <div ref={chartRef}>
       <div style={{ position: 'relative' }}>
         <button
           onClick={toggleChartType}
           style={{ position: 'absolute', top: 0, right: 0 }}
         >
-          Switch to {chartType === 'bar' ? 'area' : 'bar'} Chart
+          Switch to {chartType === 'bar' ? 'line' : 'bar'} Chart
         </button>
       </div>
       <br />
@@ -67,7 +72,7 @@ const LineChartComponent: React.FC<LineChartProps> = ({
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="monthYear" />
             <YAxis />
-            <Tooltip />
+            <Tooltip contentStyle={{ fontWeight: 'bold' }} />
             <Legend onClick={e => setActiveLine(e.dataKey)} />
             {lines.map((line, index) => (
               <Line
@@ -79,42 +84,30 @@ const LineChartComponent: React.FC<LineChartProps> = ({
               />
             ))}
           </LineChart>
-        ) : chartType === 'area' ? (
-          <AreaChart width={width * 0.95} height={height} data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="monthYear" />
-            <YAxis />
-            <Tooltip />
-            <Legend onClick={e => setActiveLine(e.dataKey)} />
-            {lines.map((line, index) => (
-              <Area
-                key={index}
-                type="monotone"
-                dataKey={line}
-                stroke={COLORS[index % COLORS.length]}
-                fill={COLORS[index % COLORS.length]}
-                strokeWidth={line === activeLine ? 3 : 1} // Highlight the active line by increasing its stroke width
-              />
-            ))}
-          </AreaChart>
         ) : (
           <BarChart width={width * 0.95} height={height} data={data}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="monthYear" />
             <YAxis />
-            <Tooltip />
+            <Tooltip contentStyle={{ fontWeight: 'bold' }} />
             <Legend onClick={e => setActiveLine(e.dataKey)} />
-            {lines.map((line, index) => (
-              <Bar
-                key={index}
-                dataKey={line}
-                fill={COLORS[index % COLORS.length]}
-              >
-                {lines.length === 1 && (
-                  <LabelList dataKey={line} position="top" />
-                )}
-              </Bar>
-            ))}
+            {lines.map((line, index) => {
+              const colorIndex =
+                (indexForColor < 0 ? index : indexForColor) % COLORS.length;
+              const isActiveLine = line === activeLine;
+              const fillColor =
+                isActiveLine || !activeLine
+                  ? COLORS[colorIndex]
+                  : 'rgba(0, 0, 0, 0.2)'; // Change this to the color you want for non-active bars
+
+              return (
+                <Bar key={index} dataKey={line} fill={fillColor}>
+                  {lines.length === 1 && (
+                    <LabelList dataKey={line} position="top" />
+                  )}
+                </Bar>
+              );
+            })}
           </BarChart>
         )}
       </div>

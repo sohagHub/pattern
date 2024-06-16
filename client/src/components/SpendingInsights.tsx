@@ -249,13 +249,25 @@ export default function SpendingInsights(props: Props) {
 
   // create category and name objects from transactions
   const categoriesObject = useMemo((): Categories => {
-    //console.log('monthlyTransactions', monthlyTransactions);
-    return monthlyTransactions.reduce((obj: Categories, tx) => {
-      tx.category in obj
-        ? (obj[tx.category] = tx.amount + obj[tx.category])
-        : (obj[tx.category] = tx.amount);
-      return obj;
-    }, {});
+    const unsortedCategories = monthlyTransactions.reduce(
+      (obj: Categories, tx) => {
+        tx.category in obj
+          ? (obj[tx.category] = tx.amount + obj[tx.category])
+          : (obj[tx.category] = tx.amount);
+        return obj;
+      },
+      {}
+    );
+
+    return Object.entries(unsortedCategories)
+      .sort((a, b) => b[1] - a[1])
+      .reduce(
+        (obj: Record<string, number>, [key, value]) => {
+          obj[key] = value;
+          return obj;
+        },
+        {} as Record<string, number>
+      );
   }, [monthlyTransactions]);
 
   const subcategoriesObject = useMemo((): SubCategories => {
@@ -273,8 +285,45 @@ export default function SpendingInsights(props: Props) {
       }
     });
 
-    return newSubcategoriesObject;
+    const sortedSubcategoriesObject: SubCategories = {};
+
+    Object.entries(newSubcategoriesObject).forEach(
+      ([category, subcategories]) => {
+        sortedSubcategoriesObject[category] = Object.entries(subcategories)
+          .sort((a, b) => b[1] - a[1])
+          .reduce(
+            (obj: Record<string, number>, [key, value]) => {
+              obj[key] = value;
+              return obj;
+            },
+            {} as Record<string, number>
+          );
+      }
+    );
+
+    return sortedSubcategoriesObject;
   }, [monthlyTransactions]);
+
+  const selectedIndex = useMemo(() => {
+    if (
+      selectedSubCategory &&
+      selectedCategory &&
+      subcategoriesObject[selectedCategory]
+    ) {
+      return Object.keys(subcategoriesObject[selectedCategory]).indexOf(
+        selectedSubCategory
+      );
+    }
+    if (selectedCategory) {
+      return Object.keys(categoriesObject).indexOf(selectedCategory);
+    }
+    return -1;
+  }, [
+    categoriesObject,
+    subcategoriesObject,
+    selectedCategory,
+    selectedSubCategory,
+  ]);
 
   const namesObject = useMemo((): Categories => {
     return monthlyTransactions.reduce((obj: Categories, tx) => {
@@ -453,7 +502,7 @@ export default function SpendingInsights(props: Props) {
       <div className="monthlySpendingContainer">
         <div className="userDataBoxPieChart">
           {console.log(
-            'selectedCategory: {}, categoriesObject:{},',
+            'selectedCategory: ',
             selectedCategory,
             Object.keys(subcategoriesObject)
           )}
@@ -496,10 +545,15 @@ export default function SpendingInsights(props: Props) {
           </div>
         </div>
       </div>
-      {/*console.log('data', sortedData*/}
+      {console.log('data', sortedData, selectedIndex)}
       {selectedType !== 'IncomeType' && (
         <div className="userDataBoxBarChart">
-          <LineChartComponent data={sortedData} lines={lines} width={width} />
+          <LineChartComponent
+            data={sortedData}
+            lines={lines}
+            width={width}
+            indexForColor={selectedIndex}
+          />
         </div>
       )}
     </div>
