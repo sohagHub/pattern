@@ -22,6 +22,7 @@ import { UsersProvider } from './services/users';
 import { CurrentUserProvider } from './services/currentUser';
 import { AssetsProvider } from './services/assets';
 import { ErrorsProvider } from './services/errors';
+import { CurrentSelectionProvider } from './services/currentSelection';
 
 import './App.scss';
 
@@ -45,19 +46,21 @@ function App() {
                   <UsersProvider>
                     <CurrentUserProvider>
                       <AssetsProvider>
-                        <Sockets />
-                        <Switch>
-                          <Route exact path="/" component={Landing} />
-                          <Route path="/home" component={UserPage} />
-                          <Route path="/oauth-link" component={OAuthLink} />
-                          <Route path="/admin" component={UserList} />
-                          <Route path="/settings" component={SettingsPage} />
-                          <Route
-                            path="/transactions"
-                            component={TransactionPage}
-                          />
-                          <Route path="/trends" component={TrendsPage} />
-                        </Switch>
+                        <CurrentSelectionProvider>
+                          <Sockets />
+                          <Switch>
+                            <Route exact path="/" component={Landing} />
+                            <Route path="/home" component={UserPage} />
+                            <Route path="/oauth-link" component={OAuthLink} />
+                            <Route path="/admin" component={UserList} />
+                            <Route path="/settings" component={SettingsPage} />
+                            <Route
+                              path="/transactions"
+                              component={TransactionPage}
+                            />
+                            <Route path="/trends" component={TrendsPage} />
+                          </Switch>
+                        </CurrentSelectionProvider>
                       </AssetsProvider>
                     </CurrentUserProvider>
                   </UsersProvider>

@@ -4,7 +4,9 @@ import { currencyFilter } from '../util';
 import { CategoriesChart } from '.';
 import { TransactionType } from './types';
 import MonthlyCostChart from './MonthlyCostChart';
-import LineChartComponent from './LineChart';
+import SelectedCategoryChart from './SelectedCategoryChart';
+import { useCurrentSelection } from '../services/currentSelection';
+import { on } from 'events';
 
 interface Props {
   transactions: TransactionType[];
@@ -72,10 +74,24 @@ export default function SpendingInsights(props: Props) {
   // grab transactions from most recent month and filter out transfers and payments
   const transactions = props.transactions;
   const [selectedMonth, setSelectedMonth] = useState<string>('');
-  const [selectedType, setSelectedType] = useState<string>('');
+  const [selectedType, setSelectedType] = useState<string>(''); // income or spending
 
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
+
+  // Use the hook to get access to onCategorySelect
+  const {
+    selectedMonth: currentSelectedMonth,
+    onMonthSelect,
+  } = useCurrentSelection();
+
+  useEffect(() => {
+    if (currentSelectedMonth) {
+      setSelectedMonth(currentSelectedMonth);
+      props.onMonthClick(currentSelectedMonth);
+      onMonthSelect('');
+    }
+  }, [currentSelectedMonth, props, onMonthSelect]);
 
   const onCategoryClick = (category: string) => {
     setSelectedCategory(category);
@@ -548,7 +564,7 @@ export default function SpendingInsights(props: Props) {
       {console.log('data', sortedData, selectedIndex)}
       {selectedType !== 'IncomeType' && (
         <div className="userDataBoxBarChart">
-          <LineChartComponent
+          <SelectedCategoryChart
             data={sortedData}
             lines={lines}
             width={width}

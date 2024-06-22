@@ -14,15 +14,16 @@ import {
   LabelList,
 } from 'recharts';
 import { COLORS } from '../util';
+import { useCurrentSelection } from '../services/currentSelection';
 
-interface LineChartProps {
+interface SelectedCategoryChartProps {
   data: any[];
   lines: string[];
   width?: number;
   indexForColor?: number;
 }
 
-const LineChartComponent: React.FC<LineChartProps> = ({
+const SelectedCategoryChart: React.FC<SelectedCategoryChartProps> = ({
   data,
   lines,
   width = 500,
@@ -31,6 +32,9 @@ const LineChartComponent: React.FC<LineChartProps> = ({
   const height = 300;
   const [activeLine, setActiveLine] = useState<string | null>(null);
   const [chartType, setChartType] = useState<'line' | 'bar'>('bar');
+
+  // Use the hook to get access to onCategorySelect
+  const { onMonthSelect } = useCurrentSelection();
 
   const toggleChartType = () => {
     setChartType(prevType => (prevType === 'line' ? 'bar' : 'line'));
@@ -54,6 +58,14 @@ const LineChartComponent: React.FC<LineChartProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const onChartClick = (event: { activePayload: any[] }) => {
+    if (event && event.activePayload && event.activePayload.length > 0) {
+      const xDataKey = event.activePayload[0].payload.monthYear;
+      console.log(xDataKey); // This will log the X-axis data key of the clicked bar
+      onMonthSelect(xDataKey);
+    }
+  };
 
   return (
     <div ref={chartRef}>
@@ -85,7 +97,12 @@ const LineChartComponent: React.FC<LineChartProps> = ({
             ))}
           </LineChart>
         ) : (
-          <BarChart width={width * 0.95} height={height} data={data}>
+          <BarChart
+            width={width * 0.95}
+            height={height}
+            data={data}
+            onClick={onChartClick}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="monthYear" />
             <YAxis />
@@ -115,4 +132,4 @@ const LineChartComponent: React.FC<LineChartProps> = ({
   );
 };
 
-export default LineChartComponent;
+export default SelectedCategoryChart;
