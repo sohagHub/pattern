@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { currencyFilter } from '../util';
+import { currencyFilter, monthMap } from '../util';
 import { CategoriesChart } from '.';
 import { TransactionType } from './types';
 import MonthlyCostChart from './MonthlyCostChart';
 import SelectedCategoryChart from './SelectedCategoryChart';
 import { useCurrentSelection } from '../services/currentSelection';
-import { on } from 'events';
 
 interface Props {
   transactions: TransactionType[];
@@ -42,7 +41,6 @@ const isIncomeCategory = (category: string): boolean => {
   return includedCategory.includes(category);
 };
 
-type MonthMap = { [key: string]: string };
 interface CategoryCosts {
   [monthYear: string]: {
     [category: string]: {
@@ -53,22 +51,6 @@ interface CategoryCosts {
     };
   };
 }
-
-// Mapping of month names to month numbers
-const months: MonthMap = {
-  Jan: '01',
-  Feb: '02',
-  Mar: '03',
-  Apr: '04',
-  May: '05',
-  Jun: '06',
-  Jul: '07',
-  Aug: '08',
-  Sep: '09',
-  Oct: '10',
-  Nov: '11',
-  Dec: '12',
-};
 
 export default function SpendingInsights(props: Props) {
   // grab transactions from most recent month and filter out transfers and payments
@@ -200,8 +182,8 @@ export default function SpendingInsights(props: Props) {
           const aYear = a.month.split(' ')[1];
           const bMonth = b.month.split(' ')[0];
           const bYear = b.month.split(' ')[1];
-          const aMonthNumber = months[aMonth];
-          const bMonthNumber = months[bMonth];
+          const aMonthNumber = monthMap[aMonth];
+          const bMonthNumber = monthMap[bMonth];
           if (aYear === bYear) {
             return Number(aMonthNumber) - Number(bMonthNumber);
           }
@@ -252,8 +234,8 @@ export default function SpendingInsights(props: Props) {
       const aYear = a[0].split(' ')[1];
       const bMonth = b[0].split(' ')[0];
       const bYear = b[0].split(' ')[1];
-      const aMonthNumber = months[aMonth];
-      const bMonthNumber = months[bMonth];
+      const aMonthNumber = monthMap[aMonth];
+      const bMonthNumber = monthMap[bMonth];
       if (aYear === bYear) {
         return Number(aMonthNumber) - Number(bMonthNumber);
       }
@@ -436,20 +418,6 @@ export default function SpendingInsights(props: Props) {
 
   //console.log('lines', lines);
 
-  let data1 = Object.keys(categoryCosts).map(monthYear => ({
-    monthYear,
-    ...Object.fromEntries(
-      Object.entries(categoryCosts[monthYear]).map(
-        ([category, categoryData]) => [
-          selectedSubCategory ? selectedSubCategory : category,
-          selectedSubCategory
-            ? categoryData.subcategories[selectedSubCategory] || 0
-            : categoryData.total,
-        ]
-      )
-    ),
-  }));
-
   type MonthData = { monthYear: string; [key: string]: number | string };
 
   const data: MonthData[] = Object.keys(categoryCosts).map(monthYear => {
@@ -472,20 +440,15 @@ export default function SpendingInsights(props: Props) {
     return monthData;
   });
 
-  console.log('data', data1);
-
-  const sortDataByMonthYear = (
-    data: any[],
-    months: { [key: string]: number }
-  ) => {
+  const sortDataByMonthYear = (data: any[]) => {
     return [...data].sort((a, b) => {
       // a and b are like "Jan 2021"
       const aMonth = a.monthYear.split(' ')[0];
       const aYear = a.monthYear.split(' ')[1];
       const bMonth = b.monthYear.split(' ')[0];
       const bYear = b.monthYear.split(' ')[1];
-      const aMonthNumber = months[aMonth];
-      const bMonthNumber = months[bMonth];
+      const aMonthNumber = monthMap[aMonth];
+      const bMonthNumber = monthMap[bMonth];
       if (aYear === bYear) {
         return Number(aMonthNumber) - Number(bMonthNumber);
       }
@@ -493,9 +456,7 @@ export default function SpendingInsights(props: Props) {
     });
   };
 
-  const sortedData = sortDataByMonthYear(data, (months as unknown) as {
-    [key: string]: number;
-  });
+  const sortedData = sortDataByMonthYear(data);
 
   console.log('sortedData', sortedData);
 

@@ -32,7 +32,25 @@ export function currencyFilter(value: number) {
     .replace(/(\d)(?=(\d{3})+(\.|$))/g, '$1,')}`;
 }
 
-const months = [
+export type MonthMap = { [key: string]: string };
+
+// Mapping of month names to month numbers
+export const monthMap: MonthMap = {
+  Jan: '01',
+  Feb: '02',
+  Mar: '03',
+  Apr: '04',
+  May: '05',
+  Jun: '06',
+  Jul: '07',
+  Aug: '08',
+  Sep: '09',
+  Oct: '10',
+  Nov: '11',
+  Dec: '12',
+};
+
+const monthList = [
   null,
   'January',
   'February',
@@ -56,7 +74,7 @@ export function formatDate(timestamp: string) {
     // slice will return the first 10 char(date)of timestamp
     // coming in as: 2019-05-07T15:41:30.520Z
     const [y, m, d] = timestamp.slice(0, 10).split('-');
-    return `${months[+m]} ${d}, ${y}`;
+    return `${monthList[+m]} ${d}, ${y}`;
   }
 
   return '';

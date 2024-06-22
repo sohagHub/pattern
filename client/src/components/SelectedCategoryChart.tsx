@@ -68,7 +68,8 @@ const SelectedCategoryChart: React.FC<SelectedCategoryChartProps> = ({
   };
 
   return (
-    <div ref={chartRef}>
+    <div className="holdingsListCategories" ref={chartRef}>
+      <h5 className="holdingsHeading">Category trend</h5>
       <div style={{ position: 'relative' }}>
         <button
           onClick={toggleChartType}
