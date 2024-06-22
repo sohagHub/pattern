@@ -56,7 +56,7 @@ export default function SpendingInsights(props: Props) {
   // grab transactions from most recent month and filter out transfers and payments
   const transactions = props.transactions;
   const [selectedMonth, setSelectedMonth] = useState<string>('');
-  const [selectedType, setSelectedType] = useState<string>(''); // income or spending
+  const [costType, setCostType] = useState<string>(''); // income or spending
 
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
@@ -127,27 +127,27 @@ export default function SpendingInsights(props: Props) {
       result = getOneMonthTransactions(
         transactions,
         date => getMonthYear(date) === selectedMonth,
-        selectedType
+        costType
       );
     } else {
       result = getOneMonthTransactions(
         transactions,
         date => getMonthYear(date) === getMonthYear(today),
-        selectedType
+        costType
       );
       setSelectedMonth(getMonthYear(today));
       if (result.length <= 0) {
         result = getOneMonthTransactions(
           transactions,
           date => getMonthYear(date) === getMonthYear(oneMonthAgo),
-          selectedType
+          costType
         );
         setSelectedMonth(getMonthYear(oneMonthAgo));
       }
     }
     return result;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedMonth, selectedType, transactions]);
+  }, [selectedMonth, costType, transactions]);
 
   const monthlyCosts = useMemo(
     () =>
@@ -189,7 +189,7 @@ export default function SpendingInsights(props: Props) {
           }
           return aYear - bYear;
         });
-        //console.log('acc', acc);
+
         return acc;
       }, []),
 
@@ -199,8 +199,21 @@ export default function SpendingInsights(props: Props) {
   const categoryCosts = useMemo<CategoryCosts>(() => {
     const unsortedCategoryCosts = transactions.reduce(
       (acc: CategoryCosts, tx) => {
-        if (!isCostCategory(tx.category)) {
+        if (!isCostCategory(tx.category) && !isIncomeCategory(tx.category)) {
           return acc;
+        }
+        if (costType === 'IncomeType' && !isIncomeCategory(tx.category)) {
+          return acc;
+        }
+        if (costType === 'SpendingType' && !isCostCategory(tx.category)) {
+          return acc;
+        }
+        if (!costType && !isCostCategory(tx.category)) {
+          return acc;
+        }
+
+        if (isIncomeCategory(tx.category)) {
+          tx.amount = -tx.amount;
         }
 
         const date = new Date(tx.date);
@@ -243,7 +256,7 @@ export default function SpendingInsights(props: Props) {
     });
 
     return Object.fromEntries(sortedEntries);
-  }, [transactions]);
+  }, [costType, transactions]);
 
   // create category and name objects from transactions
   const categoriesObject = useMemo((): Categories => {
@@ -343,7 +356,7 @@ export default function SpendingInsights(props: Props) {
   // sort names by spending totals
   const sortedNames = useMemo(() => {
     // if selectedType is IncomeType, convert all values to positive
-    if (selectedType === 'IncomeType') {
+    if (costType === 'IncomeType') {
       for (const name in namesObject) {
         namesObject[name] = Math.abs(namesObject[name]);
       }
@@ -356,12 +369,12 @@ export default function SpendingInsights(props: Props) {
     namesArray.sort((a: any[], b: any[]) => b[1] - a[1]);
     //namesArray.splice(5); // top 5
     return namesArray;
-  }, [namesObject, selectedType]);
+  }, [namesObject, costType]);
 
   const onMonthClickSetMonth = (month: string, type: string) => {
     props.onMonthClick(month);
     setSelectedMonth(month);
-    setSelectedType(type);
+    setCostType(type);
   };
 
   const [width, setWidth] = useState(0);
@@ -490,7 +503,7 @@ export default function SpendingInsights(props: Props) {
                 : categoriesObject
             }
             selectedMonth={selectedMonth}
-            selectedType={selectedType}
+            selectedType={costType}
             onCategoryClick={
               selectedCategory && hasAtLeastTwoSubcategories()
                 ? onSubCategoryClick
@@ -506,7 +519,7 @@ export default function SpendingInsights(props: Props) {
         <div className="userDataBoxVendor">
           <div className="holdingsListVendor">
             <h5 className="holdingsHeading">
-              {selectedType === 'IncomeType' ? 'Income' : 'Spending'} Sources
+              {costType === 'IncomeType' ? 'Income' : 'Spending'} Sources
             </h5>
             <div className="spendingInsightData">
               <p className="title">Source</p> <p className="title">Amount</p>
@@ -523,7 +536,7 @@ export default function SpendingInsights(props: Props) {
         </div>
       </div>
       {console.log('data', sortedData, selectedIndex)}
-      {selectedType !== 'IncomeType' && (
+      {costType !== 'IncomeType1' && (
         <div className="userDataBoxBarChart">
           <SelectedCategoryChart
             data={sortedData}
