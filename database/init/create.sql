@@ -426,3 +426,8 @@ DROP TRIGGER IF EXISTS trg_capture_balance_update ON public.accounts_table;
 CREATE TRIGGER trg_capture_balance_update
 AFTER
 UPDATE ON public.accounts_table FOR EACH ROW EXECUTE FUNCTION fn_capture_balance_change();
+
+
+ALTER TABLE public.items_table ADD institution_name varchar NULL;
+
+ALTER TABLE public.accounts_table ADD is_closed boolean NULL DEFAULT false;
