@@ -8,7 +8,6 @@ const jwt = require('jsonwebtoken');
 const {
   PLAID_CLIENT_ID,
   PLAID_ENV,
-  PLAID_SECRET_DEVELOPMENT,
   PLAID_SECRET_PRODUCTION,
 } = process.env;
 

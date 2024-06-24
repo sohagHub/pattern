@@ -4,11 +4,10 @@
 export CHOKIDAR_USEPOLLING=true
 export PLAID_CLIENT_ID=your_client_id
 export PLAID_SECRET_SANDBOX=your_plaid_secret_sandbox
-export PLAID_SECRET_DEVELOPMENT=your_plaid_secret_development
 export PLAID_SECRET_PRODUCTION=your_plaid_secret_production
 export PLAID_SANDBOX_REDIRECT_URI=http://localhost:3001/oauth-link
-export PLAID_DEVELOPMENT_REDIRECT_URI=http://localhosts:3001/oauth-link
-export PLAID_ENV=development
+export PLAID_PRODUCTION_REDIRECT_URI=http://localhosts:3001/oauth-link
+export PLAID_ENV=production
 export PORT=5001
 export DB_PORT=5432
 export DB_HOST_NAME=localhost
