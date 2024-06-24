@@ -276,11 +276,22 @@ export default function TransactionsTable(props: Props) {
     setIsModalOpen(!isModalOpen);
   };
 
-  // Function to handle saving changes from the modal
-  const handleSaveChanges = async (transaction: TransactionType) => {
+  // This function is called when the modal is closed
+  const handleClose = () => {
+    // Reset the state of the currentTransaction
+    setCurrentTransaction(null);
+
+    // Close the modal
     setIsModalOpen(false);
+  };
+
+    // Function to handle saving changes from the modal
+  const handleSaveChanges = async (transaction: TransactionType) => {
+    handleClose();
+
     // Call API to save changes
     await updateTransactionById(transaction.id, transaction);
+
     // Update local state or refetch transactions as necessary
     dispatch({
       type: 'UPDATE_TRANSACTION',
@@ -289,15 +300,6 @@ export default function TransactionsTable(props: Props) {
         updates: transaction,
       },
     });
-  };
-
-  // This function is called when the modal is closed
-  const handleClose = () => {
-    // Reset the state of the currentTransaction
-    setCurrentTransaction(null);
-
-    // Close the modal
-    setIsModalOpen(false);
   };
   
   return (

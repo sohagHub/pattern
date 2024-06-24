@@ -151,10 +151,15 @@ function reducer(state: TransactionsState, action: TransactionsAction | any) {
   switch (action.type) {
     case 'UPDATE_TRANSACTION':
       const { id, updates } = action.payload;
-      return {
-        ...state,
-        [id]: { ...state[id], ...updates },
-      };
+      if (updates.mark_delete) {
+        const { [id]: _, ...remainingTransactions } = state;
+        return remainingTransactions;
+      } else {
+        return {
+          ...state,
+          [id]: { ...state[id], ...updates },
+        };
+      }
     case 'SUCCESSFUL_GET':
       if (!action.payload.length) {
         return state;

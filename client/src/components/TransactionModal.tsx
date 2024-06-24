@@ -32,6 +32,13 @@ const TransactionModal: FC<TransactionModalProps> = ({
   const handleSave = () => {
     if (editedTransaction) onSave(editedTransaction);
   };
+    
+  const handleDelete = () => {
+      if (editedTransaction) {
+          editedTransaction.mark_delete = true;
+          onSave(editedTransaction);
+      }
+  };
   
   const onCreateRule = () => {
       setShowRuleForm(true);
@@ -111,6 +118,7 @@ const TransactionModal: FC<TransactionModalProps> = ({
             <button type="submit" onClick={handleSave}>Save</button>
             <button type="button" onClick={onCreateRule}>Create Rule</button>
             <button type="button" onClick={onCancel}>Cancel</button>
+            <button type="button" onClick={handleDelete}>Delete</button>
         </div>
       </div>
           {showRuleForm &&
