@@ -455,7 +455,8 @@ SELECT t.id,
   t.account_owner,
   t.created_at,
   t.updated_at,
-  a.name AS account_name
+  a.name AS account_name,
+  t.original_name
 FROM transactions_table t
   LEFT JOIN accounts a ON t.account_id = a.id
 where t.mark_delete is not TRUE;

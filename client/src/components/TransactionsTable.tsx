@@ -363,7 +363,7 @@ export default function TransactionsTable(props: Props) {
               <tr key={tx.id} onClick={() => { handleRowDoubleClick(tx) }}>
                   <td className="mobile-only">{tx.date.slice(0, 10)}<br/><strong>{tx.name}</strong><br />{tx.account_name}</td>
                   <td >{tx.date.slice(0, 10)}</td>
-                  <td ><strong>{tx.name}</strong><br />Account: {tx.account_name}</td>
+                <td ><strong>{tx.name}</strong><br />Account: {tx.account_name} <br />{tx.id}#{tx.original_name}</td>
                   <td ><strong>{tx.category}</strong><br />{tx.subcategory}</td>
                   <td ><strong>{currencyFilter(tx.amount)}</strong></td>
               </tr>

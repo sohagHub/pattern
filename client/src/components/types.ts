@@ -66,6 +66,7 @@ export interface TransactionType {
   updated_at: string;
   account_name: string;
   mark_delete: boolean;
+  original_name: string;
 }
 
 export interface AssetType {
