@@ -4,7 +4,7 @@
 export CHOKIDAR_USEPOLLING=true
 export PORT=3001
 export REACT_APP_SERVER_PORT=5001
-export REACT_APP_PLAID_ENV=development
+export REACT_APP_PLAID_ENV=production
 
 # Install dependencies
 echo "Installing dependencies..."
