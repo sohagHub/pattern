@@ -82,6 +82,7 @@ router.put(
     item.name = req.body.name ? req.body.name : item.name;
     item.category = req.body.category ? req.body.category : item.category;
     item.subcategory = req.body.subcategory ? req.body.subcategory : item.subcategory;
+    item.mark_delete = req.body.mark_delete ? req.body.mark_delete : item.mark_delete;
     await justUpdateTransactions([item]);
     res.json({ status: 'ok' });
 

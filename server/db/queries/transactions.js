@@ -126,6 +126,7 @@ const justUpdateTransactions = async transactions => {
             name = $2,
             category = $3,
             subcategory = $4,
+            mark_delete = $5,
             manually_updated = true
           WHERE id = $1
           RETURNING *
@@ -134,7 +135,8 @@ const justUpdateTransactions = async transactions => {
           transaction.id,
           transaction.name,
           transaction.category,
-          transaction.subcategory
+          transaction.subcategory,
+          transaction.mark_delete
         ],
       };  
       await db.query(query);
