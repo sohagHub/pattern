@@ -431,3 +431,31 @@ UPDATE ON public.accounts_table FOR EACH ROW EXECUTE FUNCTION fn_capture_balance
 ALTER TABLE public.items_table ADD institution_name varchar NULL;
 
 ALTER TABLE public.accounts_table ADD is_closed boolean NULL DEFAULT false;
+
+ALTER TABLE public.transactions_table ADD mark_delete boolean NULL DEFAULT false;
+
+-- public.transactions source
+CREATE OR REPLACE VIEW public.transactions AS
+SELECT t.id,
+  t.plaid_transaction_id,
+  t.account_id,
+  a.plaid_account_id,
+  a.item_id,
+  a.plaid_item_id,
+  a.user_id,
+  t.category,
+  t.subcategory,
+  t.type,
+  t.name,
+  t.amount,
+  t.iso_currency_code,
+  t.unofficial_currency_code,
+  t.date,
+  t.pending,
+  t.account_owner,
+  t.created_at,
+  t.updated_at,
+  a.name AS account_name
+FROM transactions_table t
+  LEFT JOIN accounts a ON t.account_id = a.id
+where t.mark_delete is not TRUE;
