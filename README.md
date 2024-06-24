@@ -1,6 +1,6 @@
 # Plaid Pattern
 
-![Plaid Pattern client][client-img]
+
 
 This is a sample Personal Finance Manager application demonstrating an end-to-end [Plaid][plaid] integration, focused on linking items and fetching transaction data. You can view a simplified version of this demonstration app at [pattern.plaid.com](https://pattern.plaid.com).
 
@@ -64,7 +64,7 @@ As a modern full-stack application, Pattern consists of multiple services handli
 -   [`client`][client-readme] runs a [React]-based single-page web frontend
 -   [`server`][server-readme] runs an application back-end server using [NodeJS] and [Express]
 -   [`database`][database-readme] runs a [PostgreSQL][postgres] database
--   [`ngrok`][ngrok-readme] exposes a [ngrok] tunnel from your local machine to the Internet to receive webhooks
+
 
 We use [Docker Compose][docker-compose] to orchestrate these services. As such, each individual service has its own Dockerfile, which Docker Compose reads when bringing up the services.
 
@@ -263,30 +263,6 @@ The server stores the responses for all of the requests it makes to the Plaid AP
 Where applicable, it also maps the response to an item and user.
 If the request returned an error, the error_type and error_code columns will be populated.
 
-## Learn More
-
--   [PostgreSQL documentation][postgres-docs]
-
-# Plaid Pattern - ngrok
-
-This demo includes [ngrok](https://ngrok.com/), a utility that creates a secure tunnel between your local machine and the outside world. We're using it here to expose the local webhooks endpoint to the internet.
-
-Browse to [localhost:4040](http://localhost:4040/inspect/http) to see the ngrok dashboard. This will show any traffic that gets routed through the ngrok URL.
-
-**Do NOT use ngrok in production!** It's only included here as a convenience for local development and is not meant to be a production-quality solution.
-
-Don’t want to use ngrok? As long as you serve the app with an endpoint that is publicly exposed, all the Plaid webhooks will work.
-
-ngrok's free account has a session limit of 8 hours. To fully test out some of the transaction webhook workflows, you will need to get a more persistent endpoint as noted above when using the development environment.
-
-## Source
-
-This image is a copy of the Docker Hub image [wernight/ngrok](https://hub.docker.com/r/wernight/ngrok/dockerfile). We've copied it here to allow us to more closely version it and to make changes as needed.
-
-## Learn More
-
--   https://hub.docker.com/r/wernight/ngrok/dockerfile
--   https://github.com/wernight/docker-ngrok/tree/202c4692cbf1bbfd5059b6ac56bece42e90bfb82
 
 ## Troubleshooting
 
@@ -299,9 +275,6 @@ See [`docs/troubleshooting.md`][troubleshooting].
 -   Find comprehensive information on Plaid API endpoints in the [API documentation][plaid-docs].
 -   Questions? Please head to the [Help Center][plaid-help] or [open a Support ticket][plaid-support-ticket].
 
-## License
-
-Plaid Pattern is a demo app that is intended to be used only for the purpose of demonstrating how you can integrate with Plaid. You are solely responsible for ensuring the correctness, legality, security, privacy, and compliance of your own app and Plaid integration. The Pattern code is licensed under the [MIT License](LICENSE) and is provided as-is and without warranty of any kind. Plaid Pattern is provided for demonstration purposes only and is not intended for use in production environments.
 
 [create-script]: database/init/create.sql
 [docker-compose]: ./docker-compose.yml
@@ -347,3 +320,31 @@ Plaid Pattern is a demo app that is intended to be used only for the purpose of 
 [server-readme]: #plaid-pattern---server
 [troubleshooting]: docs/troubleshooting.md
 [wsl]: https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly
+
+
+# Run
+
+## Backend Server
+Server will auto start during reboot. Setup is done by following:
+
+>sudo nano /etc/systemd/system/plaidAppBackend.service
+
+```
+[Unit]
+Description=Plaid App Backend Service
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/plaid/pattern/server
+ExecStart=/home/pi/plaid/pattern/server/run-server.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+## Frontend html
+run the following command in `/home/pi/plaid/pattern/client` folder
+> npm run build
+
