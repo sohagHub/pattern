@@ -986,14 +986,14 @@ ErrorMessage
 
 .transactions-modal .Modal-module_modalPortalContent__3F_jp {
   max-width: 95% !important;
-  max-height: 95% !important;
+  //max-height: 95% !important;
   align-items: center;
-  overflow: auto;
+  //overflow: hidden;
 }
 
 .transactions-modal .transactions {
-  width: 95%;
-  height: 95%;
+  width: 90%;
+  height: 100%;
 }
 
 .transactions-modal .table-filter-sort-container {
