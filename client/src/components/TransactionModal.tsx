@@ -48,6 +48,7 @@ const TransactionModal: FC<TransactionModalProps> = ({
     <div className="modal-backdrop">
       <div className="modal-content">
         <div>
+            <label>{editedTransaction?.original_name}</label>
             <label>Name: </label>
             <input
                 // eslint-disable-next-line prettier/prettier

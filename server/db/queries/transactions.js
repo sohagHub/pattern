@@ -27,12 +27,6 @@ const createOrUpdateTransactions = async transactions => {
       account_owner: accountOwner,
     } = transaction;
 
-    // if more than 1 month old, skip
-    if (transaction.date > new Date().getTime() - 30 * 24 * 60 * 60 * 1000) {
-      //console.log('Skipping transaction:', transaction);
-      return;
-    }
-
     const { id: accountId } = await retrieveAccountByPlaidAccountId(
       plaidAccountId
     );
