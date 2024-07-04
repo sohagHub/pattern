@@ -37,7 +37,7 @@ const isCostCategory = (category: string): boolean => {
 };
 
 const isIncomeCategory = (category: string): boolean => {
-  const includedCategory = ['Interest', 'Income'];
+  const includedCategory = ['Interest', 'Income', 'Credit Card Rewards'];
   return includedCategory.includes(category);
 };
 
