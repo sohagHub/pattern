@@ -18,29 +18,16 @@ export default function Landing() {
     }
   }, [setCurrentUser, userState.newUser]);
 
-  const returnToCurrentUser = () => {
-    history.push(`/home`);
-  };
   return (
     <div>
-      <Banner initialSubheading />
-      If you don't have an account, please click "Create Account". Once created,
-      you can add as many example Link items as you like.
+      <Banner doNotShowNav />
+      If you don't have an account, please click "Create Account".
+      <br />
       <div className="btnsContainer">
         <Login />
         <Button className="btnWithMargin" onClick={toggleForm} centered inline>
           Create Account
         </Button>
-        {userState.currentUser.username != null && (
-          <Button
-            className="btnWithMargin"
-            centered
-            inline
-            onClick={returnToCurrentUser}
-          >
-            Return to Current User
-          </Button>
-        )}
       </div>
       {isAdding && <AddUserForm hideForm={hideForm} />}
     </div>
