@@ -92,7 +92,7 @@ router.get(
 router.get(
   '/:userId/items',
   asyncWrapper(async (req, res) => {
-    const { userId } = req.params;
+    const userId = req.user.userId;
     const items = await retrieveItemsByUser(userId);
     res.json(sanitizeItems(items));
   })
@@ -107,7 +107,7 @@ router.get(
 router.get(
   '/:userId/accounts',
   asyncWrapper(async (req, res) => {
-    const { userId } = req.params;
+    const userId = req.user.userId;
     const accounts = await retrieveAccountsByUserId(userId);
     res.json(sanitizeAccounts(accounts));
   })
@@ -122,7 +122,7 @@ router.get(
 router.get(
   '/:userId/transactions',
   asyncWrapper(async (req, res) => {
-    const { userId } = req.params;
+    const userId = req.user.userId;
     const transactions = await retrieveTransactionsByUserId(userId);
     res.json(sanitizeTransactions(transactions));
   })
@@ -136,7 +136,7 @@ router.get(
 router.delete(
   '/:userId',
   asyncWrapper(async (req, res) => {
-    const { userId } = req.params;
+    const userId = req.user.userId;
 
     // removes all items from Plaid services associated with the user. Once removed, the access_token
     // associated with an Item is no longer valid and cannot be used to
@@ -165,7 +165,7 @@ router.delete(
 router.get(
   '/:userId/rules',
   asyncWrapper(async (req, res) => {
-    const { userId } = req.params;
+    const userId = req.user.userId;
     const rules = await retrieveRulesByUserId(userId);
     res.json(rules);
   })
@@ -174,7 +174,7 @@ router.get(
 router.post(
   '/:userId/transactions/sync',
   asyncWrapper(async (req, res) => {
-    const { userId } = req.params;
+    const userId = req.user.userId;
 
     try {  
       const items = await retrieveItemsByUser(userId);
