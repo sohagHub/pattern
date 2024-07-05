@@ -27,7 +27,7 @@ body {
 
   @media (max-width: $breakpoint-vertical) {
     padding: 1 * $unit 0 0 0;
-    margin-left: 3 * $unit;
+    margin-left: 2 * $unit;
   }
 }
 
@@ -52,7 +52,7 @@ body {
   min-width: 60 * $unit;
 
   @media (max-width: $breakpoint-vertical) {
-    width: 100%;
+    width: 95%;
     margin-right: 1 * $unit;
     max-width: $breakpoint-vertical;
     min-width: unset;
@@ -68,7 +68,7 @@ body {
   min-width: 150 * $unit;
 
   @media (max-width: $breakpoint-vertical) {
-    width: 100%;
+    width: 95%;
     margin-right: auto;
     min-width: unset;
   }
@@ -482,7 +482,7 @@ net worth
 
   @media (max-width: $breakpoint-vertical) {
     flex-direction: column;
-    width: 95%;
+    width: 100%;
   }
 }
 
