@@ -219,6 +219,7 @@ export default function TransactionsTable(props: Props) {
   // Handler for category filter change
   const handleCategoryFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setCategoryFilter(event.target.value);
+    setCurrentPage(1);
   };
 
   function renderPagination() {
