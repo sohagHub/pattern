@@ -97,6 +97,7 @@ export default function TransactionsTable(props: Props) {
 
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
+  const [categoryToSubcategoryMapping, setCategoryToSubcategoryMapping] = useState<Record<string, string[]>>({});
   
   // Update filteredTransactions when props.selectedMonth changes
   useEffect(() => {
@@ -155,6 +156,25 @@ export default function TransactionsTable(props: Props) {
 
     const uniqueCategories = Array.from(new Set(filteredTransactions.map(tx => tx.category)));
     setUniqueCategories(uniqueCategories);
+
+    const categoryToSubcategoryMapping: Record<string, Set<string>> = {};
+
+    props.transactions.forEach(tx => {
+      if (tx.category && tx.subcategory) {
+        if (!categoryToSubcategoryMapping[tx.category]) {
+          categoryToSubcategoryMapping[tx.category] = new Set();
+        }
+        categoryToSubcategoryMapping[tx.category].add(tx.subcategory);
+      }
+    });
+
+    const categoryToSubcategoryMappingWithArrays: Record<string, string[]> = {};
+    Object.keys(categoryToSubcategoryMapping).forEach(category => {
+      categoryToSubcategoryMappingWithArrays[category] = Array.from(categoryToSubcategoryMapping[category]);
+    });
+
+    console.log(categoryToSubcategoryMappingWithArrays);
+    setCategoryToSubcategoryMapping(categoryToSubcategoryMappingWithArrays);
 
     filteredTransactions = filteredTransactions.filter(tx => {
       // Category filter
@@ -372,6 +392,7 @@ export default function TransactionsTable(props: Props) {
                   <td colSpan={4}>
                     <TransactionModal
                       transaction={currentTransaction}
+                      categoryToSubcategoryMapping={categoryToSubcategoryMapping}
                       isOpen={isModalOpen}
                       onSave={handleSaveChanges}
                       onCancel={handleClose}

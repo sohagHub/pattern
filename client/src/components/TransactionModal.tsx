@@ -4,14 +4,16 @@ import { TransactionType } from './types';
 import RuleForm from './RuleForm';
 
 interface TransactionModalProps {
-  transaction: TransactionType | null;
-  isOpen: boolean;
-  onSave: (transaction: TransactionType) => void;
-  onCancel: () => void;
+    transaction: TransactionType | null;
+    categoryToSubcategoryMapping: Record<string, string[]>;
+    isOpen: boolean;
+    onSave: (transaction: TransactionType) => void;
+    onCancel: () => void;
 }
 
 const TransactionModal: FC<TransactionModalProps> = ({
   transaction,
+  categoryToSubcategoryMapping,
   isOpen,
   onSave,
   onCancel,
@@ -43,6 +45,8 @@ const TransactionModal: FC<TransactionModalProps> = ({
   const onCreateRule = () => {
       setShowRuleForm(true);
   };
+
+    console.log('allCategories: ', categoryToSubcategoryMapping);
 
   return (
     <div className="modal-backdrop">
@@ -79,20 +83,52 @@ const TransactionModal: FC<TransactionModalProps> = ({
         <div>
             <label>Category: </label>
             <input
+                list="category-options"
                 value={editedTransaction?.category || ''}
-                onChange={e =>
-                    editedTransaction && editedTransaction.id &&
-                    setEditedTransaction({
-                        ...editedTransaction,
-                        category: e.target.value,
-                    })
-                }
+                onFocus={(e) => {
+                    // Temporarily clear the input value to ensure the dropdown shows all options
+                    if (e.target.value === editedTransaction?.category) {
+                        e.target.value = '';
+                    }
+                }}
+                onBlur={(e) => {
+                    // Restore the original value if no new option was selected
+                    if (!e.target.value.trim()) {
+                        e.target.value = transaction.category;
+                    }
+                }}
+                onChange={(e) => {
+                    if (editedTransaction && editedTransaction.id) {
+                        setEditedTransaction({
+                            ...editedTransaction,
+                            category: e.target.value,
+                        });
+                    }
+                }}
             />
+            <datalist id="category-options">
+                {Object.keys(categoryToSubcategoryMapping).map((category, index) => (
+                    <option key={index} value={category} />
+                ))}
+            </datalist>
         </div>
         <div>
             <label>Subcategory: </label>
             <input
+                list="subcategory-options"
                 value={editedTransaction?.subcategory || ''}
+                onFocus={(e) => {
+                    // Temporarily clear the input value to ensure the dropdown shows all options
+                    if (e.target.value === editedTransaction?.subcategory) {
+                        e.target.value = '';
+                    }
+                }}
+                onBlur={(e) => {
+                    // Restore the original value if no new option was selected
+                    if (!e.target.value.trim()) {
+                        e.target.value = transaction.subcategory;
+                    }
+                }}
                 onChange={e =>
                     editedTransaction && editedTransaction.id &&
                     setEditedTransaction({
@@ -101,6 +137,11 @@ const TransactionModal: FC<TransactionModalProps> = ({
                     })
                 }
             />
+            <datalist id="subcategory-options">
+                {editedTransaction && categoryToSubcategoryMapping[editedTransaction.category]?.map((subcategory, index) => (
+                    <option key={index} value={subcategory} />
+                ))}
+            </datalist>
         </div>
         <div>
             <label>Amount: </label>
