@@ -12,6 +12,26 @@ interface Props {
   rows?: number;
 }
 
+const mapCategoriesToSubcategories = (inputTransactions: TransactionType[]): Record<string, string[]> => {
+  const categoryToSubcategoryMapping: Record<string, Set<string>> = {};
+
+  inputTransactions.forEach(tx => {
+    if (tx.category && tx.subcategory) {
+      if (!categoryToSubcategoryMapping[tx.category]) {
+        categoryToSubcategoryMapping[tx.category] = new Set();
+      }
+      categoryToSubcategoryMapping[tx.category].add(tx.subcategory);
+    }
+  });
+
+  const categoryToSubcategoryMappingWithArrays: Record<string, string[]> = {};
+  Object.keys(categoryToSubcategoryMapping).forEach(category => {
+    categoryToSubcategoryMappingWithArrays[category] = Array.from(categoryToSubcategoryMapping[category]);
+  });
+
+  return categoryToSubcategoryMappingWithArrays;
+};
+
 export default function TransactionsTable(props: Props) {
   const [rowsPerPage, setRowsPerPage] = useState(props.rows || 20);
   const { dispatch } = useTransactions();
@@ -96,7 +116,8 @@ export default function TransactionsTable(props: Props) {
   }, [props.filterText]);
 
   const [categoryFilter, setCategoryFilter] = useState('All');
-  const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
+  const [subCategoryFilter, setSubCategoryFilter] = useState('All');
+  const [uniqueCategoryToSubcategoryMapping, setUniqueCategoryToSubcategoryMapping] = useState<Record<string, string[]>>({});
   const [categoryToSubcategoryMapping, setCategoryToSubcategoryMapping] = useState<Record<string, string[]>>({});
   
   // Update filteredTransactions when props.selectedMonth changes
@@ -154,27 +175,10 @@ export default function TransactionsTable(props: Props) {
       return andMatch && (orMatch || orTerms.length === 0) && notMatch;
     });
 
-    const uniqueCategories = Array.from(new Set(filteredTransactions.map(tx => tx.category)));
-    setUniqueCategories(uniqueCategories);
 
-    const categoryToSubcategoryMapping: Record<string, Set<string>> = {};
 
-    props.transactions.forEach(tx => {
-      if (tx.category && tx.subcategory) {
-        if (!categoryToSubcategoryMapping[tx.category]) {
-          categoryToSubcategoryMapping[tx.category] = new Set();
-        }
-        categoryToSubcategoryMapping[tx.category].add(tx.subcategory);
-      }
-    });
-
-    const categoryToSubcategoryMappingWithArrays: Record<string, string[]> = {};
-    Object.keys(categoryToSubcategoryMapping).forEach(category => {
-      categoryToSubcategoryMappingWithArrays[category] = Array.from(categoryToSubcategoryMapping[category]);
-    });
-
-    console.log(categoryToSubcategoryMappingWithArrays);
-    setCategoryToSubcategoryMapping(categoryToSubcategoryMappingWithArrays);
+    setCategoryToSubcategoryMapping(mapCategoriesToSubcategories(props.transactions));
+    setUniqueCategoryToSubcategoryMapping(mapCategoriesToSubcategories(filteredTransactions));
 
     filteredTransactions = filteredTransactions.filter(tx => {
       // Category filter
@@ -182,11 +186,15 @@ export default function TransactionsTable(props: Props) {
         return false;
       }
 
+      if (categoryFilter !== 'All' && tx.subcategory !== subCategoryFilter) {
+        return false;
+      }
+
       return true;
     });
 
     setFilteredTransactions(filteredTransactions);
-  }, [categoryFilter, filterTerm, props.transactions]);
+  }, [categoryFilter, subCategoryFilter, filterTerm, props.transactions]);
 
 
 
@@ -218,7 +226,11 @@ export default function TransactionsTable(props: Props) {
 
   // Handler for category filter change
   const handleCategoryFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setCategoryFilter(event.target.value);
+    console.log('filter value', event.target.value);
+    // if there is :: in the value, then first part is category and second part is subcategory, also trim the value
+    const [category, subcategory] = event.target.value.split('::').map(part => part.trim());
+    setCategoryFilter(category);
+    setSubCategoryFilter(subcategory);
     setCurrentPage(1);
   };
 
@@ -368,10 +380,20 @@ export default function TransactionsTable(props: Props) {
             <th>Date</th>
             <th>Details</th>
             <th>Category<span> </span>
-              <select className='table-category-select' onChange={handleCategoryFilterChange} value={categoryFilter}>
+              <select className='table-category-select' onChange={handleCategoryFilterChange}>
                 <option value="All">All</option>
-                {uniqueCategories.map(category => (
-                  <option key={category} value={category}>{category}</option>
+                {Object.entries(uniqueCategoryToSubcategoryMapping).map(([category, subcategories]) => (
+                  <optgroup label={category} key={category}>
+                    {subcategories.length === 0 ? (
+                      // If there are no subcategories, just show the category itself as an option
+                      <option value={category}>{category}</option>
+                    ) : (
+                      // For categories with subcategories, list them as options
+                      subcategories.map(subcategory => (
+                        <option key={subcategory} value={`${category}::${subcategory}`}>{subcategory}</option>
+                      ))
+                    )}
+                  </optgroup>
                 ))}
               </select>
             </th>
