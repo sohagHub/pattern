@@ -33,7 +33,7 @@ export default function Sockets() {
     socket.current.on('SYNC_ERROR', ({ itemId, userId, log, error } = {}) => {
       const msg = `${log} ${error}`;
       console.log(msg);
-      toast(msg, { autoClose: false });
+      toast(msg, { autoClose: true });
       //getAccountsByItem(itemId);
       //getTransactionsByItem(itemId);
       //getTransactionsByUser(userId);
