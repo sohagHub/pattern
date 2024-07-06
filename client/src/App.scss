@@ -4,12 +4,9 @@ $threads-font-path: '~plaid-threads/fonts';
 
 $border: 2px solid $black200;
 $breakpoint-vertical: 1000px;
-//
+
 /*
-
-
 Base
-
 */
 
 body {
@@ -28,6 +25,7 @@ body {
   @media (max-width: $breakpoint-vertical) {
     padding: 1 * $unit 0 0 0;
     margin-left: 2 * $unit;
+    font-size: 2.1 * $unit;
   }
 }
 
