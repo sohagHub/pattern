@@ -1036,8 +1036,28 @@ ErrorMessage
     background-color: #f3f3f3;
   }
 
-  table-category-select {
-    white-space: nowrap;
+  .table-category-select {
+    display: inline-block;
+    min-width: 100px; /* Adjust minimum width as needed */
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    max-width: 50%;
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
   }
 
   /* Responsive table */
