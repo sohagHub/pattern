@@ -95,6 +95,10 @@ const TransactionModal: FC<TransactionModalProps> = ({
                     // Restore the original value if no new option was selected
                     if (!e.target.value.trim()) {
                         e.target.value = transaction.category;
+                        if (editedTransaction) {
+                            editedTransaction.category = transaction.category;
+                        }
+                        console.log('category: ', transaction.category);
                     }
                 }}
                 onChange={(e) => {
@@ -129,13 +133,16 @@ const TransactionModal: FC<TransactionModalProps> = ({
                         e.target.value = transaction.subcategory;
                     }
                 }}
-                onChange={e =>
-                    editedTransaction && editedTransaction.id &&
-                    setEditedTransaction({
-                        ...editedTransaction,
-                        subcategory: e.target.value,
-                    })
-                }
+                onChange={e => {
+                    if (editedTransaction && editedTransaction.id) {
+                        setEditedTransaction({
+                            ...editedTransaction,
+                            subcategory: e.target.value,
+                        });
+                    }
+                    console.log('category: ', editedTransaction?.category);
+                    console.log('subcategory: ', e.target.value);
+                }}
             />
             <datalist id="subcategory-options">
                 {editedTransaction && categoryToSubcategoryMapping[editedTransaction.category]?.map((subcategory, index) => (
