@@ -14,6 +14,7 @@ export interface ItemType {
   created_at: string;
   updated_at: string;
   total: number;
+  is_archived: boolean;
 }
 
 export interface AccountType {

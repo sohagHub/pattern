@@ -759,30 +759,29 @@ ErrorMessage
 }
 
 .pagination-list {
-  margin: 30;
-  padding: 10;
-  list-style: none;
+  margin: 0 auto; /* Centers the pagination list */
+  padding: 10px 0; /* Adds padding on top and bottom for spacing */
+  list-style: none; /* Removes default list styling */
   display: flex;
-  justify-content: center;
+  justify-content: center; /* Keeps pagination centered */
 }
 
 .pagination-item {
-  display: inline-block;
-  margin-right: 5px;
+  margin: 0 5px; /* Adds spacing between pagination items */
 }
 
 .pagination-link {
-  display: inline-block;
-  padding: 5px 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  color: #333;
+  padding: 8px 12px; /* Increases padding for a larger clickable area */
+  background-color: #f0f0f0; /* Light grey background */
+  border: 1px solid #ccc; /* Light grey border */
+  color: #333; /* Dark grey text */
   cursor: pointer;
-  text-decoration: none;
+  text-decoration: none; /* Removes underline from links */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
 
-.pagination-link:hover {
-  background-color: #e0e0e0;
+.pagination-link:hover, .pagination-link:focus {
+  background-color: #e0e0e0; /* Darker grey background on hover/focus */
 }
 
 .pagination-link.active {
@@ -790,9 +789,10 @@ ErrorMessage
   color: #fff;
 }
 
-.pagination-item.active .pagination-link {
-  background-color: #007bff;
-  color: white;
+.pagination-link.active, .pagination-item.active .pagination-link {
+  background-color: #007bff; /* Blue background for active state */
+  color: #fff; /* White text for active state */
+  border-color: #007bff; /* Blue border for active state */
 }
 
 .table-filter-sort-container {

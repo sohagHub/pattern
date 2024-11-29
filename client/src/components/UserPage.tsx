@@ -212,10 +212,9 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                   <div className="item__header">
                     <div>
                       <h2 className="item__header-heading">
-                        {`${items.length} ${pluralize(
-                          'Bank',
-                          items.length
-                        )} Linked`}{' '}
+                        {`${
+                          items.filter(item => !item.is_archived).length
+                        } ${pluralize('Bank', items.length)} Linked`}{' '}
                         <button
                           className="plus-button"
                           onClick={() => setIsExpanded(!isExpanded)}
@@ -231,18 +230,45 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                   </div>
                   <ErrorMessage />
 
-                  {isExpanded &&
-                    items.map(item => (
-                      <div id="itemCards" key={item.id}>
-                        <ItemCard
-                          item={item}
-                          userId={userId}
-                          onShowAccountTransactions={
-                            setSelectedAccountAndOpenModal
-                          }
-                        />
+                  {isExpanded && (
+                    <>
+                      {items
+                        .filter(item => !item.is_archived)
+                        .map(item => (
+                          <div id="itemCards" key={item.id}>
+                            {console.log(item)}
+                            <ItemCard
+                              item={item}
+                              userId={userId}
+                              onShowAccountTransactions={
+                                setSelectedAccountAndOpenModal
+                              }
+                            />
+                          </div>
+                        ))}
+                      <div className="archived-items">
+                        <h2 className="item__header-heading">
+                          {`${
+                            items.filter(item => item.is_archived).length
+                          } Archived ${pluralize('Bank', items.length)}`}
+                        </h2>
+                        {items
+                          .filter(item => item.is_archived)
+                          .map(item => (
+                            <div id="itemCards" key={item.id}>
+                              {console.log(item)}
+                              <ItemCard
+                                item={item}
+                                userId={userId}
+                                onShowAccountTransactions={
+                                  setSelectedAccountAndOpenModal
+                                }
+                              />
+                            </div>
+                          ))}
                       </div>
-                    ))}
+                    </>
+                  )}
                 </>
               )}
             </>
