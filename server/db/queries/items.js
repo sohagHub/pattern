@@ -153,8 +153,10 @@ const updateItemStatus = async (itemId, status) => {
  * @param {string} itemId the id of the item.
  */
 const deleteItem = async itemId => {
+  console.log('Deleting item', itemId);
   const query = {
-    text: `DELETE FROM items_table WHERE id = $1`,
+    // text: `DELETE FROM items_table WHERE id = $1`,
+    text: `UPDATE items SET is_archived=true WHERE id = $1`,
     values: [itemId],
   };
   await db.query(query);

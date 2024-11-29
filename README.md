@@ -276,51 +276,6 @@ See [`docs/troubleshooting.md`][troubleshooting].
 -   Questions? Please head to the [Help Center][plaid-help] or [open a Support ticket][plaid-support-ticket].
 
 
-[create-script]: database/init/create.sql
-[docker-compose]: ./docker-compose.yml
-[plaid-docs-api-identifiers]: https://plaid.com/docs/#storing-plaid-api-identifiers
-[plaid-new-support-ticket]: https://dashboard.plaid.com/support/new
-[postgres]: https://www.postgresql.org/
-[postgres-docs]: https://www.postgresql.org/docs/
-[cra]: https://github.com/facebook/create-react-app
-[plaid-link]: https://plaid.com/docs/#integrating-with-link
-[plaid-oauth]: https://plaid.com/docs/link/oauth/#introduction-to-oauth
-[plaid-link-update-mode]: https://plaid.com/docs/link/update-mode/
-[react]: https://reactjs.org/
-[database-readme]: #plaid-pattern---database
-[expressjs]: http://expressjs.com/
-[items-routes]: server/routes/items.js
-[ngrok-readme]: #plaid-pattern---ngrok
-[node-pg]: https://github.com/brianc/node-postgres
-[nodejs]: https://nodejs.org/en/
-[plaid-node]: https://github.com/plaid/plaid-node
-[transactions-handler]: /server/webhookHandlers/handleTransactionsWebhook.js
-[update-transactions]: /server/update_transactions.js
-[transactions-webhooks]: https://plaid.com/docs/#transactions-webhooks
-[users-routes]: server/routes/users.js
-[vscode-debugging]: https://code.visualstudio.com/docs/editor/debugging
-[client-img]: docs/pattern_screenshot.jpg
-[client-readme]: #plaid-pattern---client
-[docker]: https://docs.docker.com/
-[docker-compose]: https://docs.docker.com/compose/
-[express]: https://expressjs.com/
-[ngrok]: https://ngrok.com/
-[nodejs]: https://nodejs.org/en/
-[plaid]: https://plaid.com
-[plaid-dashboard]: https://dashboard.plaid.com/team/api
-[plaid-docs]: https://plaid.com/docs/
-[plaid-help]: https://support.plaid.com/hc/en-us
-[plaid-keys]: https://dashboard.plaid.com/developers/keys
-[plaid-quickstart]: https://plaid.com/docs/quickstart/
-[plaid-signup]: https://dashboard.plaid.com/signup
-[plaid-support-ticket]: https://dashboard.plaid.com/support/new
-[plaid-redirect-uri]: https://plaid.com/docs/link/oauth/#redirect-uri-configuration
-[postgres]: https://www.postgresql.org/
-[react]: http://reactjs.org/
-[server-readme]: #plaid-pattern---server
-[troubleshooting]: docs/troubleshooting.md
-[wsl]: https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly
-
 
 # Run
 
