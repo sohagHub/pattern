@@ -303,3 +303,54 @@ WantedBy=multi-user.target
 run the following command in `/home/pi/plaid/pattern/client` folder
 > npm run build
 
+## Run server with nginx
+
+> cat /etc/nginx/sites-available/plaidapp
+```
+server{
+    #listen on port 80 and redirect to HTTPS
+    listen 80;
+    server_name sohagst.duckdns.org; # Use your server's IP or domain name
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    # Listen on port 443 for SSL connections
+    listen 443 ssl;
+    server_name sohagst.duckdns.org; # Use your server's IP or domain name
+
+    # Specify the location of the SSL certificate and private key
+    ssl_certificate /etc/letsencrypt/archive/sohagst.duckdns.org/fullchain1.pem; # Adjust this path
+    ssl_certificate_key /etc/letsencrypt/archive/sohagst.duckdns.org/privkey1.pem; # Adjust this path
+
+    # Recommended SSL settings for security
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+
+    location / {
+        root /home/pi/plaid/pattern/client/build; # Adjust the path to your React app's build directory
+        try_files $uri /index.html;
+        index index.html index.htm;
+    }
+
+    location /socket.io {
+        proxy_pass http://localhost:5001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+     
+    # Proxy all other requests to the backend server
+    location /api {
+        proxy_pass http://localhost:5001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```

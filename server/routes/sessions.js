@@ -69,7 +69,7 @@ router.post(
 
 const handleAuthentication = (res, user) => {
   generateAndSetToken(res, 'token', user, SECRET_KEY, '10m');
-  generateAndSetToken(res, 'refreshToken', user, REFRESH_SECRET_KEY, '2d');
+  generateAndSetToken(res, 'refreshToken', user, REFRESH_SECRET_KEY, '1440m');
 
   let returnUser = sanitizeUsers(user);
   res.json(returnUser);
