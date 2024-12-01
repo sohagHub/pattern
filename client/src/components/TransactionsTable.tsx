@@ -12,7 +12,9 @@ interface Props {
   rows?: number;
 }
 
-const mapCategoriesToSubcategories = (inputTransactions: TransactionType[]): Record<string, string[]> => {
+const mapCategoriesToSubcategories = (
+  inputTransactions: TransactionType[]
+): Record<string, string[]> => {
   const categoryToSubcategoryMapping: Record<string, Set<string>> = {};
 
   inputTransactions.forEach(tx => {
@@ -26,7 +28,9 @@ const mapCategoriesToSubcategories = (inputTransactions: TransactionType[]): Rec
 
   const categoryToSubcategoryMappingWithArrays: Record<string, string[]> = {};
   Object.keys(categoryToSubcategoryMapping).forEach(category => {
-    categoryToSubcategoryMappingWithArrays[category] = Array.from(categoryToSubcategoryMapping[category]);
+    categoryToSubcategoryMappingWithArrays[category] = Array.from(
+      categoryToSubcategoryMapping[category]
+    );
   });
 
   return categoryToSubcategoryMappingWithArrays;
@@ -58,8 +62,12 @@ export default function TransactionsTable(props: Props) {
     setSortDirection(event.target.value);
   };
 
-  const [filteredTransactions, setFilteredTransactions] = useState<TransactionType[]>([]);
-  const [currentTransactions, setCurrentTransactions] = useState<TransactionType[]>([]);
+  const [filteredTransactions, setFilteredTransactions] = useState<
+    TransactionType[]
+  >([]);
+  const [currentTransactions, setCurrentTransactions] = useState<
+    TransactionType[]
+  >([]);
 
   function convertDateString(input: string): string {
     // Define a type for the month mapping
@@ -102,9 +110,9 @@ export default function TransactionsTable(props: Props) {
   useEffect(() => {
     console.log('filter: ' + props.filterText);
     // get all term that are separated by space or quotes and not empty string
-    let terms = props.filterText.split('\'').filter((item) => item.trim() !== '');
+    let terms = props.filterText.split("'").filter(item => item.trim() !== '');
 
-    const newFilterTerm = convertDateString(terms[0]);//convertDateString(props.filterText);
+    const newFilterTerm = convertDateString(terms[0]); //convertDateString(props.filterText);
     if (
       newFilterTerm === 'Invalid Date Format' ||
       newFilterTerm === 'Invalid Month'
@@ -117,9 +125,15 @@ export default function TransactionsTable(props: Props) {
 
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [subCategoryFilter, setSubCategoryFilter] = useState('All');
-  const [uniqueCategoryToSubcategoryMapping, setUniqueCategoryToSubcategoryMapping] = useState<Record<string, string[]>>({});
-  const [categoryToSubcategoryMapping, setCategoryToSubcategoryMapping] = useState<Record<string, string[]>>({});
-  
+  const [
+    uniqueCategoryToSubcategoryMapping,
+    setUniqueCategoryToSubcategoryMapping,
+  ] = useState<Record<string, string[]>>({});
+  const [
+    categoryToSubcategoryMapping,
+    setCategoryToSubcategoryMapping,
+  ] = useState<Record<string, string[]>>({});
+
   // Update filteredTransactions when props.selectedMonth changes
   useEffect(() => {
     const input = filterTerm;
@@ -132,16 +146,34 @@ export default function TransactionsTable(props: Props) {
     const notMatches = input.match(/NOT ?\((.*?)\)/);
 
     if (orMatches && orMatches[1]) {
-      orTerms.push(...orMatches[1].trim().toLowerCase().split(/\s+/));
+      orTerms.push(
+        ...orMatches[1]
+          .trim()
+          .toLowerCase()
+          .split(/\s+/)
+      );
     }
 
     if (notMatches && notMatches[1]) {
-      notTerms.push(...notMatches[1].trim().toLowerCase().split(/\s+/));
+      notTerms.push(
+        ...notMatches[1]
+          .trim()
+          .toLowerCase()
+          .split(/\s+/)
+      );
     }
 
     // Remove the OR and NOT parts from the input, then treat the rest as AND terms
-    const andString = input.replace(/OR ?\(.*?\)/, '').replace(/NOT ?\(.*?\)/, '');
-    andTerms.push(...andString.trim().toLowerCase().split(/\s+/).filter(term => term));
+    const andString = input
+      .replace(/OR ?\(.*?\)/, '')
+      .replace(/NOT ?\(.*?\)/, '');
+    andTerms.push(
+      ...andString
+        .trim()
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(term => term)
+    );
 
     // Function to check if a transaction matches a given term
     const matchesTerm = (tx: TransactionType, term: string): boolean => {
@@ -159,26 +191,33 @@ export default function TransactionsTable(props: Props) {
         tx.category?.toLowerCase().includes(term) ||
         tx.subcategory?.toLowerCase().includes(term) ||
         tx.account_name?.toLowerCase().includes(term) ||
-        tx.amount?.toString().toLowerCase().includes(term) ||
+        tx.amount
+          ?.toString()
+          .toLowerCase()
+          .includes(term) ||
         tx.date?.toLowerCase().includes(term)
-      )
+      );
     };
 
     // Filter transactions based on AND, OR, NOT logic
     let filteredTransactions = props.transactions.filter(tx => {
       //if (tx.category === 'Duplicate') return false;
 
-      const andMatch = andTerms.length === 0 || andTerms.every(term => matchesTerm(tx, term));
-      const orMatch = orTerms.length > 0 && orTerms.some(term => matchesTerm(tx, term));
+      const andMatch =
+        andTerms.length === 0 || andTerms.every(term => matchesTerm(tx, term));
+      const orMatch =
+        orTerms.length > 0 && orTerms.some(term => matchesTerm(tx, term));
       const notMatch = notTerms.every(term => !matchesTerm(tx, term));
 
       return andMatch && (orMatch || orTerms.length === 0) && notMatch;
     });
 
-
-
-    setCategoryToSubcategoryMapping(mapCategoriesToSubcategories(props.transactions));
-    setUniqueCategoryToSubcategoryMapping(mapCategoriesToSubcategories(filteredTransactions));
+    setCategoryToSubcategoryMapping(
+      mapCategoriesToSubcategories(props.transactions)
+    );
+    setUniqueCategoryToSubcategoryMapping(
+      mapCategoriesToSubcategories(filteredTransactions)
+    );
 
     filteredTransactions = filteredTransactions.filter(tx => {
       // Category filter
@@ -195,8 +234,6 @@ export default function TransactionsTable(props: Props) {
 
     setFilteredTransactions(filteredTransactions);
   }, [categoryFilter, subCategoryFilter, filterTerm, props.transactions]);
-
-
 
   useEffect(() => {
     const sortedTransactions = filteredTransactions.sort((a, b) => {
@@ -225,10 +262,14 @@ export default function TransactionsTable(props: Props) {
   ]);
 
   // Handler for category filter change
-  const handleCategoryFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleCategoryFilterChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     console.log('filter value', event.target.value);
     // if there is :: in the value, then first part is category and second part is subcategory, also trim the value
-    const [category, subcategory] = event.target.value.split('::').map(part => part.trim());
+    const [category, subcategory] = event.target.value
+      .split('::')
+      .map(part => part.trim());
     setCategoryFilter(category);
     setSubCategoryFilter(subcategory);
     setCurrentPage(1);
@@ -263,8 +304,9 @@ export default function TransactionsTable(props: Props) {
             return (
               <li
                 key={index}
-                className={`pagination-item  ${currentPage === pageNumber ? 'active' : ''
-                  }`}
+                className={`pagination-item  ${
+                  currentPage === pageNumber ? 'active' : ''
+                }`}
               >
                 <button
                   className="pagination-link"
@@ -285,7 +327,7 @@ export default function TransactionsTable(props: Props) {
             previousWasEllipsis = true;
             return (
               <li className="pagination-item" key={index}>
-                ......
+                ...
               </li>
             );
           }
@@ -298,7 +340,10 @@ export default function TransactionsTable(props: Props) {
 
   // Then, inside your component
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentTransaction, setCurrentTransaction] = useState<TransactionType | null>(null);
+  const [
+    currentTransaction,
+    setCurrentTransaction,
+  ] = useState<TransactionType | null>(null);
 
   // Function to open the modal with a transaction
   const handleRowDoubleClick = (transaction: TransactionType) => {
@@ -318,7 +363,7 @@ export default function TransactionsTable(props: Props) {
     setIsModalOpen(false);
   };
 
-    // Function to handle saving changes from the modal
+  // Function to handle saving changes from the modal
   const handleSaveChanges = async (transaction: TransactionType) => {
     handleClose();
 
@@ -334,7 +379,7 @@ export default function TransactionsTable(props: Props) {
       },
     });
   };
-  
+
   return (
     <div className="transactions">
       {/* New inputs for filter term and sort direction */}
@@ -379,22 +424,33 @@ export default function TransactionsTable(props: Props) {
             <th className="mobile-only">Date & Details</th>
             <th>Date</th>
             <th>Details</th>
-            <th>Category<span> </span>
-              <select className='table-category-select' onChange={handleCategoryFilterChange}>
+            <th>
+              Category<span> </span>
+              <select
+                className="table-category-select"
+                onChange={handleCategoryFilterChange}
+              >
                 <option value="All">All</option>
-                {Object.entries(uniqueCategoryToSubcategoryMapping).map(([category, subcategories]) => (
-                  <optgroup label={category} key={category}>
-                    {subcategories.length === 0 ? (
-                      // If there are no subcategories, just show the category itself as an option
-                      <option value={category}>{category}</option>
-                    ) : (
-                      // For categories with subcategories, list them as options
-                      subcategories.map(subcategory => (
-                        <option key={subcategory} value={`${category}::${subcategory}`}>{subcategory}</option>
-                      ))
-                    )}
-                  </optgroup>
-                ))}
+                {Object.entries(uniqueCategoryToSubcategoryMapping).map(
+                  ([category, subcategories]) => (
+                    <optgroup label={category} key={category}>
+                      {subcategories.length === 0 ? (
+                        // If there are no subcategories, just show the category itself as an option
+                        <option value={category}>{category}</option>
+                      ) : (
+                        // For categories with subcategories, list them as options
+                        subcategories.map(subcategory => (
+                          <option
+                            key={subcategory}
+                            value={`${category}::${subcategory}`}
+                          >
+                            {subcategory}
+                          </option>
+                        ))
+                      )}
+                    </optgroup>
+                  )
+                )}
               </select>
             </th>
             <th>Amount</th>
@@ -403,19 +459,43 @@ export default function TransactionsTable(props: Props) {
         <tbody>
           {currentTransactions.map(tx => (
             <>
-              <tr key={tx.id} onClick={() => { handleRowDoubleClick(tx) }}>
-                  <td className="mobile-only">{tx.date.slice(0, 10)}<br/><strong>{tx.name}</strong><br />{tx.account_name}</td>
-                  <td >{tx.date.slice(0, 10)}</td>
-                <td ><strong>{tx.name}</strong><br />Account: {tx.account_name} <br />{tx.id}#{tx.original_name}</td>
-                  <td ><strong>{tx.category}</strong><br />{tx.subcategory}</td>
-                  <td ><strong>{currencyFilter(tx.amount)}</strong></td>
+              <tr
+                key={tx.id}
+                onClick={() => {
+                  handleRowDoubleClick(tx);
+                }}
+              >
+                <td className="mobile-only">
+                  {tx.date.slice(0, 10)}
+                  <br />
+                  <strong>{tx.name}</strong>
+                  <br />
+                  {tx.account_name}
+                </td>
+                <td>{tx.date.slice(0, 10)}</td>
+                <td>
+                  <strong>{tx.name}</strong>
+                  <br />
+                  Account: {tx.account_name} <br />
+                  {tx.id}#{tx.original_name}
+                </td>
+                <td>
+                  <strong>{tx.category}</strong>
+                  <br />
+                  {tx.subcategory}
+                </td>
+                <td>
+                  <strong>{currencyFilter(tx.amount)}</strong>
+                </td>
               </tr>
               {currentTransaction && currentTransaction.id === tx.id && (
                 <tr>
                   <td colSpan={4}>
                     <TransactionModal
                       transaction={currentTransaction}
-                      categoryToSubcategoryMapping={categoryToSubcategoryMapping}
+                      categoryToSubcategoryMapping={
+                        categoryToSubcategoryMapping
+                      }
                       isOpen={isModalOpen}
                       onSave={handleSaveChanges}
                       onCancel={handleClose}
@@ -427,16 +507,12 @@ export default function TransactionsTable(props: Props) {
           ))}
         </tbody>
       </table>
-      
+
       <div className="pagination">
         {filteredTransactions.length > rowsPerPage && (
-          <ul className="pagination-list">
-            {renderPagination()}
-          </ul>
+          <ul className="pagination-list">{renderPagination()}</ul>
         )}
       </div>
-
-
     </div>
   );
 }
