@@ -30,7 +30,9 @@ const createOrUpdateTransactions = async transactions => {
     const { id: accountId } = await retrieveAccountByPlaidAccountId(
       plaidAccountId
     );
-    let [category, subcategory] = categories;
+    console.log(transactionName, categories);
+    categories = categories || [];
+    let [category = null, subcategory = null] = categories;
 
     // if pending is true, we don't want to update the transaction
     if (pending) {
@@ -128,6 +130,7 @@ const justUpdateTransactions = async transactions => {
             category = $3,
             subcategory = $4,
             mark_delete = $5,
+            date = $6,
             manually_updated = true
           WHERE id = $1
           RETURNING *
@@ -137,7 +140,8 @@ const justUpdateTransactions = async transactions => {
           transaction.name,
           transaction.category,
           transaction.subcategory,
-          transaction.mark_delete
+          transaction.mark_delete,
+          transaction.date
         ],
       };  
       await db.query(query);
