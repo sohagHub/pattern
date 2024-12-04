@@ -84,7 +84,7 @@ const createOrUpdateTransactions = async transactions => {
               amount = EXCLUDED.amount,
               iso_currency_code = EXCLUDED.iso_currency_code,
               unofficial_currency_code = EXCLUDED.unofficial_currency_code,
-              date = EXCLUDED.date,
+              date = CASE WHEN transactions_table.manually_updated THEN transactions_table.date ELSE EXCLUDED.date END,
               pending = EXCLUDED.pending,
               account_owner = EXCLUDED.account_owner,
               original_name = EXCLUDED.name,
