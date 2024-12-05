@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   BarChart,
   Bar,
@@ -23,6 +23,23 @@ interface Props {
 }
 
 export default function MonthlyCostChart(props: Props) {
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+
+  const [chartWidth, setChartWidth] = useState(0);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (chartContainerRef.current) {
+        setChartWidth(chartContainerRef.current.offsetWidth);
+      }
+    };
+
+    window.addEventListener('resize', updateWidth);
+    updateWidth();
+
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
+
   const [showIncome, setShowIncome] = useState(false);
   const [showSpending, setShowSpending] = useState(true);
 
@@ -50,8 +67,6 @@ export default function MonthlyCostChart(props: Props) {
       return props.width * 0.95;
     }
   }, [props.width]);
-
-  const [chartWidth, setChartWidth] = useState(() => widthCalculation());
 
   useEffect(() => {
     const handleResize = () => setChartWidth(widthCalculation());
@@ -105,7 +120,7 @@ export default function MonthlyCostChart(props: Props) {
   };
 
   return (
-    <div className="holdingsListMonthlyCost">
+    <div ref={chartContainerRef} className="holdingsListMonthlyCost">
       <div className="totalTrendsTop">
         <h5 className="costHeading">
           Monthly {showIncome && 'Income'} {showIncome && showSpending && '&'}{' '}

@@ -7,7 +7,7 @@ interface Props {
 const Banner = (props: Props) => {
   return (
     <div id="banner" className="bottom-border-content">
-      <div className="banner-header">
+      <div className="banner-header" style={{ width: '100%' }}>
         <h2 className="everpresent-content__heading">ST Finance</h2>
         {!props.doNotShowNav && (
           <nav>

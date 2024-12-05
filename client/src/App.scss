@@ -9,22 +9,30 @@ $breakpoint-vertical: 1000px;
 Base
 */
 
+// Add global box-sizing
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   background: $white;
 }
 
 .App {
-  //display: flex;
-  //flex-direction: row;
-  max-width: 300 * $unit;
-  margin-right: auto;
-  margin-left: auto;
-  padding: 1 * $unit 20 * $unit 1 * $unit 20 * $unit;
-  justify-content: center;
+  display: flex; // Enable Flexbox
+  flex-direction: column; // Arrange children vertically
+  justify-content: center; // Center vertically
+  align-items: center; // Center horizontally
+  max-width: 1200px; // Increased from 300 * $unit to accommodate all components
+  margin: 0 auto; // Center the container itself
+  padding: 1 * $unit 1 * $unit 1 * $unit 1 * $unit; // Balanced padding
 
   @media (max-width: $breakpoint-vertical) {
     padding: 1 * $unit 0 0 0;
-    margin-left: 2 * $unit;
+    margin: 0 auto; // Ensure auto margins on both sides
+    flex-direction: column; // Stack children vertically on smaller screens
   }
 }
 
@@ -526,6 +534,7 @@ net worth
 }
 
 .holdingsListMonthlyCost {
+  width: 100%;
   padding: 1 * $unit;
 
   .title {
