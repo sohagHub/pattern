@@ -4,6 +4,7 @@
 
 const { retrieveAccountByPlaidAccountId } = require('./accounts');
 const db = require('../');
+const { processWithConcurrencyLimit } = require('../../util');
 
 /**
  * Creates or updates multiple transactions.
@@ -11,85 +12,67 @@ const db = require('../');
  * @param {Object[]} transactions an array of transactions.
  */
 const createOrUpdateTransactions = async transactions => {
-  const pendingQueries = transactions.map(async transaction => {
-    let {
-      account_id: plaidAccountId,
-      transaction_id: plaidTransactionId,
-      category_id: plaidCategoryId,
-      category: categories,
-      transaction_type: transactionType,
-      name: transactionName,
-      amount,
-      iso_currency_code: isoCurrencyCode,
-      unofficial_currency_code: unofficialCurrencyCode,
-      date: transactionDate,
-      pending,
-      account_owner: accountOwner,
-    } = transaction;
+  const concurrency = 10; // Configurable concurrency limit
+  const batchSize = 10;   // Batch size
 
-    const { id: accountId } = await retrieveAccountByPlaidAccountId(
-      plaidAccountId
-    );
-    // console.log(transactionName, categories);
-    categories = categories || [];
-    let [category = null, subcategory = null] = categories;
+  await processWithConcurrencyLimit(transactions, concurrency, batchSize, async batch => {
+    const queries = await Promise.all(batch.map(async transaction => {
+      let {
+        account_id: plaidAccountId,
+        transaction_id: plaidTransactionId,
+        category_id: plaidCategoryId,
+        category: categories,
+        transaction_type: transactionType,
+        name: transactionName,
+        amount,
+        iso_currency_code: isoCurrencyCode,
+        unofficial_currency_code: unofficialCurrencyCode,
+        date: transactionDate,
+        pending,
+        account_owner: accountOwner,
+      } = transaction;
 
-    // if pending is true, we don't want to update the transaction
-    if (pending) {
-      //console.log('Skipping pending transaction:', transaction);
-      return;
-    }
-    
-    const original_name = transactionName;
-    const original_category = category;
-    const original_subcategory = subcategory;
+      const { id: accountId } = await retrieveAccountByPlaidAccountId(
+        plaidAccountId
+      );
+      categories = categories || [];
+      let [category = null, subcategory = null] = categories;
 
-    ({ transactionName, category, subcategory } = await applyRulesForCategory(
-      transactionName,
-      category,
-      subcategory
-    ));
+      if (pending) {
+        return;
+      }
+      
+      const original_name = transactionName;
+      const original_category = category;
+      const original_subcategory = subcategory;
 
-    try {
-      const query = {
+      ({ transactionName, category, subcategory } = await applyRulesForCategory(
+        transactionName,
+        category,
+        subcategory
+      ));
+
+      return {
         text: `
           INSERT INTO transactions_table
-            (
-              account_id,
-              plaid_transaction_id,
-              plaid_category_id,
-              category,
-              subcategory,
-              type,
-              name,
-              amount,
-              iso_currency_code,
-              unofficial_currency_code,
-              date,
-              pending,
-              account_owner,
-              original_name,
-              original_category,
-              original_subcategory
-            )
+            (account_id, plaid_transaction_id, plaid_category_id, category, subcategory, type, name, amount, iso_currency_code, unofficial_currency_code, date, pending, account_owner, original_name, original_category, original_subcategory)
           VALUES
             ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
-          ON CONFLICT (plaid_transaction_id) DO UPDATE 
-            SET 
-              plaid_category_id = EXCLUDED.plaid_category_id,
-              category = CASE WHEN transactions_table.manually_updated THEN transactions_table.category ELSE EXCLUDED.category END,
-              subcategory = CASE WHEN transactions_table.manually_updated THEN transactions_table.subcategory ELSE EXCLUDED.subcategory END,
-              type = EXCLUDED.type,
-              name = CASE WHEN transactions_table.manually_updated THEN transactions_table.name ELSE EXCLUDED.name END,
-              amount = EXCLUDED.amount,
-              iso_currency_code = EXCLUDED.iso_currency_code,
-              unofficial_currency_code = EXCLUDED.unofficial_currency_code,
-              date = CASE WHEN transactions_table.manually_updated THEN transactions_table.date ELSE EXCLUDED.date END,
-              pending = EXCLUDED.pending,
-              account_owner = EXCLUDED.account_owner,
-              original_name = EXCLUDED.name,
-              original_category = EXCLUDED.category,
-              original_subcategory = EXCLUDED.subcategory;
+          ON CONFLICT (plaid_transaction_id) DO UPDATE SET
+            plaid_category_id = EXCLUDED.plaid_category_id,
+            category = CASE WHEN transactions_table.manually_updated THEN transactions_table.category ELSE EXCLUDED.category END,
+            subcategory = CASE WHEN transactions_table.manually_updated THEN transactions_table.subcategory ELSE EXCLUDED.subcategory END,
+            type = EXCLUDED.type,
+            name = CASE WHEN transactions_table.manually_updated THEN transactions_table.name ELSE EXCLUDED.name END,
+            amount = EXCLUDED.amount,
+            iso_currency_code = EXCLUDED.iso_currency_code,
+            unofficial_currency_code = EXCLUDED.unofficial_currency_code,
+            date = CASE WHEN transactions_table.manually_updated THEN transactions_table.date ELSE EXCLUDED.date END,
+            pending = EXCLUDED.pending,
+            account_owner = EXCLUDED.account_owner,
+            original_name = EXCLUDED.name,
+            original_category = EXCLUDED.category,
+            original_subcategory = EXCLUDED.subcategory;
         `,
         values: [
           accountId,
@@ -110,19 +93,37 @@ const createOrUpdateTransactions = async transactions => {
           original_subcategory,
         ],
       };
-      await db.query(query);
+    }));
+
+    // Execute batched queries within a transaction
+    const client = await db.connect();
+    try {
+      await client.query('BEGIN');
+      for (const query of queries) {
+        await client.query(query);
+      }
+      await client.query('COMMIT');
     } catch (err) {
+      await client.query('ROLLBACK');
       console.error(err);
+    } finally {
+      client.release();
     }
   });
-  await Promise.all(pendingQueries);
 };
 
+counter = 0;
 const justUpdateTransactions = async transactions => {
-  const pendingQueries = transactions.map(async transaction => {
-    // I have the updatred transaction object, just update it in the db
-    try {
-      const query = {
+  const concurrency = 10; // Configurable concurrency limit
+  const batchSize = 100;   // Batch size
+  // log the transaction length and start time or global counter
+  let d = new Date();
+  counter++;
+  console.log(`Updating ${transactions.length} transactions at ${d.toISOString()}, counter: ${counter}`);
+
+  await processWithConcurrencyLimit(transactions, concurrency, batchSize, async batch => {
+    const queries = await Promise.all(batch.map(async transaction => {
+      return {
         text: `
           UPDATE transactions_table
           SET
@@ -133,7 +134,7 @@ const justUpdateTransactions = async transactions => {
             date = $6,
             manually_updated = true
           WHERE id = $1
-          RETURNING *
+          RETURNING *;
         `,
         values: [
           transaction.id,
@@ -141,17 +142,29 @@ const justUpdateTransactions = async transactions => {
           transaction.category,
           transaction.subcategory,
           transaction.mark_delete,
-          transaction.date
+          transaction.date,
         ],
-      };  
-      await db.query(query);
+      };
+    }));
+
+    // Execute batched queries within a transaction
+    const client = await db.connect();
+    try {
+      await client.query('BEGIN');
+      for (const query of queries) {
+        await client.query(query);
+      }
+      await client.query('COMMIT');
     } catch (err) {
+      await client.query('ROLLBACK');
       console.error(err);
+    } finally {
+      client.release();
     }
   });
-  await Promise.all(pendingQueries);
-}
 
+  console.log(`Finished updating ${transactions.length} transactions at ${new Date().toISOString()}`);
+};
 
 /**
  * Retrieves a single transaction by its ID.

@@ -18,10 +18,10 @@ const db = new Pool({
   port: DB_PORT,
   user: POSTGRES_USER,
   password: POSTGRES_PASSWORD,
-  max: 5,
+  max: 30,
   min: 2,
   idleTimeoutMillis: 10000, // close idle clients after 1 second
-  connectionTimeoutMillis: 10000, // return an error after 1 second if connection could not be established
+  connectionTimeoutMillis: 20000, // return an error after 1 second if connection could not be established
 });
 
 module.exports = db;

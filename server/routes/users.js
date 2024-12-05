@@ -15,6 +15,7 @@ const {
   retrieveUserById,
   retrieveRulesByUserId,
   updateNetWorth,
+  processWithConcurrencyLimit,
 } = require('../db/queries');
 const { asyncWrapper } = require('../middleware');
 const {
@@ -232,5 +233,46 @@ router.post(
     });
   })
 );
+
+/*
+router.put(
+  '/updateTransactionsByRule/:userId',
+  asyncWrapper(async (req, res) => {
+    const { userId } = req.params;
+    const transactions = await retrieveTransactionsByUserId(userId);
+    const concurrency = 30; // Concurrency limit
+    const batchSize = 100;   // Batch size
+
+    await processWithConcurrencyLimit(transactions, concurrency, batchSize, async (batch) => {
+      const updatedTransactions = await Promise.all(batch.map(async (transaction) => {
+        let { transactionName: name, category, subcategory } = await applyRulesForCategory(
+          transaction.name, transaction.category, transaction.subcategory
+        );
+
+        if (name !== transaction.name || category !== transaction.category || subcategory !== transaction.subcategory) {
+          transaction.name = name;
+
+          if (transaction.category !== 'Duplicate') {
+            transaction.category = category;
+          }
+
+          transaction.subcategory = subcategory;
+        }
+
+        return transaction;
+      }));
+
+      await justUpdateTransactions(updatedTransactions);
+    });
+
+    req.io.emit('SYNC_COMPLETED', {
+      userId: userId,
+      log: 'Rules are applied',
+    });
+
+    console.log('done');
+    res.json({ status: 'ok' });
+  })
+);*/
 
 module.exports = router;

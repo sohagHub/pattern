@@ -33,7 +33,7 @@ const {
 } = require('../db/queries/transactions');
 
 const { get } = require('lodash');
-const { getInstitutionById } = require('../util');
+const { getInstitutionById, processWithConcurrencyLimit } = require('../util');
 
 
 /**
@@ -154,22 +154,47 @@ router.put(
   asyncWrapper(async (req, res) => {
     const { userId } = req.params;
     const transactions = await retrieveTransactionsByUserId(userId);
-    for (const transaction of transactions) {
-      let { transactionName: name, category, subcategory } = await applyRulesForCategory(
-        transaction.name, transaction.category, transaction.subcategory);
-      
-      if (name !== transaction.name || category !== transaction.category || subcategory !== transaction.subcategory) {
-        transaction.name = name;
-        
-        if (transaction.category !== 'Duplicate') {
-          transaction.category = category;
-        }
-        
-        transaction.subcategory = subcategory;
-      }
+    const concurrency = 20; // Concurrency limit
+    const batchSize = 100; // Batch size
 
-      justUpdateTransactions([transaction]);
-    }
+    await processWithConcurrencyLimit(
+      transactions,
+      concurrency,
+      batchSize,
+      async batch => {
+        const updatedTransactions = await Promise.all(
+          batch.map(async transaction => {
+            let {
+              transactionName: name,
+              category,
+              subcategory,
+            } = await applyRulesForCategory(
+              transaction.name,
+              transaction.category,
+              transaction.subcategory
+            );
+
+            if (
+              name !== transaction.name ||
+              category !== transaction.category ||
+              subcategory !== transaction.subcategory
+            ) {
+              transaction.name = name;
+
+              if (transaction.category !== 'Duplicate') {
+                transaction.category = category;
+              }
+
+              transaction.subcategory = subcategory;
+            }
+
+            return transaction;
+          })
+        );
+
+        await justUpdateTransactions(updatedTransactions);
+      }
+    );
     
     req.io.emit('SYNC_COMPLETED', {
       userId: userId,
