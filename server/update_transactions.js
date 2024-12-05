@@ -12,8 +12,8 @@ const {
   updateItemTransactionsCursor,
 } = require('./db/queries');
 
-const FiveDaysInMillis = 0 * 24 * 60 * 60 * 1000;
-const OneMonthInMillis = 1 * 30 * 24 * 60 * 60 * 1000; // Approx. 1 month
+const OneDayInMillis = 1 * 24 * 60 * 60 * 1000;
+const OneMonthInMillis = 30 * 24 * 60 * 60 * 1000; // Approx. 1 month
 
 /**
  * Fetches transactions from the Plaid API for a given item.
@@ -43,10 +43,8 @@ const fetchTransactionUpdates = async plaidItemId => {
     const plaidClient = isProd ? prodClient : plaid;
     const updatedAtDate = new Date(updatedAt);
 
-    let response;
-
     if (
-      (isProd && updatedAtDate.getTime() > Date.now() - FiveDaysInMillis) ||
+      (isProd && updatedAtDate.getTime() > Date.now() - OneDayInMillis) ||
       isArchived
     ) {
       // If the last update was within five days in production or the item is archived, skip fetching
@@ -61,24 +59,18 @@ const fetchTransactionUpdates = async plaidItemId => {
         },
       };
     } else {
-      // Fetch transactions by date (last 1 month)
-      const transactionsByDate = await getTransactionsByDate(
-        plaidClient,
-        accessToken
-      );
-      added = [...new Set([...added, ...transactionsByDate])];
+      // Run getTransactionsByDate and syncTransactions in parallel
+      const [transactionsByDate, syncResult] = await Promise.all([
+        [], //getTransactionsByDate(plaidClient, accessToken),
+        syncTransactions(plaidClient, accessToken, cursor),
+      ]);
 
-      // Sync transactions
-      const syncResult = await syncTransactions(
-        plaidClient,
-        accessToken,
-        cursor
-      );
-      added = [...new Set([...added, ...syncResult.added])];
+      // Combine results
+      added = [...new Set([...added, ...transactionsByDate, ...syncResult.added])];
       modified = modified.concat(syncResult.modified);
       removed = removed.concat(syncResult.removed);
       cursor = syncResult.nextCursor;
-      isUpdated = true; // Assuming sync was successful
+      isUpdated = true;
     }
 
     response = { data: { isUpdated } };

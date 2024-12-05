@@ -179,11 +179,11 @@ router.post(
     try {  
       const items = await retrieveItemsByUser(userId);
 
-      let institution;
-      for (const item of items) {
-        let plaidItemId; // Declare the variable outside of the try block
+      await Promise.all(items.map(async (item) => {
+        let institution;
+        let plaidItemId;
         try {
-          const { plaid_item_id: plaidItemId } = item;
+          ({ plaid_item_id: plaidItemId } = item);
           institution = await getInstitutionById(item.plaid_institution_id);
           const {
             addedCount,
@@ -202,19 +202,19 @@ router.post(
             log: logMessage,
           });
         } catch (err) {
-          const logMessage = `Bank: ${institution.name}, ItemId: ${
+          const logMessage = `Bank: ${institution ? institution.name : 'Unknown'}, ItemId: ${
             item.id
-            }, Error: ${err.message}`;
+          }, Error: ${JSON.stringify(err.response.data)}`;
           console.log(logMessage);
-          console.error(err);
+          //console.error(err.response.data);
           req.io.emit('SYNC_ERROR', {
             itemId: plaidItemId,
             userId: item.user_id,
             log: logMessage,
-            errror: err,
+            error: err,
           });
         }
-      }
+      }));
 
       res.json({ status: 'ok' });
     } catch (err) {

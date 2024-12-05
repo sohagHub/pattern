@@ -30,7 +30,7 @@ const createOrUpdateTransactions = async transactions => {
     const { id: accountId } = await retrieveAccountByPlaidAccountId(
       plaidAccountId
     );
-    console.log(transactionName, categories);
+    // console.log(transactionName, categories);
     categories = categories || [];
     let [category = null, subcategory = null] = categories;
 
