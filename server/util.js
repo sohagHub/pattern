@@ -139,6 +139,30 @@ const verifyPassword = async (passwordAttempt, storedHash) => {
   return match; // true if the password matches, false otherwise
 };
 
+// Helper function to process tasks with limited concurrency and batch size
+async function processWithConcurrencyLimit(tasks, concurrency, batchSize, taskFn) {
+  const batches = [];
+  for (let i = 0; i < tasks.length; i += batchSize) {
+    batches.push(tasks.slice(i, i + batchSize));
+  }
+
+  const results = [];
+  const executing = [];
+
+  for (const batch of batches) {
+    const p = taskFn(batch);
+    results.push(p);
+
+    if (executing.length >= concurrency) {
+      await Promise.race(executing);
+    }
+
+    const e = p.then(() => executing.splice(executing.indexOf(e), 1));
+    executing.push(e);
+  }
+
+  return Promise.all(results);
+}
 
 module.exports = {
   toArray,
@@ -152,4 +176,5 @@ module.exports = {
   myCache,
   getPasswordHash,
   verifyPassword,
+  processWithConcurrencyLimit,
 };
