@@ -39,7 +39,7 @@ export default function CategoriesChart(props: Props) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
+  const [chartType, setChartType] = useState<'pie' | 'bar'>('bar');
   const [activeIndex] = useState<number | null>(null);
   let data = [];
   const labels = Object.keys(props.categories);
