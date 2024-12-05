@@ -25,13 +25,14 @@ body {
   flex-direction: column; // Arrange children vertically
   justify-content: center; // Center vertically
   align-items: center; // Center horizontally
+  width: 100%; // Ensure full width
   max-width: 1200px; // Increased from 300 * $unit to accommodate all components
   margin: 0 auto; // Center the container itself
   padding: 1 * $unit 1 * $unit 1 * $unit 1 * $unit; // Balanced padding
 
   @media (max-width: $breakpoint-vertical) {
     padding: 1 * $unit 0 0 0;
-    margin: 0 auto; // Ensure auto margins on both sides
+    margin-left: 2 * $unit;
     flex-direction: column; // Stack children vertically on smaller screens
   }
 }
@@ -74,7 +75,7 @@ body {
 
   @media (max-width: $breakpoint-vertical) {
     width: 95%;
-    margin-right: auto;
+    margin: 0 auto;
     min-width: unset;
   }
 }
@@ -133,6 +134,8 @@ shared styles
 }
 
 .value {
+  text-overflow: ellipsis;
+  overflow-x: hidden;
   text-overflow: ellipsis;
   overflow-x: hidden;
 }
@@ -1288,5 +1291,6 @@ ErrorMessage
         }
       }
     }
+
   }
 }
