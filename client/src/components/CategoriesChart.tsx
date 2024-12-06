@@ -107,7 +107,7 @@ export default function CategoriesChart(props: Props) {
     onPieChartClick({ name: data.activeLabel, value: 0 });
   };
 
-  const chartHeight = 500; // the height of your chart
+  const chartHeight = 550; // the height of your chart
 
   return (
     <div className="holdingsListCategories" ref={pieChartRef}>
@@ -148,7 +148,7 @@ export default function CategoriesChart(props: Props) {
             data={data}
             cx="50%"
             cy="50%"
-            paddingAngle={5}
+            paddingAngle={2}
             label={renderLabelNameValue}
             innerRadius={0}
             outerRadius={160}
