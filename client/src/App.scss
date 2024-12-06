@@ -22,8 +22,8 @@ body {
 
 .App {
   display: flex; // Enable Flexbox
-  flex-direction: column; // Arrange children vertically
-  justify-content: center; // Center vertically
+  //flex-direction: column; // Arrange children vertically
+  //justify-content: center; // Center vertically
   align-items: center; // Center horizontally
   width: 100%; // Ensure full width
   max-width: 1200px; // Increased from 300 * $unit to accommodate all components
