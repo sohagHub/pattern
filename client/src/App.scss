@@ -518,12 +518,9 @@ net worth
 .holdingsListCategories {
   padding: 2 * $unit;
 
-  .title {
-    font-weight: bold;
-  }
-
   @media (max-width: $breakpoint-vertical) {
     padding: 1 * $unit;
+    
   }
 }
 
@@ -598,6 +595,7 @@ Monthly Spending
 
 .monthlySpendingContainer {
   display: flex;
+  flex-wrap: wrap;
   //flex-direction: column;
 
   @media (max-width: $breakpoint-vertical) {
@@ -637,25 +635,18 @@ Monthly Spending
   }
 }
 
-.userDataBoxPieChart {
-  width: 100%;
-  min-height: 30 * $unit;
-  border: $border;
-
-  @media (max-width: $breakpoint-vertical) {
-    margin-right: 0;
-    width: 100%;
-  }
-}
-
+.userDataBoxPieChart,
 .userDataBoxVendor {
-  width: 100%;
-  min-height: 30 * $unit;
+  flex: 1 1 50%;
+  box-sizing: border-box;
+  padding: 10px;
+  min-width: 300px;
   border: $border;
 
   @media (max-width: $breakpoint-vertical) {
-    width: 100%;
     margin-right: 0;
+    width: 100%;
+    
   }
 }
 

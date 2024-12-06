@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   PieChart,
   Pie,
@@ -26,17 +26,21 @@ interface Props {
 
 export default function CategoriesChart(props: Props) {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const widthCalculation = () =>
-    window.innerWidth < 1000 ? window.innerWidth - 100 : 600;
-  const [chartWidth, setChartWidth] = useState(widthCalculation());
+  const pieChartRef = useRef<HTMLDivElement>(null);
+
+  const [chartWidth, setChartWidth] = useState(0);
 
   useEffect(() => {
-    const handleResize = () => setChartWidth(widthCalculation());
+    const updateWidth = () => {
+      if (pieChartRef.current) {
+        setChartWidth(pieChartRef.current.offsetWidth);
+      }
+    };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', updateWidth);
+    updateWidth();
 
-    // Clean up the event listener on component unmount
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
   const [chartType, setChartType] = useState<'pie' | 'bar'>('bar');
@@ -82,8 +86,6 @@ export default function CategoriesChart(props: Props) {
     props.onCategoryClick(entry.name);
     setSelectedCategory(entry.name);
   };
-
-  const pieChartRef = useRef(null);
 
   const CustomTooltip: React.FC<any> = ({ active, payload }) => {
     //console.log('CustomTooltip' + active + ' ' + payload);
@@ -189,8 +191,7 @@ export default function CategoriesChart(props: Props) {
           <Tooltip content={<CustomTooltip />} />
           <Bar
             dataKey="value"
-            //onMouseEnter={onPieEnter}
-            //onMouseLeave={onPieLeave}
+            barSize={50} // Set a maximum bar size
           >
             {data.map((entry, index) => (
               <Cell
