@@ -21,20 +21,11 @@ body {
 }
 
 .App {
-  display: flex; // Enable Flexbox
-  //flex-direction: column; // Arrange children vertically
-  //justify-content: center; // Center vertically
   align-items: center; // Center horizontally
   width: 100%; // Ensure full width
-  max-width: 1200px; // Increased from 300 * $unit to accommodate all components
-  margin: 0 auto; // Center the container itself
-  padding: 1 * $unit 1 * $unit 1 * $unit 1 * $unit; // Balanced padding
-
-  @media (max-width: $breakpoint-vertical) {
-    padding: 1 * $unit 0 0 0;
-    margin-left: 2 * $unit;
-    flex-direction: column; // Stack children vertically on smaller screens
-  }
+  max-width: 220 * $unit; // Increased from 300 * $unit to accommodate all components
+  margin: auto; // Center the container itself
+  //padding: 1 * $unit 1 * $unit 1 * $unit 1 * $unit; // Balanced padding
 }
 
 .container {
@@ -43,7 +34,7 @@ body {
 
   @media (max-width: $breakpoint-vertical) {
     flex-direction: column-reverse;
-    width: 100vw; // 100% width of the viewport width
+    width: 98vw; // 100% width of the viewport width
   }
 }
 
