@@ -123,25 +123,9 @@ const retrieveAccountsByUserId = async userId => {
   return accounts;
 };
 
-/**
- * Retrieves accounts associated with multiple Plaid account IDs.
- *
- * @param {string[]} plaidAccountIds an array of Plaid account IDs.
- * @returns {Object[]} an array of accounts.
- */
-const retrieveAccountsByPlaidAccountIds = async plaidAccountIds => {
-  const query = {
-    text: 'SELECT * FROM accounts WHERE plaid_account_id = ANY($1)',
-    values: [plaidAccountIds],
-  };
-  const { rows: accounts } = await db.query(query);
-  return accounts;
-};
-
 module.exports = {
   createAccounts,
   retrieveAccountByPlaidAccountId,
   retrieveAccountsByItemId,
   retrieveAccountsByUserId,
-  retrieveAccountsByPlaidAccountIds,
 };
