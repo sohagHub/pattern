@@ -6,10 +6,11 @@ const forEach = require('lodash/forEach');
 const { Configuration, PlaidApi, PlaidEnvironments } = require('plaid');
 
 const {
-  createPlaidApiEvent,
+  //createPlaidApiEvent,
   retrieveItemByPlaidAccessToken,
 } = require('./db/queries');
 
+const { createPlaidApiEvent } = require('./db/queries/plaidApiEvents');
 // Your Plaid API keys and secrets are loaded as environment variables.
 // They are set in your `.env` file. See the repo README for more info.
 const {
@@ -118,7 +119,7 @@ class PlaidClientWrapper {
         await log(clientMethod, args, res);
         return res;
       } catch (err) {
-        await log(clientMethod, args, err.response.data);
+        await log(clientMethod, args, err.response);
         throw err;
       }
     };

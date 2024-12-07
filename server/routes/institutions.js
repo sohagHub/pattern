@@ -41,16 +41,22 @@ router.get(
  * Fetches a single institution from the Plaid API.
  *
  * @param {string} instId The ins_id of the institution to be returned.
- * @returns {Object[]} an array containing a single institution.
+ * @returns {Object[]} an array containing a single institution or an error message.
  */
 router.get(
   '/:instId',
   asyncWrapper(async (req, res) => {
     try {
       const { instId } = req.params;
-      institution = await getInstitutionById(instId);
-      res.json(toArray(institution));
-    } catch (error) {}
+      const institution = await getInstitutionById(instId);
+      if (institution) {
+        res.json([institution]);
+      } else {
+        res.status(404).json({ error: 'Institution not found.' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error.' });
+    }
   })
 );
 

@@ -56,6 +56,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isArchivedBankExpanded, setIsArchivedBankExpanded] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -251,21 +252,30 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                           {`${
                             items.filter(item => item.is_archived).length
                           } Archived ${pluralize('Bank', items.length)}`}
+                          <button
+                            className="plus-button"
+                            onClick={() =>
+                              setIsArchivedBankExpanded(!isArchivedBankExpanded)
+                            }
+                          >
+                            {isArchivedBankExpanded ? '- ' : ' + '}
+                          </button>
                         </h2>
-                        {items
-                          .filter(item => item.is_archived)
-                          .map(item => (
-                            <div id="itemCards" key={item.id}>
-                              {console.log(item)}
-                              <ItemCard
-                                item={item}
-                                userId={userId}
-                                onShowAccountTransactions={
-                                  setSelectedAccountAndOpenModal
-                                }
-                              />
-                            </div>
-                          ))}
+                        {isArchivedBankExpanded &&
+                          items
+                            .filter(item => item.is_archived)
+                            .map(item => (
+                              <div id="itemCards" key={item.id}>
+                                {console.log(item)}
+                                <ItemCard
+                                  item={item}
+                                  userId={userId}
+                                  onShowAccountTransactions={
+                                    setSelectedAccountAndOpenModal
+                                  }
+                                />
+                              </div>
+                            ))}
                       </div>
                     </>
                   )}

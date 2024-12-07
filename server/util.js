@@ -120,8 +120,8 @@ const getInstitutionById = async (instId) => {
     myCache.set(instId, institution);
     return institution;
   } catch (error) {
-    console.error(error);
-    // Handle error
+    console.error(`Error fetching institution by ID (${instId}):`, error);
+    throw error;
   }
 };
 
