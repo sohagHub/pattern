@@ -32,15 +32,14 @@ let failedQueue: {
   reject: (reason?: any) => void;
 }[] = [];
 
-const processQueue = (error: unknown, token = null) => {
+const processQueue = (error: unknown) => {
   failedQueue.forEach(prom => {
     if (error) {
       prom.reject(error);
     } else {
-      prom.resolve(token);
+      prom.resolve('');
     }
   });
-
   failedQueue = [];
 };
 
@@ -67,20 +66,17 @@ api.interceptors.response.use(
             isRefreshing = false;
             processQueue(null);
           } catch (err) {
-            processQueue(err, null);
+            processQueue(err);
             window.location.href = '/';
+            return Promise.reject(err);
           }
         }
 
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        })
-          .then(() => {
-            return api(originalRequest);
-          })
-          .catch(err => {
-            return Promise.reject(err);
-          });
+        }).then(() => {
+          return api(originalRequest);
+        });
       }
     }
 
