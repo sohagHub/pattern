@@ -140,7 +140,7 @@ const verifyPassword = async (passwordAttempt, storedHash) => {
 };
 
 // Helper function to process tasks with limited concurrency and batch size
-async function processWithConcurrencyLimit(tasks, concurrency, batchSize, taskFn) {
+const processWithConcurrencyLimit = async (tasks, concurrency, batchSize, taskFn) => {
   const batches = [];
   for (let i = 0; i < tasks.length; i += batchSize) {
     batches.push(tasks.slice(i, i + batchSize));
