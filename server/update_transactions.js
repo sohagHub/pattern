@@ -12,8 +12,8 @@ const {
   updateItemTransactionsCursor,
 } = require('./db/queries');
 
-const OneDayInMillis = 1 * 24 * 60 * 60 * 1000;
-const OneMonthInMillis = 30 * 24 * 60 * 60 * 1000; // Approx. 1 month
+const OneDayInMillis = 0 * 24 * 60 * 60 * 1000;
+const OneMonthInMillis = 10 * 24 * 60 * 60 * 1000; // Approx. 1 month
 
 /**
  * Fetches transactions from the Plaid API for a given item.
@@ -61,7 +61,7 @@ const fetchTransactionUpdates = async plaidItemId => {
     } else {
       // Run getTransactionsByDate and syncTransactions in parallel
       const [transactionsByDate, syncResult] = await Promise.all([
-        [], //getTransactionsByDate(plaidClient, accessToken),
+        getTransactionsByDate(plaidClient, accessToken),
         syncTransactions(plaidClient, accessToken, cursor),
       ]);
 

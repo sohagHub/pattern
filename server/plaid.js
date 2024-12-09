@@ -5,7 +5,7 @@
 const forEach = require('lodash/forEach');
 const { Configuration, PlaidApi, PlaidEnvironments } = require('plaid');
 
-const { retrieveItemByPlaidAccessToken } = require('./db/queries');
+const { retrieveItemByPlaidAccessToken } = require('./db/queries/items');
 const { createPlaidApiEvent } = require('./db/queries/plaidApiEvents');
 
 // Your Plaid API keys and secrets are loaded as environment variables.

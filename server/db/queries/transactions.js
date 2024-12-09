@@ -13,7 +13,7 @@ const { processWithConcurrencyLimit } = require('../../util');
  */
 const createOrUpdateTransactions = async transactions => {
   const concurrency = 10; // Configurable concurrency limit
-  const batchSize = 10;   // Batch size
+  const batchSize = 100;   // Batch size
 
   await processWithConcurrencyLimit(transactions, concurrency, batchSize, async batch => {
     const queries = await Promise.all(batch.map(async transaction => {
@@ -98,13 +98,18 @@ const createOrUpdateTransactions = async transactions => {
     // Execute batched queries within a transaction
     const client = await db.connect();
     try {
-      await client.query('BEGIN');
+      //await client.query('BEGIN');
       for (const query of queries) {
+        if (!query) {
+          continue;
+        }
+        //console.log(query);
         await client.query(query);
+        //console.log("end" + query);
       }
-      await client.query('COMMIT');
+      //await client.query('COMMIT');
     } catch (err) {
-      await client.query('ROLLBACK');
+      //await client.query('ROLLBACK');
       console.error(err);
     } finally {
       client.release();
