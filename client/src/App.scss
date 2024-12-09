@@ -1276,3 +1276,17 @@ ErrorMessage
 
   }
 }
+
+.react-dropdown-tree-select .dropdown {
+  position: static;
+}
+
+.category-dropdown {
+  position: static;
+
+  .dropdown {
+    position: static;
+  }
+
+  @extend .table-category-select;
+}

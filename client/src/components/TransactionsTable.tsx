@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 import { currencyFilter } from '../util';
 import { TransactionType } from './types';
 import { updateTransactionById } from '../services/api';
 import useTransactions from '../services/transactions';
 import TransactionModal from './TransactionModal';
+import DropdownTreeSelect, { TreeNode } from 'react-dropdown-tree-select';
+import 'react-dropdown-tree-select/dist/styles.css';
 
 interface Props {
   transactions: TransactionType[];
@@ -123,8 +125,8 @@ export default function TransactionsTable(props: Props) {
     }
   }, [props.filterText]);
 
-  const [categoryFilter, setCategoryFilter] = useState('All');
-  const [subCategoryFilter, setSubCategoryFilter] = useState('All');
+  const [categoryFilter, setCategoryFilter] = useState<string[]>([]); 
+  const [subCategoryFilter, setSubCategoryFilter] = useState<string[]>([]);
   const [
     uniqueCategoryToSubcategoryMapping,
     setUniqueCategoryToSubcategoryMapping,
@@ -133,6 +135,8 @@ export default function TransactionsTable(props: Props) {
     categoryToSubcategoryMapping,
     setCategoryToSubcategoryMapping,
   ] = useState<Record<string, string[]>>({});
+  const [categoryTreeData, setCategoryTreeData] = useState<TreeNode[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<TreeNode[]>([]);
 
   // Update filteredTransactions when props.selectedMonth changes
   useEffect(() => {
@@ -220,20 +224,45 @@ export default function TransactionsTable(props: Props) {
     );
 
     filteredTransactions = filteredTransactions.filter(tx => {
+
+      if (categoryFilter.length === 0 && subCategoryFilter.length === 0) {
+        return true;
+      }
+      
       // Category filter
-      if (categoryFilter !== 'All' && tx.category !== categoryFilter) {
-        return false;
+      if (categoryFilter.length > 0 && categoryFilter.includes(tx.category)) {
+        return true;
       }
 
-      if (categoryFilter !== 'All' && tx.subcategory !== subCategoryFilter) {
-        return false;
+      // Subcategory filter
+      if (subCategoryFilter.length > 0 && subCategoryFilter.includes(tx.category + '::' + tx.subcategory)) {
+        return true;
       }
 
-      return true;
+      return false;
     });
 
     setFilteredTransactions(filteredTransactions);
-  }, [categoryFilter, subCategoryFilter, filterTerm, props.transactions]);
+
+    // Build the mapping from all transactions
+    const mapping = mapCategoriesToSubcategories(props.transactions);
+    setCategoryToSubcategoryMapping(mapping);
+
+    // Create tree data from the complete mapping
+    const treeData = Object.entries(mapping).map(([category, subcategories]) => ({
+      label: category,
+      value: category,
+      checked: selectedCategories.some(node => node.value === category || node.parent === category),
+      expanded: selectedCategories.some(node => node.value === category || node.parent === category),
+      children: subcategories.map(subcategory => ({
+        label: subcategory,
+        value: `${category}::${subcategory}`,
+        checked: selectedCategories.some(node => node.value === `${category}::${subcategory}`),
+        parent: category,
+      })),
+    }));
+    setCategoryTreeData(treeData);
+  }, [categoryFilter, subCategoryFilter, filterTerm, props.transactions, selectedCategories]);
 
   useEffect(() => {
     const sortedTransactions = filteredTransactions.sort((a, b) => {
@@ -270,8 +299,26 @@ export default function TransactionsTable(props: Props) {
     const [category, subcategory] = event.target.value
       .split('::')
       .map(part => part.trim());
-    setCategoryFilter(category);
-    setSubCategoryFilter(subcategory);
+    setCategoryFilter([category]);
+    setSubCategoryFilter([subcategory]);
+    setCurrentPage(1);
+  };
+
+  // Handler for category selection change
+  const handleCategoryTreeChange = (currentNode: TreeNode, selectedNodes: TreeNode[]) => {
+    setSelectedCategories(selectedNodes);
+
+    // Extract categories and subcategories from selected nodes
+    const categories = selectedNodes
+      .filter(node => !node.parent)
+      .map(node => node.label);
+
+    const subcategories = selectedNodes
+      .filter(node => node.parent)
+      .map(node => node.value);
+
+    setCategoryFilter(categories);
+    setSubCategoryFilter(subcategories);
     setCurrentPage(1);
   };
 
@@ -425,33 +472,17 @@ export default function TransactionsTable(props: Props) {
             <th>Date</th>
             <th>Details</th>
             <th>
-              Category<span> </span>
-              <select
-                className="table-category-select"
-                onChange={handleCategoryFilterChange}
-              >
-                <option value="All">All</option>
-                {Object.entries(uniqueCategoryToSubcategoryMapping).map(
-                  ([category, subcategories]) => (
-                    <optgroup label={category} key={category}>
-                      {subcategories.length === 0 ? (
-                        // If there are no subcategories, just show the category itself as an option
-                        <option value={category}>{category}</option>
-                      ) : (
-                        // For categories with subcategories, list them as options
-                        subcategories.map(subcategory => (
-                          <option
-                            key={subcategory}
-                            value={`${category}::${subcategory}`}
-                          >
-                            {subcategory}
-                          </option>
-                        ))
-                      )}
-                    </optgroup>
-                  )
-                )}
-              </select>
+              Category
+              <div className="category-dropdown">
+                <DropdownTreeSelect
+                  data={categoryTreeData}
+                  onChange={handleCategoryTreeChange}
+                  keepChildrenOnSearch={true}
+                  showPartiallySelected={true}
+                  //texts={{ placeholder: 'Select Category' }}
+                  //mode="hierarchical" // Optional: use 'simpleSelect' if you want single selection
+                />
+              </div>
             </th>
             <th>Amount</th>
           </tr>
