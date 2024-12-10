@@ -222,13 +222,13 @@ export default function TransactionsTable(props: Props) {
     setUniqueCategoryToSubcategoryMapping(
       mapCategoriesToSubcategories(filteredTransactions)
     );
-
+    
     filteredTransactions = filteredTransactions.filter(tx => {
 
       if (categoryFilter.length === 0 && subCategoryFilter.length === 0) {
         return true;
       }
-      
+
       // Category filter
       if (categoryFilter.length > 0 && categoryFilter.includes(tx.category)) {
         return true;
@@ -253,7 +253,7 @@ export default function TransactionsTable(props: Props) {
       label: category,
       value: category,
       checked: selectedCategories.some(node => node.value === category || node.parent === category),
-      expanded: selectedCategories.some(node => node.value === category || node.parent === category),
+      expanded: selectedCategories.some(node => node.parent === category),
       children: subcategories.map(subcategory => ({
         label: subcategory,
         value: `${category}::${subcategory}`,
@@ -317,7 +317,12 @@ export default function TransactionsTable(props: Props) {
       .filter(node => node.parent)
       .map(node => node.value);
 
-    setCategoryFilter(categories);
+    // remove subCategtoryFilter's {category::subCategory} category from categoryFilter
+    // get all categories from subcategories
+    const subCategoryCategories = subcategories.map(subcategory => subcategory.split('::')[0]);
+    const newCategories = categories.filter(category => !subCategoryCategories.includes(category));
+    
+    setCategoryFilter(newCategories);
     setSubCategoryFilter(subcategories);
     setCurrentPage(1);
   };
@@ -479,8 +484,8 @@ export default function TransactionsTable(props: Props) {
                   onChange={handleCategoryTreeChange}
                   keepChildrenOnSearch={true}
                   showPartiallySelected={true}
-                  //texts={{ placeholder: 'Select Category' }}
-                  //mode="hierarchical" // Optional: use 'simpleSelect' if you want single selection
+                  texts={{ placeholder: 'Select Category' }}
+                  mode="hierarchical" // Optional: use 'simpleSelect' if you want single selection
                 />
               </div>
             </th>

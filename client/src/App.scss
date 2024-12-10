@@ -1277,16 +1277,22 @@ ErrorMessage
   }
 }
 
-.react-dropdown-tree-select .dropdown {
-  position: static;
-}
-
 .category-dropdown {
   position: static;
+  overflow: hidden;
+  width: 100%;
+  //display: flex;
 
   .dropdown {
     position: static;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
-  @extend .table-category-select;
+  .react-dropdown-tree-select .dropdown .dropdown-trigger {
+    max-height: 10 * $unit;
+  }
 }
+
+
