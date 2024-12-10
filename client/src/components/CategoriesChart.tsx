@@ -103,6 +103,7 @@ export default function CategoriesChart(props: Props) {
   };
 
   const handleClick = (data: any) => {
+    if (!data) return;
     console.log('handleClick: ' + data);
     onPieChartClick({ name: data.activeLabel, value: 0 });
   };
@@ -187,7 +188,7 @@ export default function CategoriesChart(props: Props) {
         >
           <CartesianGrid strokeDasharray="1 1" />
           <XAxis type="number" />
-          <YAxis dataKey="name" type="category" hide={true} />
+          <YAxis dataKey="name" type="category" hide={false} />
           <Tooltip content={<CustomTooltip />} />
           <Bar
             dataKey="value"
@@ -210,10 +211,9 @@ export default function CategoriesChart(props: Props) {
               />
             ))}
 
-            <LabelList dataKey="name" position="right" fill={colors.black} />
             <LabelList
               dataKey={renderLabelValue}
-              position="left"
+              position="right"
               fill={colors.black}
             />
           </Bar>
