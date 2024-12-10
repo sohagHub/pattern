@@ -248,19 +248,36 @@ export default function TransactionsTable(props: Props) {
     const mapping = mapCategoriesToSubcategories(props.transactions);
     setCategoryToSubcategoryMapping(mapping);
 
+    // Calculate total number of categories and subcategories
+    const totalCategories = Object.keys(mapping).length;
+    const totalSubcategories = Object.values(mapping).reduce(
+      (acc, subcats) => acc + subcats.length,
+      0
+    );
+    const totalNodes = totalCategories + totalSubcategories + 1; // +1 for 'Select All'
+
     // Create tree data from the complete mapping
-    const treeData = Object.entries(mapping).map(([category, subcategories]) => ({
-      label: category,
-      value: category,
-      checked: selectedCategories.some(node => node.value === category || node.parent === category),
-      expanded: selectedCategories.some(node => node.parent === category),
-      children: subcategories.map(subcategory => ({
-        label: subcategory,
-        value: `${category}::${subcategory}`,
-        checked: selectedCategories.some(node => node.value === `${category}::${subcategory}`),
-        parent: category,
+    const treeData = [
+      {
+        label: 'Select All',
+        value: 'all',
+        checked: selectedCategories.length === totalNodes, // Updated condition
+        expanded: true,
+        children: [],
+      },
+      ...Object.entries(mapping).map(([category, subcategories]) => ({
+        label: category,
+        value: category,
+        checked: selectedCategories.some(node => node.value === category || node.parent === category),
+        expanded: selectedCategories.some(node => node.parent === category),
+        children: subcategories.map((sub: string) => ({
+          label: sub,
+          value: `${category}::${sub}`,
+          checked: selectedCategories.some(node => node.value === `${category}::${sub}`),
+          parent: category,
+        })),
       })),
-    }));
+    ];
     setCategoryTreeData(treeData);
   }, [categoryFilter, subCategoryFilter, filterTerm, props.transactions, selectedCategories]);
 
@@ -306,25 +323,48 @@ export default function TransactionsTable(props: Props) {
 
   // Handler for category selection change
   const handleCategoryTreeChange = (currentNode: TreeNode, selectedNodes: TreeNode[]) => {
-    setSelectedCategories(selectedNodes);
+    if (currentNode.value === 'all') {
+      if (currentNode.checked) {
+        // Select all categories and subcategories
+        const allNodes = categoryTreeData.flatMap(category => [
+          { ...category, checked: true },
+          ...category.children?.map((sub: TreeNode) => ({ ...sub, checked: true })) || [],
+        ]);
+        setSelectedCategories(allNodes);
+        setCategoryFilter(Object.keys(categoryToSubcategoryMapping));
+        setSubCategoryFilter(
+          Object.values(categoryToSubcategoryMapping).flatMap(subs => subs.map(sub => `${Object.keys(categoryToSubcategoryMapping).find(key => categoryToSubcategoryMapping[key].includes(sub))}::${sub}`))
+        );
+      } else {
+        // Deselect all categories and subcategories
+        setSelectedCategories([]);
+        setCategoryFilter([]);
+        setSubCategoryFilter([]);
+      }
+    } else {
 
-    // Extract categories and subcategories from selected nodes
-    const categories = selectedNodes
-      .filter(node => !node.parent)
-      .map(node => node.label);
+      // Ensure that when a parent/currentnode is unselected, its children are also unselected
+      const updatedSelectedNodes = selectedNodes.filter(node => {
+        return currentNode.value !== node.parent;
+      });
+      setSelectedCategories(updatedSelectedNodes);
 
-    const subcategories = selectedNodes
-      .filter(node => node.parent)
-      .map(node => node.value);
+      // Extract categories and subcategories from updatedSelectedNodes
+      const updatedCategories = updatedSelectedNodes
+        .filter(node => !node.parent)
+        .map(node => node.label);
 
-    // remove subCategtoryFilter's {category::subCategory} category from categoryFilter
-    // get all categories from subcategories
-    const subCategoryCategories = subcategories.map(subcategory => subcategory.split('::')[0]);
-    const newCategories = categories.filter(category => !subCategoryCategories.includes(category));
-    
-    setCategoryFilter(newCategories);
-    setSubCategoryFilter(subcategories);
-    setCurrentPage(1);
+      const updatedSubcategories = updatedSelectedNodes
+        .filter(node => node.parent)
+        .map(node => node.value);
+      
+      const subCategoryCategories = updatedSubcategories.map(subcategory => subcategory.split('::')[0]);
+      const newCategories = updatedCategories.filter(category => !subCategoryCategories.includes(category));
+
+      setCategoryFilter(newCategories);
+      setSubCategoryFilter(updatedSubcategories);
+      setCurrentPage(1);
+    }
   };
 
   function renderPagination() {
@@ -494,9 +534,8 @@ export default function TransactionsTable(props: Props) {
         </thead>
         <tbody>
           {currentTransactions.map(tx => (
-            <>
+            <React.Fragment key={tx.id}>
               <tr
-                key={tx.id}
                 onClick={() => {
                   handleRowDoubleClick(tx);
                 }}
@@ -526,7 +565,7 @@ export default function TransactionsTable(props: Props) {
               </tr>
               {currentTransaction && currentTransaction.id === tx.id && (
                 <tr>
-                  <td colSpan={4}>
+                  <td colSpan={5}>
                     <TransactionModal
                       transaction={currentTransaction}
                       categoryToSubcategoryMapping={
@@ -539,7 +578,7 @@ export default function TransactionsTable(props: Props) {
                   </td>
                 </tr>
               )}
-            </>
+            </React.Fragment>
           ))}
         </tbody>
       </table>
@@ -550,5 +589,4 @@ export default function TransactionsTable(props: Props) {
         )}
       </div>
     </div>
-  );
-}
+  );}
