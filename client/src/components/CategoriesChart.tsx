@@ -45,7 +45,7 @@ export default function CategoriesChart(props: Props) {
 
   const [chartType, setChartType] = useState<'pie' | 'bar'>('bar');
   const [activeIndex] = useState<number | null>(null);
-  let data = [];
+  let data: { name: string; value: number }[] = [];
   const labels = Object.keys(props.categories);
   const values = Object.values(props.categories);
   let totalValue = 0;
@@ -107,6 +107,12 @@ export default function CategoriesChart(props: Props) {
     console.log('handleClick: ' + data);
     onPieChartClick({ name: data.activeLabel, value: 0 });
   };
+
+  useEffect(() => {
+    if (data.length === 1 && selectedCategory !== data[0].name) {
+      onPieChartClick(data[0]);
+    }
+  }, [data, selectedCategory, onPieChartClick]);
 
   const chartHeight = 550; // the height of your chart
 

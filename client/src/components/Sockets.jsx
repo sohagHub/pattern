@@ -25,7 +25,7 @@ export default function Sockets() {
       const msg = `${log}`;
       console.log(msg);
       toast(msg, { autoClose: false });
-      //getAccountsByItem(itemId);
+      getAccountsByItem(itemId);
       //getTransactionsByItem(itemId);
       getTransactionsByUser(userId);
     });

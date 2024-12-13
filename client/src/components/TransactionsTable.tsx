@@ -245,7 +245,7 @@ export default function TransactionsTable(props: Props) {
     setFilteredTransactions(filteredTransactions);
 
     // Build the mapping from all transactions
-    const mapping = mapCategoriesToSubcategories(props.transactions);
+    const mapping = mapCategoriesToSubcategories(filteredTransactions); // instead of props.transactions
     setCategoryToSubcategoryMapping(mapping);
 
     // Calculate total number of categories and subcategories
