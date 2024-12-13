@@ -151,7 +151,7 @@ export default function CategoriesChart(props: Props) {
             cy="50%"
             paddingAngle={2}
             label={renderLabelNameValue}
-            innerRadius={0}
+            innerRadius={60}
             outerRadius={160}
             dataKey="value"
             isAnimationActive={true}
@@ -188,7 +188,7 @@ export default function CategoriesChart(props: Props) {
         >
           <CartesianGrid strokeDasharray="1 1" />
           <XAxis type="number" />
-          <YAxis dataKey="name" type="category" hide={false} />
+          <YAxis width={30} dataKey="name" type="category" hide={false} />
           <Tooltip content={<CustomTooltip />} />
           <Bar
             dataKey="value"
