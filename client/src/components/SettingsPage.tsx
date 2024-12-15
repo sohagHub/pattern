@@ -90,89 +90,100 @@ const SettingsPage = () => {
           onCancel={onCancel}
         />
       )}
-      <table className="custom-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Subcategory</th>
-            <th className="mobile-only">From</th>
-            <th />
-            <th>New Name</th>
-            <th>New Category</th>
-            <th>New Subcategory</th>
-            <th className="mobile-only">To</th>
-            <th>Serial</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rules.map((rule, index) => (
-            <>
-              <tr key={rule.id}>
-                <td>{index + 1}</td>
+      <div>
+        <table className="custom-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Subcategory</th>
+              <th />
+              <th>New Name</th>
+              <th>New Category</th>
+              <th>New Subcategory</th>
+              <th className="mobile-only">From</th>
+              <th />
+              <th className="mobile-only">To</th>
+              <th>Serial</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rules.map((rule, index) => (
+              <>
+                <tr key={rule.id}>
+                  <td>{index + 1}</td>
 
-                <td>{rule.name}</td>
-                <td>{rule.category}</td>
-                <td>{rule.subcategory}</td>
-                <td className="mobile-only">
-                  <tr>
-                    <strong>{rule.name}</strong>
-                  </tr>
-                  <tr>
-                    Category:
-                    {rule.category || '-'}
-                  </tr>
-                  <tr>
-                    Subcategory:
-                    {rule.subcategory || '-'}
-                  </tr>
-                </td>
-                <td>{'=>'}</td>
-                <td>{rule.new_name}</td>
-                <td>{rule.new_category}</td>
-                <td>{rule.new_subcategory}</td>
-                <td className="mobile-only">
-                  <tr>
-                    <strong>{rule.new_name}</strong>
-                  </tr>
-                  <tr>{rule.new_category}</tr>
-                  <tr>{rule.new_subcategory}</tr>
-                </td>
-                <td>{rule.serial}</td>
-                <td>
-                  <button
-                    className={`rule-table-button`}
-                    onClick={() => handleEdit(rule)}
-                  >
-                    Edit
-                  </button>
-                  <br />
-                  <button
-                    className={'rule-table-button'}
-                    onClick={() => handleDelete(rule.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
+                  <td>{rule.name}</td>
+                  <td>{rule.category}</td>
+                  <td>{rule.subcategory}</td>
 
-              {showRule && expandedRowId === rule.id && (
-                <tr>
-                  <td colSpan={10}>
-                    <RuleForm
-                      initialRule={editingRule}
-                      onSubmit={onSubmit}
-                      onCancel={onCancel}
-                    />
+                  <td>{'=>'}</td>
+                  <td>{rule.new_name}</td>
+                  <td>{rule.new_category}</td>
+                  <td>{rule.new_subcategory}</td>
+
+                  <td className="mobile-only">
+                    <tr>
+                      <strong>{rule.name}</strong>
+                    </tr>
+                    {rule.category && (
+                      <tr>
+                        Category:
+                        {rule.category}
+                      </tr>
+                    )}
+                    {rule.subcategory && (
+                      <tr>
+                        Subcategory:
+                        {rule.subcategory}
+                      </tr>
+                    )}
+                  </td>
+                  <td>{'=>'}</td>
+                  <td className="mobile-only">
+                    <tr>
+                      <strong>{rule.new_name}</strong>
+                    </tr>
+                    <tr>{rule.new_category}</tr>
+                    <tr>{rule.new_subcategory}</tr>
+                  </td>
+
+                  <td>{rule.serial}</td>
+                  <td>
+                    <button
+                      className={`rule-table-button`}
+                      onClick={() => handleEdit(rule)}
+                    >
+                      Edit
+                    </button>
+                    <br />
+                    <button
+                      className={'rule-table-button'}
+                      onClick={() => handleDelete(rule.id)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
-              )}
-            </>
-          ))}
-        </tbody>
-      </table>
+
+                {showRule && expandedRowId === rule.id && (
+                  <tr>
+                    <td colSpan={10}>
+                      <RuleForm
+                        initialRule={editingRule}
+                        onSubmit={onSubmit}
+                        onCancel={onCancel}
+                      />
+                    </td>
+                  </tr>
+                )}
+              </>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

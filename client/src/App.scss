@@ -876,12 +876,11 @@ ErrorMessage
 }
 
 .custom-table {
-  width: 100%;
+  width: 99%;
   border-collapse: collapse;
 
-  th,
-  td {
-    padding: 8px;
+  th, td {
+    padding: 1 * $unit;
     text-align: left;
     border-bottom: 1px solid #ddd;
   }
@@ -908,14 +907,11 @@ ErrorMessage
 
   /* Responsive table */
   @media only screen and (max-width: $breakpoint-vertical) {
-    th:nth-child(1) {
+    th:nth-child(1),
+    td:nth-child(1) {
       display: table-cell; // Show the first th
       text-align: left;
-    }
-
-    td:nth-child(1) {
-      display: table-cell; // Show the first td
-      text-align: left;
+      width: 1%;
     }
 
     td:nth-child(2),
@@ -924,29 +920,40 @@ ErrorMessage
     th:nth-child(3),
     td:nth-child(4),
     th:nth-child(4),
+    td:nth-child(5),
+    th:nth-child(5),
+    td:nth-child(6),
+    th:nth-child(6),
     td:nth-child(7),
     th:nth-child(7),
     td:nth-child(8),
-    th:nth-child(8),
-    td:nth-child(9),
-    th:nth-child(9) {
+    th:nth-child(8) {
       display: none; // Hide the second and third td
     }
 
-    td:nth-child(5),
-    th:nth-child(5),
+    td:nth-child(9),
+    th:nth-child(9),
+    td:nth-child(11),
+    th:nth-child(11) {
+      display: table-cell;
+      width: 30%;
+      word-wrap: break-word;
+      white-space: normal;
+      word-break: break-word;
+    }
+
     td:nth-child(10),
     th:nth-child(10) {
-      display: table-cell;
-      width: 40%;
+      width: 5%;
     }
-    td:nth-child(4),
-    th:nth-child(4) {
-      width: 20%;
-    }
-    td:nth-child(5),
-    th:nth-child(5) {
-      width: 20%;
+
+    td:nth-child(12),
+    th:nth-child(12),
+    td:nth-child(13),
+    th:nth-child(13) {
+      width: 5%;
+      text-align: right;
+      //word-break: break-word;
     }
   }
 }
@@ -1059,7 +1066,7 @@ ErrorMessage
   }
 
   /* Responsive table */
-  @media only screen and (max-width: $breakpoint-vertical) {
+  @media (max-width: $breakpoint-vertical) {
     //table-layout: unset;
     th:nth-child(1) {
       display: table-cell; // Show the first th
