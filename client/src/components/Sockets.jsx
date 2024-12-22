@@ -24,7 +24,7 @@ export default function Sockets() {
     socket.current.on('SYNC_COMPLETED', ({ itemId, userId, log } = {}) => {
       const msg = `${log}`;
       console.log(msg);
-      toast(msg, { autoClose: false });
+      toast(msg, { autoClose: true });
       getAccountsByItem(itemId);
       //getTransactionsByItem(itemId);
       getTransactionsByUser(userId);

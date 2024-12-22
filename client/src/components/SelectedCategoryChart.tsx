@@ -67,6 +67,8 @@ const SelectedCategoryChart: React.FC<SelectedCategoryChartProps> = ({
     }
   };
 
+  data = data.slice(-12);
+
   return (
     <div className="holdingsListCategories" ref={chartRef}>
       <h5 className="holdingsHeading">Category trend</h5>

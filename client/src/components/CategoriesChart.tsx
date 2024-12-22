@@ -198,7 +198,7 @@ export default function CategoriesChart(props: Props) {
           <Tooltip content={<CustomTooltip />} />
           <Bar
             dataKey="value"
-            barSize={50} // Set a maximum bar size
+            barSize={40} // Set a maximum bar size
           >
             {data.map((entry, index) => (
               <Cell

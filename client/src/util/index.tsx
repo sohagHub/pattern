@@ -50,6 +50,24 @@ export const monthMap: MonthMap = {
   Dec: '12',
 };
 
+export interface MonthYearItem {
+  monthYear: string;
+  [key: string]: any;
+}
+
+export const sortByMonthYear = (a: MonthYearItem, b: MonthYearItem) => {
+  const aMonth = a.monthYear.split(' ')[0];
+  const aYear = a.monthYear.split(' ')[1];
+  const bMonth = b.monthYear.split(' ')[0];
+  const bYear = b.monthYear.split(' ')[1];
+  const aMonthNumber = monthMap[aMonth];
+  const bMonthNumber = monthMap[bMonth];
+  if (aYear === bYear) {
+    return Number(aMonthNumber) - Number(bMonthNumber);
+  }
+  return Number(aYear) - Number(bYear);
+};
+
 const monthList = [
   null,
   'January',

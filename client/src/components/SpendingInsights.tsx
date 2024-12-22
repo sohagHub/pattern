@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { currencyFilter, monthMap } from '../util';
+import { currencyFilter, monthMap, sortByMonthYear } from '../util';
 import { CategoriesChart } from '.';
 import { TransactionType } from './types';
 import MonthlyCostChart from './MonthlyCostChart';
@@ -166,29 +166,17 @@ export default function SpendingInsights(props: Props) {
 
         const date = new Date(tx.date);
         const monthYear = getMonthYear(date);
-        const index = acc.findIndex(item => item.month === monthYear);
+        const index = acc.findIndex(item => item.monthYear === monthYear);
 
         if (index === -1) {
-          acc.push({ month: monthYear, cost: cost, income: -income });
+          acc.push({ monthYear: monthYear, cost: cost, income: -income });
         } else {
           acc[index].cost = acc[index].cost + cost;
           acc[index].income = acc[index].income - income;
         }
 
         // sort the acc by year and month
-        acc.sort((a, b) => {
-          // a and b are like "Jan 2021"
-          const aMonth = a.month.split(' ')[0];
-          const aYear = a.month.split(' ')[1];
-          const bMonth = b.month.split(' ')[0];
-          const bYear = b.month.split(' ')[1];
-          const aMonthNumber = monthMap[aMonth];
-          const bMonthNumber = monthMap[bMonth];
-          if (aYear === bYear) {
-            return Number(aMonthNumber) - Number(bMonthNumber);
-          }
-          return aYear - bYear;
-        });
+        acc.sort(sortByMonthYear);
 
         return acc;
       }, []),
@@ -453,23 +441,7 @@ export default function SpendingInsights(props: Props) {
     return monthData;
   });
 
-  const sortDataByMonthYear = (data: any[]) => {
-    return [...data].sort((a, b) => {
-      // a and b are like "Jan 2021"
-      const aMonth = a.monthYear.split(' ')[0];
-      const aYear = a.monthYear.split(' ')[1];
-      const bMonth = b.monthYear.split(' ')[0];
-      const bYear = b.monthYear.split(' ')[1];
-      const aMonthNumber = monthMap[aMonth];
-      const bMonthNumber = monthMap[bMonth];
-      if (aYear === bYear) {
-        return Number(aMonthNumber) - Number(bMonthNumber);
-      }
-      return Number(aYear) - Number(bYear);
-    });
-  };
-
-  const sortedData = sortDataByMonthYear(data);
+  const sortedData = data.sort(sortByMonthYear);
 
   console.log('sortedData', sortedData);
 

@@ -9,12 +9,12 @@ import {
   Cell,
   LabelList,
 } from 'recharts';
-import { COLORS } from '../util';
+import { COLORS, sortByMonthYear } from '../util';
 import colors from 'plaid-threads/scss/colors';
 
 interface Props {
   monthlyCosts: {
-    month: string;
+    monthYear: string;
     cost: number;
     income: number;
   }[];
@@ -82,7 +82,7 @@ export default function MonthlyCostChart(props: Props) {
       const value = payload[0].payload;
       return (
         <div className="custom-tooltip">
-          {value.month}
+          {value.monthYear}
           {showIncome && <br />}
           {showIncome && `Income: ${value.incomeString}`}
           <br />
@@ -93,22 +93,25 @@ export default function MonthlyCostChart(props: Props) {
     return null;
   };
 
-  const data = props.monthlyCosts.map(item => ({
-    ...item,
-    spending: Math.round(item.cost),
-    income: Math.round(item.income),
-    costString: `-$${Math.round(item.cost).toLocaleString()}`,
-    incomeString: `$${Math.round(item.income).toLocaleString()}`,
-  }));
+  const data = props.monthlyCosts
+    .sort(sortByMonthYear)
+    .slice(-12)
+    .map(item => ({
+      ...item,
+      spending: Math.round(item.cost),
+      income: Math.round(item.income),
+      costString: `-$${Math.round(item.cost).toLocaleString()}`,
+      incomeString: `$${Math.round(item.income).toLocaleString()}`,
+    }));
 
   const onIncomeBarClick = (data: any, index: any, event: any) => {
-    const month = data.month;
+    const month = data.monthYear;
     props.onMonthClick(month, 'IncomeType');
     event.stopPropagation();
   };
 
   const onCostBarClick = (data: any, index: any, event: any) => {
-    const month = data.month;
+    const month = data.monthYear;
     props.onMonthClick(month, '');
     event.stopPropagation();
   };
@@ -171,14 +174,14 @@ export default function MonthlyCostChart(props: Props) {
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[(index % 4) + 5]} />
             ))}
-            {chartWidth > 900 && (
+            {/*chartWidth > 900 && (
               <LabelList
                 dataKey="incomeString"
                 position="outside"
                 angle={-90}
                 fill={colors.black800}
               />
-            )}
+            )*/}
           </Bar>
         )}
         {showSpending && (
@@ -190,14 +193,14 @@ export default function MonthlyCostChart(props: Props) {
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % 4]} />
             ))}
-            {chartWidth > 900 && (
+            {/*chartWidth > 900 && (
               <LabelList
                 dataKey="costString"
                 position="outside"
                 angle={-90}
                 fill={colors.black900}
               />
-            )}
+            )*/}
           </Bar>
         )}
       </BarChart>
