@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
-import { currencyFilter } from '../util';
+import { currencyFilter, convertDateToString, mapCategoriesToSubcategories } from '../util';
 import { TransactionType } from './types';
 import { updateTransactionById } from '../services/api';
 import useTransactions from '../services/transactions';
@@ -12,30 +12,6 @@ interface Props {
   filterText: string;
   rows?: number;
 }
-
-const mapCategoriesToSubcategories = (
-  inputTransactions: TransactionType[]
-): Record<string, string[]> => {
-  const categoryToSubcategoryMapping: Record<string, Set<string>> = {};
-
-  inputTransactions.forEach(tx => {
-    if (tx.category && tx.subcategory) {
-      if (!categoryToSubcategoryMapping[tx.category]) {
-        categoryToSubcategoryMapping[tx.category] = new Set();
-      }
-      categoryToSubcategoryMapping[tx.category].add(tx.subcategory);
-    }
-  });
-
-  const categoryToSubcategoryMappingWithArrays: Record<string, string[]> = {};
-  Object.keys(categoryToSubcategoryMapping).forEach(category => {
-    categoryToSubcategoryMappingWithArrays[category] = Array.from(
-      categoryToSubcategoryMapping[category]
-    );
-  });
-
-  return categoryToSubcategoryMappingWithArrays;
-};
 
 export default function TransactionsTable(props: Props) {
   const [rowsPerPage, setRowsPerPage] = useState(props.rows || 20);
@@ -76,42 +52,7 @@ export default function TransactionsTable(props: Props) {
     TransactionType[]
   >([]);
 
-  function convertDateString(input: string): string {
-    // Define a type for the month mapping
-    type MonthMap = { [key: string]: string };
 
-    // Mapping of month names to month numbers
-    const months: MonthMap = {
-      Jan: '01',
-      Feb: '02',
-      Mar: '03',
-      Apr: '04',
-      May: '05',
-      Jun: '06',
-      Jul: '07',
-      Aug: '08',
-      Sep: '09',
-      Oct: '10',
-      Nov: '11',
-      Dec: '12',
-    };
-
-    // Split the input into month and year
-    const parts = input && input.split(' ');
-    if (parts && parts.length === 2) {
-      const month = parts[0];
-      const year = parts[1];
-
-      // Check if month is valid
-      if (months[month]) {
-        return `${year}-${months[month]}`;
-      } else {
-        return 'Invalid Month';
-      }
-    } else {
-      return 'Invalid Date Format';
-    }
-  }
 
   // Update monthFilter when props.selectedMonth changes
   useEffect(() => {
@@ -119,7 +60,7 @@ export default function TransactionsTable(props: Props) {
     // get all term that are separated by space or quotes and not empty string
     let terms = props.filterText.split("'").filter(item => item.trim() !== '');
 
-    const newFilterTerm = convertDateString(terms[0]); //convertDateString(props.filterText);
+    const newFilterTerm = convertDateToString(terms[0]); //convertDateString(props.filterText);
     if (
       newFilterTerm === 'Invalid Date Format' ||
       newFilterTerm === 'Invalid Month'
@@ -311,20 +252,6 @@ export default function TransactionsTable(props: Props) {
     indexOfLastTransaction,
     sortDirection,
   ]);
-
-  // Handler for category filter change
-  const handleCategoryFilterChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    console.log('filter value', event.target.value);
-    // if there is :: in the value, then first part is category and second part is subcategory, also trim the value
-    const [category, subcategory] = event.target.value
-      .split('::')
-      .map(part => part.trim());
-    setCategoryFilter([category]);
-    setSubCategoryFilter([subcategory]);
-    setCurrentPage(1);
-  };
 
   // Handler for category selection change
   const handleCategoryTreeChange = (currentNode: TreeNode, selectedNodes: TreeNode[]) => {

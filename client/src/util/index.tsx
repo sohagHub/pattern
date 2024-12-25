@@ -212,3 +212,45 @@ export const getOneMonthTransactions = (
     return isCostCategory(tx.category) && dateMatcher(date);
   });
 };
+
+export const convertDateToString = (input: string) => {
+  // Split the input into month and year
+  const parts = input && input.split(' ');
+  if (parts && parts.length === 2) {
+    const month = parts[0];
+    const year = parts[1];
+
+    // Check if month is valid
+    if (monthMap[month]) {
+      return `${year}-${monthMap[month]}`;
+    } else {
+      return 'Invalid Month';
+    }
+  } else {
+    return 'Invalid Date Format';
+  }
+};
+
+export const mapCategoriesToSubcategories = (
+  inputTransactions: TransactionType[]
+): Record<string, string[]> => {
+  const categoryToSubcategoryMapping: Record<string, Set<string>> = {};
+
+  inputTransactions.forEach(tx => {
+    if (tx.category && tx.subcategory) {
+      if (!categoryToSubcategoryMapping[tx.category]) {
+        categoryToSubcategoryMapping[tx.category] = new Set();
+      }
+      categoryToSubcategoryMapping[tx.category].add(tx.subcategory);
+    }
+  });
+
+  const categoryToSubcategoryMappingWithArrays: Record<string, string[]> = {};
+  Object.keys(categoryToSubcategoryMapping).forEach(category => {
+    categoryToSubcategoryMappingWithArrays[category] = Array.from(
+      categoryToSubcategoryMapping[category]
+    );
+  });
+
+  return categoryToSubcategoryMappingWithArrays;
+};
