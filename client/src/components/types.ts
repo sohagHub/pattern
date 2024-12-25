@@ -86,3 +86,22 @@ export interface UserType {
   updated_at: string;
   token: string | null;
 }
+
+export interface Categories {
+  [key: string]: number;
+}
+
+export interface SubCategories {
+  [key: string]: Categories;
+}
+
+export interface CategoryCosts {
+  [monthYear: string]: {
+    [category: string]: {
+      total: number;
+      subcategories: {
+        [subcategory: string]: number;
+      };
+    };
+  };
+}

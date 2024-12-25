@@ -39,6 +39,7 @@ type TransactionsAction =
 
 interface TransactionsContextShape extends TransactionsState {
   dispatch: Dispatch<TransactionsAction>;
+  allTransactions: TransactionType[];
   transactionsByAccount: Dictionary<any>;
   getTransactionsByAccount: (accountId: number, refresh?: boolean) => void;
   deleteTransactionsByItemId: (itemId: number) => void;

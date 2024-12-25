@@ -9,7 +9,6 @@ import DropdownTreeSelect, { TreeNode } from 'react-dropdown-tree-select';
 import 'react-dropdown-tree-select/dist/styles.css';
 
 interface Props {
-  transactions: TransactionType[];
   filterText: string;
   rows?: number;
 }
@@ -40,7 +39,13 @@ const mapCategoriesToSubcategories = (
 
 export default function TransactionsTable(props: Props) {
   const [rowsPerPage, setRowsPerPage] = useState(props.rows || 20);
-  const { dispatch } = useTransactions();
+  
+  const { dispatch, allTransactions } = useTransactions();
+  const [transactions, setTransactions] = useState<TransactionType[]>([]);
+  useEffect(() => {
+    setTransactions(allTransactions);
+  }, [allTransactions]);
+
 
   // Pagination logic
   //const transactionsPerPage = 50; // Replace 10 with the desired number of transactions per page
@@ -204,7 +209,7 @@ export default function TransactionsTable(props: Props) {
     };
 
     // Filter transactions based on AND, OR, NOT logic
-    let filteredTransactions = props.transactions.filter(tx => {
+    let filteredTransactions = transactions.filter(tx => {
       //if (tx.category === 'Duplicate') return false;
 
       const andMatch =
@@ -217,7 +222,7 @@ export default function TransactionsTable(props: Props) {
     });
 
     setCategoryToSubcategoryMapping(
-      mapCategoriesToSubcategories(props.transactions)
+      mapCategoriesToSubcategories(transactions)
     );
     setUniqueCategoryToSubcategoryMapping(
       mapCategoriesToSubcategories(filteredTransactions)
@@ -245,7 +250,7 @@ export default function TransactionsTable(props: Props) {
     setFilteredTransactions(filteredTransactions);
 
     // Build the mapping from all transactions
-    const mapping = mapCategoriesToSubcategories(filteredTransactions); // instead of props.transactions
+    const mapping = mapCategoriesToSubcategories(transactions); // instead of transactions
     setCategoryToSubcategoryMapping(mapping);
 
     // Calculate total number of categories and subcategories
@@ -279,7 +284,7 @@ export default function TransactionsTable(props: Props) {
       })),
     ];
     setCategoryTreeData(treeData);
-  }, [categoryFilter, subCategoryFilter, filterTerm, props.transactions, selectedCategories]);
+  }, [categoryFilter, subCategoryFilter, filterTerm, transactions, selectedCategories]);
 
   useEffect(() => {
     const sortedTransactions = filteredTransactions.sort((a, b) => {

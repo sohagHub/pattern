@@ -1,8 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { currencyFilter, monthMap, sortByMonthYear } from '../util';
+import {
+  currencyFilter,
+  monthMap,
+  sortByMonthYear,
+  isCostCategory,
+  isIncomeCategory,
+  getOneMonthTransactions,
+} from '../util';
 import { CategoriesChart } from '.';
-import { TransactionType } from './types';
+import {
+  TransactionType,
+  Categories,
+  SubCategories,
+  CategoryCosts,
+} from './types';
 import MonthlyCostChart from './MonthlyCostChart';
 import SelectedCategoryChart from './SelectedCategoryChart';
 import { useCurrentSelection } from '../services/currentSelection';
@@ -13,43 +25,6 @@ interface Props {
   onMonthClick: (month: string) => void;
   onCategoryClick: (category: string) => void;
   onSubCategoryClick: (subCategory: string) => void;
-}
-
-interface Categories {
-  [key: string]: number;
-}
-
-interface SubCategories {
-  [key: string]: Categories;
-}
-
-// Function to check if a transaction category is excluded
-const isCostCategory = (category: string): boolean => {
-  const excludedCategories = [
-    'Payment',
-    'Transfer',
-    'Interest',
-    'Income',
-    'Investment',
-    'Duplicate',
-  ];
-  return !excludedCategories.includes(category);
-};
-
-const isIncomeCategory = (category: string): boolean => {
-  const includedCategory = ['Interest', 'Income', 'Credit Card Rewards'];
-  return includedCategory.includes(category);
-};
-
-interface CategoryCosts {
-  [monthYear: string]: {
-    [category: string]: {
-      total: number;
-      subcategories: {
-        [subcategory: string]: number;
-      };
-    };
-  };
 }
 
 export default function SpendingInsights(props: Props) {
@@ -97,24 +72,6 @@ export default function SpendingInsights(props: Props) {
       props.onCategoryClick('');
       props.onMonthClick('');
     }
-  };
-
-  type DateMatcher = (date: Date) => boolean;
-
-  const getOneMonthTransactions = (
-    transactions: TransactionType[],
-    dateMatcher: DateMatcher,
-    type: string
-  ): TransactionType[] => {
-    return transactions.filter(tx => {
-      const date = new Date(tx.date);
-
-      if (type === 'IncomeType') {
-        return isIncomeCategory(tx.category) && dateMatcher(date);
-      }
-
-      return isCostCategory(tx.category) && dateMatcher(date);
-    });
   };
 
   const monthlyTransactions = useMemo(() => {

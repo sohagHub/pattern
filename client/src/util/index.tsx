@@ -9,6 +9,7 @@ import {
 
 import { postLinkEvent as apiPostLinkEvent } from '../services/api';
 import colors from 'plaid-threads/scss/colors';
+import { TransactionType } from '../components/types';
 
 /**
  * @desc small helper for pluralizing words for display given a number of items
@@ -175,3 +176,39 @@ export const COLORS = [
   colors.green600,
   //colors.purple600,
 ];
+
+// Function to check if a transaction category is excluded
+export const isCostCategory = (category: string): boolean => {
+  const excludedCategories = [
+    'Payment',
+    'Transfer',
+    'Interest',
+    'Income',
+    'Investment',
+    'Duplicate',
+  ];
+  return !excludedCategories.includes(category);
+};
+
+export const isIncomeCategory = (category: string): boolean => {
+  const includedCategory = ['Interest', 'Income', 'Credit Card Rewards'];
+  return includedCategory.includes(category);
+};
+
+export type DateMatcher = (date: Date) => boolean;
+
+export const getOneMonthTransactions = (
+  transactions: TransactionType[],
+  dateMatcher: DateMatcher,
+  type: string
+): TransactionType[] => {
+  return transactions.filter(tx => {
+    const date = new Date(tx.date);
+
+    if (type === 'IncomeType') {
+      return isIncomeCategory(tx.category) && dateMatcher(date);
+    }
+
+    return isCostCategory(tx.category) && dateMatcher(date);
+  });
+};

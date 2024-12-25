@@ -33,7 +33,7 @@ const TransactionPage = ({ match }: RouteComponentProps<RouteInfo>) => {
             <h4 className="transaction-header">
               <strong>Transactions</strong>
             </h4>
-            <TransactionsTable transactions={transactions} filterText={''} />
+            <TransactionsTable filterText={''} />
           </div>
         </div>
       </div>

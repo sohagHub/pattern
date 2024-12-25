@@ -360,7 +360,6 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
               <strong>Transactions</strong>
             </h4>
             <TransactionsTable
-              transactions={transactions}
               filterText={
                 (selectedMonth ? "'" + selectedMonth + "'" : '') +
                 ' ' +
@@ -380,11 +379,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
               isOpen={isModalOpen}
               onRequestClose={closeModal}
             >
-              <TransactionsTable
-                transactions={transactions}
-                filterText={selectedAccount}
-                rows={10}
-              />
+              <TransactionsTable filterText={selectedAccount} rows={10} />
             </Modal>
           </div>
         </div>

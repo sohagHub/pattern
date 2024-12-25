@@ -45,14 +45,10 @@ const UserPage = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
-
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedAccount('');
   };
-
-
 
   useEffect(() => {
     // This gets transactions from the database only.
@@ -137,45 +133,113 @@ const UserPage = () => {
     setItems(orderedItems);
   }, [accountsByItem, itemsByUser, userId]);
 
-
-  const [selectedItem, setSelectedItem] = useState('item1');
+  const [selectedItem, setSelectedItem] = useState('Spending');
+  const [spendingView, setSpendingView] = useState('Timeline');
 
   return (
     <div>
       <div>
         <Banner />
       </div>
-      <div className="container">
-        <div className="left-section">
-          <div>
-            <ul>
-              <li onClick={() => setSelectedItem('item1')}>Item 1</li>
-              <li onClick={() => setSelectedItem('item2')}>Item 2</li>
-              <li onClick={() => setSelectedItem('item3')}>Item 3</li>
-              {/* Add more items as needed */}
-            </ul>
-          </div>
+      <div className="trend-container">
+        <div className="trend-left-section">
+          <ul>
+            <li
+              onClick={() => setSelectedItem('Spending')}
+              className={selectedItem === 'Spending' ? 'active' : ''}
+            >
+              Spending
+              {selectedItem === 'Spending' && (
+                <ul className="spending-subnav">
+                  <li
+                    onClick={() => setSpendingView('All')}
+                    className={spendingView === 'All' ? 'active' : ''}
+                  >
+                    All
+                  </li>
+                  <li
+                    onClick={() => setSpendingView('Timeline')}
+                    className={spendingView === 'Timeline' ? 'active' : ''}
+                  >
+                    Timeline
+                  </li>
+                  <li
+                    onClick={() => setSpendingView('Category')}
+                    className={spendingView === 'Category' ? 'active' : ''}
+                  >
+                    By Category
+                  </li>
+                  <li
+                    onClick={() => setSpendingView('Vendor')}
+                    className={spendingView === 'Vendor' ? 'active' : ''}
+                  >
+                    By Vendor
+                  </li>
+                </ul>
+              )}
+            </li>
+            <li
+              onClick={() => setSelectedItem('Income')}
+              className={selectedItem === 'Income' ? 'active' : ''}
+            >
+              Income
+            </li>
+            <li
+              onClick={() => setSelectedItem('Assets')}
+              className={selectedItem === 'Assets' ? 'active' : ''}
+            >
+              Assets
+            </li>
+            <li
+              onClick={() => setSelectedItem('Liabilities')}
+              className={selectedItem === 'Liabilities' ? 'active' : ''}
+            >
+              Liabilities
+            </li>
+            <li
+              onClick={() => setSelectedItem('Net Worth')}
+              className={selectedItem === 'Net Worth' ? 'active' : ''}
+            >
+              Net Worth
+            </li>
+          </ul>
         </div>
 
-        <div className="right-section">
-          {numOfItems > 0 && transactions.length > 0 && (
+        <div className="trend-right-section">
+          {selectedItem === 'Spending' && (
             <>
-              <SpendingInsights
-                numOfItems={numOfItems}
-                transactions={transactions}
-                onMonthClick={setSelectedMonth}
-                onCategoryClick={setSelectedCategory}
-                onSubCategoryClick={setSelectedSubCategory}
-                //selectedMonth={selectedMonth}
-              />
+              {spendingView === 'Timeline' && (
+                <h3>Placeholder for Spending by Vendor</h3>
+              )}
+              {spendingView === 'All' &&
+                numOfItems > 0 &&
+                transactions.length > 0 && (
+                  <SpendingInsights
+                    numOfItems={numOfItems}
+                    transactions={transactions}
+                    onMonthClick={setSelectedMonth}
+                    onCategoryClick={setSelectedCategory}
+                    onSubCategoryClick={setSelectedSubCategory}
+                    //selectedMonth={selectedMonth}
+                  />
+                )}
+              {spendingView === 'Vendor' && (
+                <h3>Placeholder for Spending by Vendor Graph</h3>
+              )}
             </>
           )}
+
+          {selectedItem === 'Income' && <h3>Placeholder for Income chart</h3>}
+
+          {selectedItem === 'Assets' && <h3>Placeholder for Assets chart</h3>}
+
+          {/* ...add more placeholders as needed... */}
+
           <div>
             <h4 className="transaction-header">
               <strong>Transactions</strong>
             </h4>
             <TransactionsTable
-              transactions={transactions}
               filterText={
                 (selectedMonth ? "'" + selectedMonth + "'" : '') +
                 ' ' +
@@ -189,11 +253,7 @@ const UserPage = () => {
               isOpen={isModalOpen}
               onRequestClose={closeModal}
             >
-              <TransactionsTable
-                transactions={transactions}
-                filterText={selectedAccount}
-                rows={10}
-              />
+              <TransactionsTable filterText={selectedAccount} rows={10} />
             </Modal>
           </div>
         </div>
