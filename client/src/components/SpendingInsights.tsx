@@ -18,9 +18,9 @@ import {
 import MonthlyCostChart from './MonthlyCostChart';
 import SelectedCategoryChart from './SelectedCategoryChart';
 import { useCurrentSelection } from '../services/currentSelection';
+import useTransactions from '../services/transactions';
 
 interface Props {
-  transactions: TransactionType[];
   numOfItems: number;
   onMonthClick: (month: string) => void;
   onCategoryClick: (category: string) => void;
@@ -29,7 +29,12 @@ interface Props {
 
 export default function SpendingInsights(props: Props) {
   // grab transactions from most recent month and filter out transfers and payments
-  const transactions = props.transactions;
+  const { allTransactions } = useTransactions();
+  const [transactions, setTransactions] = useState<TransactionType[]>([]);
+  useEffect(() => {
+    setTransactions(allTransactions);
+  }, [allTransactions]);
+
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [costType, setCostType] = useState<string>(''); // income or spending
 
@@ -373,8 +378,6 @@ export default function SpendingInsights(props: Props) {
           )
         )
       ).sort();
-
-  //console.log('lines', lines);
 
   type MonthData = { monthYear: string; [key: string]: number | string };
 

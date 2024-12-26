@@ -40,7 +40,7 @@ export default function MonthlyCostChart(props: Props) {
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
-  const [showIncome, setShowIncome] = useState(false);
+  const [showIncome, setShowIncome] = useState(true);
   const [showSpending, setShowSpending] = useState(true);
 
   const toggleIncome = () => {

@@ -216,7 +216,6 @@ const UserPage = () => {
                 transactions.length > 0 && (
                   <SpendingInsights
                     numOfItems={numOfItems}
-                    transactions={transactions}
                     onMonthClick={setSelectedMonth}
                     onCategoryClick={setSelectedCategory}
                     onSubCategoryClick={setSelectedSubCategory}

@@ -336,7 +336,6 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
               />
               <SpendingInsights
                 numOfItems={numOfItems}
-                transactions={transactions}
                 onMonthClick={setSelectedMonth}
                 onCategoryClick={setSelectedCategory}
                 onSubCategoryClick={setSelectedSubCategory}
