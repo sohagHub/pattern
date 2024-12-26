@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
   BarChart,
   Bar,
@@ -9,20 +9,70 @@ import {
   Cell,
   LabelList,
 } from 'recharts';
-import { COLORS, sortByMonthYear } from '../util';
-import colors from 'plaid-threads/scss/colors';
+import {
+  COLORS,
+  getMonthYear,
+  isCostCategory,
+  isIncomeCategory,
+  sortByMonthYear,
+} from '../util';
+import useTransactions from '../services/transactions';
+import { TransactionType } from './types';
 
 interface Props {
-  monthlyCosts: {
-    monthYear: string;
-    cost: number;
-    income: number;
-  }[];
   onMonthClick: (month: string, type: string) => void;
   width: number;
 }
 
+interface MonthlyCost {
+  monthYear: string;
+  cost: number;
+  income: number;
+}
+
 export default function MonthlyCostChart(props: Props) {
+  const { allTransactions } = useTransactions();
+  const [transactions, setTransactions] = useState<TransactionType[]>([]);
+  useEffect(() => {
+    setTransactions(allTransactions);
+  }, [allTransactions]);
+
+  // put the type of monthlyCosts here
+  const monthlyCosts = useMemo(
+    () =>
+      // calculate monthly total cost by month from transactions
+      // and send as as monthlyCosts: {
+      //   month: string;
+      //   cost: number;
+      // }[]; to MonthlyCostChart
+      transactions.reduce<MonthlyCost[]>((acc: any[], tx) => {
+        if (!isCostCategory(tx.category) && !isIncomeCategory(tx.category)) {
+          return acc;
+        }
+
+        const cost = isCostCategory(tx.category) ? tx.amount : 0;
+        const income = isIncomeCategory(tx.category) ? tx.amount : 0;
+
+        const date = new Date(tx.date);
+        const monthYear = getMonthYear(date);
+        const index = acc.findIndex(item => item.monthYear === monthYear);
+
+        if (index === -1) {
+          acc.push({ monthYear: monthYear, cost: cost, income: -income });
+        } else {
+          acc[index].cost = acc[index].cost + cost;
+          acc[index].income = acc[index].income - income;
+        }
+
+        // sort the acc by year and month
+        acc.sort(sortByMonthYear);
+
+        return acc;
+      }, []),
+
+    [transactions]
+  );
+
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
   const [chartWidth, setChartWidth] = useState(0);
@@ -93,10 +143,10 @@ export default function MonthlyCostChart(props: Props) {
     return null;
   };
 
-  const data = props.monthlyCosts
+  const data = monthlyCosts
     .sort(sortByMonthYear)
     .slice(-12)
-    .map(item => ({
+    .map((item: { cost: number; income: number }) => ({
       ...item,
       spending: Math.round(item.cost),
       income: Math.round(item.income),

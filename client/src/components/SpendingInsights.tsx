@@ -7,6 +7,7 @@ import {
   isCostCategory,
   isIncomeCategory,
   getOneMonthTransactions,
+  getMonthYear,
 } from '../util';
 import { CategoriesChart } from '.';
 import {
@@ -110,41 +111,6 @@ export default function SpendingInsights(props: Props) {
     return result;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMonth, costType, transactions]);
-
-  const monthlyCosts = useMemo(
-    () =>
-      // calculate monthly total cost by month from transactions
-      // and send as as monthlyCosts: {
-      //   month: string;
-      //   cost: number;
-      // }[]; to MonthlyCostChart
-      transactions.reduce((acc: any[], tx) => {
-        if (!isCostCategory(tx.category) && !isIncomeCategory(tx.category)) {
-          return acc;
-        }
-
-        const cost = isCostCategory(tx.category) ? tx.amount : 0;
-        const income = isIncomeCategory(tx.category) ? tx.amount : 0;
-
-        const date = new Date(tx.date);
-        const monthYear = getMonthYear(date);
-        const index = acc.findIndex(item => item.monthYear === monthYear);
-
-        if (index === -1) {
-          acc.push({ monthYear: monthYear, cost: cost, income: -income });
-        } else {
-          acc[index].cost = acc[index].cost + cost;
-          acc[index].income = acc[index].income - income;
-        }
-
-        // sort the acc by year and month
-        acc.sort(sortByMonthYear);
-
-        return acc;
-      }, []),
-
-    [transactions]
-  );
 
   const categoryCosts = useMemo<CategoryCosts>(() => {
     const unsortedCategoryCosts = transactions.reduce(
@@ -414,7 +380,6 @@ export default function SpendingInsights(props: Props) {
         {width > 0 && (
           <div className="userDataBoxBarChart">
             <MonthlyCostChart
-              monthlyCosts={monthlyCosts}
               onMonthClick={onMonthClickSetMonth}
               width={width}
             />
@@ -481,13 +446,3 @@ export default function SpendingInsights(props: Props) {
     </div>
   );
 }
-
-const getMonthYear = (date: Date) => {
-  const month = date.toLocaleString('default', {
-    month: 'short',
-    timeZone: 'UTC',
-  });
-  const year = date.getFullYear();
-  const monthYear = `${month} ${year}`;
-  return monthYear;
-};

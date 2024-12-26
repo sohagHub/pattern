@@ -254,3 +254,13 @@ export const mapCategoriesToSubcategories = (
 
   return categoryToSubcategoryMappingWithArrays;
 };
+
+export const getMonthYear = (date: Date) => {
+  const month = date.toLocaleString('default', {
+    month: 'short',
+    timeZone: 'UTC',
+  });
+  const year = date.getFullYear();
+  const monthYear = `${month} ${year}`;
+  return monthYear;
+};
