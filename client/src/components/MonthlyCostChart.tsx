@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from 'react';
 import {
   BarChart,
   Bar,
@@ -7,7 +13,6 @@ import {
   CartesianGrid,
   Tooltip,
   Cell,
-  LabelList,
 } from 'recharts';
 import {
   COLORS,
@@ -18,9 +23,9 @@ import {
 } from '../util';
 import useTransactions from '../services/transactions';
 import { TransactionType } from './types';
+import { useCurrentSelection } from '../services/currentSelection';
 
 interface Props {
-  onMonthClick: (month: string, type: string) => void;
   width: number;
 }
 
@@ -36,6 +41,14 @@ export default function MonthlyCostChart(props: Props) {
   useEffect(() => {
     setTransactions(allTransactions);
   }, [allTransactions]);
+
+  const {
+    onMonthSelect,
+    selectedCostType,
+    onCostTypeSelect,
+    onCategorySelect,
+    onSubCategorySelect,
+  } = useCurrentSelection();
 
   // put the type of monthlyCosts here
   const monthlyCosts = useMemo(
@@ -156,20 +169,37 @@ export default function MonthlyCostChart(props: Props) {
 
   const onIncomeBarClick = (data: any, index: any, event: any) => {
     const month = data.monthYear;
-    props.onMonthClick(month, 'IncomeType');
+    onMonthSelect(month);
+
+    if (selectedCostType !== 'IncomeType') {
+      onCategorySelect('');
+      onSubCategorySelect('');
+    }
+
+    onCostTypeSelect('IncomeType');
     event.stopPropagation();
   };
 
   const onCostBarClick = (data: any, index: any, event: any) => {
     const month = data.monthYear;
-    props.onMonthClick(month, '');
+    onMonthSelect(month);
+
+    if (selectedCostType !== 'SpendingType') {
+      onCategorySelect('');
+      onSubCategorySelect('');
+    }
+
+    onCostTypeSelect('SpendingType');
     event.stopPropagation();
   };
 
   const onBarClick = (data: any, index: any, event: any) => {
     if (data == null) return;
-    const month = data.activeLabel;
-    props.onMonthClick(month, '');
+    let month = data.activeLabel;
+    if (!month) {
+      month = data.activePayload[0].payload.monthYear;
+    }
+    onMonthSelect(month);
   };
 
   return (
