@@ -60,7 +60,8 @@ export default function SpendingInsights(props: Props) {
   useEffect(() => {
     if (
       (selectedCostType === 'IncomeType' && isCostCategory(selectedCategory)) ||
-      (selectedCostType === 'SpendingType' && isIncomeCategory(selectedCategory))
+      (selectedCostType === 'SpendingType' &&
+        isIncomeCategory(selectedCategory))
     ) {
       props.onCategoryClick('');
       props.onSubCategoryClick('');
@@ -129,9 +130,9 @@ export default function SpendingInsights(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMonth, selectedCostType, transactions]);
 
-  const categoryCosts = useMemo<CategoryCosts>(() => {
-    const unsortedCategoryCosts = transactions.reduce(
-      (acc: CategoryCosts, tx) => {
+  const categoryCosts = useMemo<CategoryCosts>(
+    () =>
+      transactions.reduce((acc: CategoryCosts, tx) => {
         if (!isCostCategory(tx.category) && !isIncomeCategory(tx.category)) {
           return acc;
         }
@@ -178,24 +179,9 @@ export default function SpendingInsights(props: Props) {
         }
 
         return acc;
-      },
-      {}
-    );
-    const sortedEntries = Object.entries(unsortedCategoryCosts).sort((a, b) => {
-      const aMonth = a[0].split(' ')[0];
-      const aYear = a[0].split(' ')[1];
-      const bMonth = b[0].split(' ')[0];
-      const bYear = b[0].split(' ')[1];
-      const aMonthNumber = monthMap[aMonth];
-      const bMonthNumber = monthMap[bMonth];
-      if (aYear === bYear) {
-        return Number(aMonthNumber) - Number(bMonthNumber);
-      }
-      return Number(aYear) - Number(bYear);
-    });
-
-    return Object.fromEntries(sortedEntries);
-  }, [selectedCostType, transactions]);
+      }, {}),
+    [selectedCostType, transactions]
+  );
 
   // create category and name objects from transactions
   const categoriesObject = useMemo((): Categories => {
