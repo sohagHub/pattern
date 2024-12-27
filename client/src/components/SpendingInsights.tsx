@@ -413,8 +413,6 @@ export default function SpendingInsights(props: Props) {
                 ? subcategoriesObject[selectedCategory]
                 : categoriesObject
             }
-            selectedMonth={selectedMonth || ''}
-            selectedType={selectedCostType}
             onCategoryClick={
               selectedCategory && hasAtLeastTwoSubcategories()
                 ? onSubCategoryClick

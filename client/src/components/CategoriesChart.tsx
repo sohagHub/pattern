@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   PieChart,
   Pie,
@@ -13,18 +13,18 @@ import {
 } from 'recharts';
 import { COLORS } from '../util';
 import colors from 'plaid-threads/scss/colors';
+import { useCurrentSelection } from '../services/currentSelection';
 
 interface Props {
   categories: {
     [key: string]: number;
   };
-  selectedMonth: string;
-  selectedType: string;
   onCategoryClick: (category: string) => void;
   viewType: string;
 }
 
 export default function CategoriesChart(props: Props) {
+  const { selectedMonth, selectedCostType } = useCurrentSelection();
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const pieChartRef = useRef<HTMLDivElement>(null);
 
@@ -51,7 +51,7 @@ export default function CategoriesChart(props: Props) {
   let totalValue = 0;
 
   for (let i = 0; i < labels.length; i++) {
-    if (values[i] <= 0 && props.selectedType !== 'IncomeType') {
+    if (values[i] <= 0 && selectedCostType !== 'IncomeType') {
       continue;
     }
     const roundedValue = Math.round(values[i]);
@@ -59,7 +59,7 @@ export default function CategoriesChart(props: Props) {
     totalValue += values[i];
   }
 
-  if (props.selectedType === 'IncomeType') {
+  if (selectedCostType === 'IncomeType') {
     // change all data values to positive
     data = data.map(entry => {
       return { name: entry.name, value: Math.abs(entry.value) };
@@ -119,12 +119,12 @@ export default function CategoriesChart(props: Props) {
   return (
     <div className="holdingsListCategories" ref={pieChartRef}>
       <h5 className="holdingsHeading">
-        {props.selectedType === 'IncomeType' ? 'Income' : 'Spending'}{' '}
+        {selectedCostType === 'IncomeType' ? 'Income' : 'Spending'}{' '}
         {props.viewType === 'main' ? 'Categories' : 'Sub-Categories'}
       </h5>
       <div className="categoryChartButtonDiv">
         <div>
-          {props.selectedMonth}, Total: ${totalValue.toLocaleString()}
+          {selectedMonth}, Total: ${totalValue.toLocaleString()}
           <br />
           <button
             className="switchChartTypeButton"
