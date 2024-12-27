@@ -24,7 +24,12 @@ interface Props {
 }
 
 export default function CategoriesChart(props: Props) {
-  const { selectedMonth, selectedCostType } = useCurrentSelection();
+  const {
+    selectedMonth,
+    selectedCostType,
+    onCategorySelect,
+    onSubCategorySelect,
+  } = useCurrentSelection();
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const pieChartRef = useRef<HTMLDivElement>(null);
 
@@ -88,8 +93,10 @@ export default function CategoriesChart(props: Props) {
       // like setting state, showing modal with more details, etc.
       props.onCategoryClick(entry.name);
       setSelectedCategory(entry.name);
+      onSubCategorySelect(entry.name);
+      onCategorySelect(entry.name);
     },
-    [props, setSelectedCategory]
+    [onCategorySelect, onSubCategorySelect, props]
   );
 
   const CustomTooltip: React.FC<any> = ({ active, payload }) => {

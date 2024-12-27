@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import {
   LineChart,
   BarChart,
@@ -13,19 +13,23 @@ import {
   Area,
   LabelList,
 } from 'recharts';
-import { COLORS } from '../util';
+import {
+  COLORS,
+  getMonthYear,
+  isCostCategory,
+  isIncomeCategory,
+  sortByMonthYear,
+} from '../util';
 import { useCurrentSelection } from '../services/currentSelection';
+import useTransactions from '../services/transactions';
+import { CategoryCosts } from './types';
 
 interface SelectedCategoryChartProps {
-  data: any[];
-  lines: string[];
   width?: number;
   indexForColor?: number;
 }
 
 const SelectedCategoryChart: React.FC<SelectedCategoryChartProps> = ({
-  data,
-  lines,
   width = 500,
   indexForColor = -1,
 }) => {
@@ -33,8 +37,103 @@ const SelectedCategoryChart: React.FC<SelectedCategoryChartProps> = ({
   const [activeLine, setActiveLine] = useState<string | null>(null);
   const [chartType, setChartType] = useState<'line' | 'bar'>('bar');
 
-  // Use the hook to get access to onCategorySelect
-  const { onMonthSelect } = useCurrentSelection();
+  const { allTransactions } = useTransactions();
+  const {
+    selectedMonth,
+    selectedCategory,
+    selectedSubCategory,
+    selectedCostType,
+    onMonthSelect,
+  } = useCurrentSelection();
+
+  const { data, lines } = useMemo(() => {
+    const categoryCosts = allTransactions.reduce((acc: CategoryCosts, tx) => {
+      if (!isCostCategory(tx.category) && !isIncomeCategory(tx.category)) {
+        return acc;
+      }
+      if (selectedCostType === 'IncomeType' && !isIncomeCategory(tx.category)) {
+        return acc;
+      }
+      if (selectedCostType === 'SpendingType' && !isCostCategory(tx.category)) {
+        return acc;
+      }
+      if (!selectedCostType && !isCostCategory(tx.category)) {
+        return acc;
+      }
+
+      if (isIncomeCategory(tx.category)) {
+        tx.amount = -tx.amount;
+      }
+
+      const date = new Date(tx.date);
+      const monthYear = getMonthYear(date);
+
+      if (!acc[monthYear]) {
+        acc[monthYear] = {};
+      }
+
+      if (!acc[monthYear][tx.category]) {
+        acc[monthYear][tx.category] = { total: 0, subcategories: {} };
+      }
+
+      acc[monthYear][tx.category].total += tx.amount;
+
+      if (tx.subcategory) {
+        if (!acc[monthYear][tx.category].subcategories[tx.subcategory]) {
+          acc[monthYear][tx.category].subcategories[tx.subcategory] = 0;
+        }
+
+        acc[monthYear][tx.category].subcategories[tx.subcategory] += tx.amount;
+      }
+
+      return acc;
+    }, {});
+
+    let lines;
+    if (selectedCategory) {
+      lines = selectedSubCategory ? [selectedSubCategory] : [selectedCategory];
+    } else {
+      lines = Array.from(
+        new Set(
+          Object.keys(categoryCosts).flatMap(monthYear =>
+            Object.keys(categoryCosts[monthYear])
+          )
+        )
+      ).sort();
+    }
+
+    type MonthData = { monthYear: string; [key: string]: number | string };
+
+    const data: MonthData[] = Object.keys(categoryCosts).map(monthYear => {
+      const monthData: MonthData = { monthYear };
+
+      Object.entries(categoryCosts[monthYear]).forEach(
+        ([category, categoryData]) => {
+          // Add category total
+          monthData[category] = Math.round(categoryData.total);
+
+          // Add subcategory totals
+          Object.entries(categoryData.subcategories || {}).forEach(
+            ([subCategory, subCategoryTotal]) => {
+              monthData[`${subCategory}`] = Math.round(subCategoryTotal);
+            }
+          );
+        }
+      );
+
+      return monthData;
+    });
+
+    return {
+      data: data.sort(sortByMonthYear).slice(-12),
+      lines,
+    };
+  }, [
+    allTransactions,
+    selectedCategory,
+    selectedCostType,
+    selectedSubCategory,
+  ]);
 
   const toggleChartType = () => {
     setChartType(prevType => (prevType === 'line' ? 'bar' : 'line'));
@@ -66,8 +165,6 @@ const SelectedCategoryChart: React.FC<SelectedCategoryChartProps> = ({
       onMonthSelect(xDataKey);
     }
   };
-
-  data = data.slice(-12);
 
   return (
     <div className="holdingsListCategories" ref={chartRef}>

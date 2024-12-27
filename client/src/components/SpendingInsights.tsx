@@ -130,59 +130,6 @@ export default function SpendingInsights(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMonth, selectedCostType, transactions]);
 
-  const categoryCosts = useMemo<CategoryCosts>(
-    () =>
-      transactions.reduce((acc: CategoryCosts, tx) => {
-        if (!isCostCategory(tx.category) && !isIncomeCategory(tx.category)) {
-          return acc;
-        }
-        if (
-          selectedCostType === 'IncomeType' &&
-          !isIncomeCategory(tx.category)
-        ) {
-          return acc;
-        }
-        if (
-          selectedCostType === 'SpendingType' &&
-          !isCostCategory(tx.category)
-        ) {
-          return acc;
-        }
-        if (!selectedCostType && !isCostCategory(tx.category)) {
-          return acc;
-        }
-
-        if (isIncomeCategory(tx.category)) {
-          tx.amount = -tx.amount;
-        }
-
-        const date = new Date(tx.date);
-        const monthYear = getMonthYear(date);
-
-        if (!acc[monthYear]) {
-          acc[monthYear] = {};
-        }
-
-        if (!acc[monthYear][tx.category]) {
-          acc[monthYear][tx.category] = { total: 0, subcategories: {} };
-        }
-
-        acc[monthYear][tx.category].total += tx.amount;
-
-        if (tx.subcategory) {
-          if (!acc[monthYear][tx.category].subcategories[tx.subcategory]) {
-            acc[monthYear][tx.category].subcategories[tx.subcategory] = 0;
-          }
-
-          acc[monthYear][tx.category].subcategories[tx.subcategory] +=
-            tx.amount;
-        }
-
-        return acc;
-      }, {}),
-    [selectedCostType, transactions]
-  );
-
   // create category and name objects from transactions
   const categoriesObject = useMemo((): Categories => {
     const unsortedCategories = monthlyTransactions.reduce(
@@ -336,44 +283,6 @@ export default function SpendingInsights(props: Props) {
     );
   };
 
-  const lines = selectedCategory
-    ? selectedSubCategory
-      ? [selectedSubCategory]
-      : [selectedCategory] //Array.from(new Set(Object.keys(categoryCosts).flatMap(monthYear => Object.keys(categoryCosts[monthYear][selectedCategory]?.subcategories || {})))))
-    : Array.from(
-        new Set(
-          Object.keys(categoryCosts).flatMap(monthYear =>
-            Object.keys(categoryCosts[monthYear])
-          )
-        )
-      ).sort();
-
-  type MonthData = { monthYear: string; [key: string]: number | string };
-
-  const data: MonthData[] = Object.keys(categoryCosts).map(monthYear => {
-    const monthData: MonthData = { monthYear };
-
-    Object.entries(categoryCosts[monthYear]).forEach(
-      ([category, categoryData]) => {
-        // Add category total
-        monthData[category] = Math.round(categoryData.total);
-
-        // Add subcategory totals
-        Object.entries(categoryData.subcategories || {}).forEach(
-          ([subCategory, subCategoryTotal]) => {
-            monthData[`${subCategory}`] = Math.round(subCategoryTotal);
-          }
-        );
-      }
-    );
-
-    return monthData;
-  });
-
-  const sortedData = data.sort(sortByMonthYear);
-
-  console.log('sortedData', sortedData);
-
   return (
     <div>
       <h4 className="monthlySpendingHeading">
@@ -431,15 +340,9 @@ export default function SpendingInsights(props: Props) {
           </div>
         </div>
       </div>
-      {console.log('data', sortedData, selectedIndex)}
       {selectedCostType !== 'IncomeType1' && (
         <div className="userDataBoxBarChart">
-          <SelectedCategoryChart
-            data={sortedData}
-            lines={lines}
-            width={width}
-            indexForColor={selectedIndex}
-          />
+          <SelectedCategoryChart width={width} indexForColor={selectedIndex} />
         </div>
       )}
     </div>
