@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   PieChart,
   Pie,
@@ -78,14 +78,19 @@ export default function CategoriesChart(props: Props) {
   };
 
   // Event handler for click events on pie chart segments
-  const onPieChartClick = (entry: { name: string; value: number }) => {
-    // Perform any action here. For demonstration, we'll just log the clicked segment.
-    console.log(`Clicked on: ${entry.name} - $${entry.value.toLocaleString()}`);
-    // Here, you can also use entry data to perform more complex actions,
-    // like setting state, showing modal with more details, etc.
-    props.onCategoryClick(entry.name);
-    setSelectedCategory(entry.name);
-  };
+  const onPieChartClick = useCallback(
+    (entry: { name: string; value: number }) => {
+      // Perform any action here. For demonstration, we'll just log the clicked segment.
+      console.log(
+        `Clicked on: ${entry.name} - $${entry.value.toLocaleString()}`
+      );
+      // Here, you can also use entry data to perform more complex actions,
+      // like setting state, showing modal with more details, etc.
+      props.onCategoryClick(entry.name);
+      setSelectedCategory(entry.name);
+    },
+    [props, setSelectedCategory]
+  );
 
   const CustomTooltip: React.FC<any> = ({ active, payload }) => {
     //console.log('CustomTooltip' + active + ' ' + payload);
