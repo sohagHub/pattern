@@ -115,7 +115,7 @@ export default function SpendingInsights(props: Props) {
       //setSelectedMonth(getMonthYear(today));
       onMonthSelect(getMonthYear(today));
       props.onMonthClick(getMonthYear(today));
-      if (result.length <= 0) {
+      if (result.length <= 0 && transactions.length > 0) {
         result = getOneMonthTransactions(
           transactions,
           date => getMonthYear(date) === getMonthYear(oneMonthAgo),
@@ -297,11 +297,6 @@ export default function SpendingInsights(props: Props) {
       </div>
       <div className="monthlySpendingContainer">
         <div className="userDataBoxPieChart">
-          {console.log(
-            'selectedCategory: ',
-            selectedCategory,
-            Object.keys(subcategoriesObject)
-          )}
           <CategoriesChart
             categories={
               selectedCategory && hasAtLeastTwoSubcategories()
