@@ -152,6 +152,7 @@ export default function CategoriesChart(props: Props) {
               onClick={() => {
                 props.onCategoryClick('');
                 setSelectedCategory('');
+                onCategorySelect('');
               }}
             >
               Clear Selection
