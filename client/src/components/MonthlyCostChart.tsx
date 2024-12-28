@@ -252,7 +252,7 @@ export default function MonthlyCostChart(props: Props) {
             onClick={onIncomeBarClick}
           >
             {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[(index % 4) + 5]} />
+              <Cell key={`cell-${index}`} fill={COLORS[(index % 5) + 5]} />
             ))}
             {/*chartWidth > 900 && (
               <LabelList
@@ -271,7 +271,7 @@ export default function MonthlyCostChart(props: Props) {
             onClick={onCostBarClick}
           >
             {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % 4]} />
+              <Cell key={`cell-${index}`} fill={COLORS[index % 5]} />
             ))}
             {/*chartWidth > 900 && (
               <LabelList

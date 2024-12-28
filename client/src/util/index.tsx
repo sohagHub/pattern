@@ -174,7 +174,7 @@ export const COLORS = [
   colors.red600,
   colors.blue600,
   colors.green600,
-  //colors.purple600,
+  colors.purple600,
 ];
 
 // Function to check if a transaction category is excluded
