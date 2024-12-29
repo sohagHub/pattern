@@ -72,12 +72,12 @@ export default function CategoriesChart() {
     if (hasMultipleSubcategories) {
       // Show subcategories data
       chartData = Object.entries(subcategories)
-        .map(([subCategory, value]) => ({
-          name: subCategory,
-          value: selectedCostType === 'IncomeType' ? Math.abs(value) : value,
-          id: selectedCategory + ":" + subCategory,
+        .map(([subcategory, subcategoryData]) => ({
+          name: subcategory,
+          value: selectedCostType === 'IncomeType' ? Math.abs(subcategoryData.total) : subcategoryData.total,
+          id: selectedCategory + ":" + subcategory,
         }));
-      total = Object.values(subcategories).reduce((sum, val) => sum + val, 0);
+      total = Object.values(subcategories).reduce((sum, subcategoryData) => sum + subcategoryData.total, 0);
       setViewType('subcategory');
     } else {
       // Show categories data

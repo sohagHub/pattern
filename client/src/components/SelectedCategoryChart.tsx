@@ -63,8 +63,8 @@ const SelectedCategoryChart: React.FC<SelectedCategoryChartProps> = ({
 
           // Add subcategory totals
           Object.entries(categoryData.subcategories || {}).forEach(
-            ([subCategory, subCategoryTotal]) => {
-              monthData[`${subCategory}`] = Math.round(subCategoryTotal);
+            ([subCategory, subCategoryData]) => {
+              monthData[`${subCategory}`] = Math.round(subCategoryData.total);
             }
           );
         }

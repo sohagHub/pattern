@@ -298,10 +298,14 @@ export const getMonthlyCategorizedDataFromTransactions = (
 
     if (tx.subcategory) {
       if (!acc[monthYear][tx.category].subcategories[tx.subcategory]) {
-        acc[monthYear][tx.category].subcategories[tx.subcategory] = 0;
+        acc[monthYear][tx.category].subcategories[tx.subcategory] = {
+          total: 0,
+          transactions: [],
+        };
       }
 
-      acc[monthYear][tx.category].subcategories[tx.subcategory] += tx.amount;
+      acc[monthYear][tx.category].subcategories[tx.subcategory].total += tx.amount;
+      acc[monthYear][tx.category].subcategories[tx.subcategory].transactions.push(tx);
     }
 
     return acc;

@@ -100,7 +100,10 @@ export interface CategoryCosts {
     [category: string]: {
       total: number;
       subcategories: {
-        [subcategory: string]: number;
+        [subcategory: string]: {
+          total: number;
+          transactions: TransactionType[];
+        };
       };
     };
   };
