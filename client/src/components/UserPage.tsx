@@ -334,13 +334,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                 userId={userId}
                 assetsOnly={false}
               />
-              <SpendingInsights
-                numOfItems={numOfItems}
-                onMonthClick={setSelectedMonth}
-                onCategoryClick={setSelectedCategory}
-                onSubCategoryClick={setSelectedSubCategory}
-                //selectedMonth={selectedMonth}
-              />
+              <SpendingInsights onMonthClick={setSelectedMonth} />
             </>
           )}
           {numOfItems === 0 && transactions.length === 0 && assets.length > 0 && (

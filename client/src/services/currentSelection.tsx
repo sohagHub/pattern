@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface CurrentSelectionContextType {
-  selectedMonth: string | null;
+  selectedMonth: string;
   onMonthSelect: (month: string) => void;
   selectedCostType: string;
   onCostTypeSelect: (costType: string) => void;
-  selectedCategory: string | null;
+  selectedCategory: string;
   onCategorySelect: (category: string) => void;
-  selectedSubCategory: string | null;
+  selectedSubCategory: string;
   onSubCategorySelect: (subCategory: string) => void;
 }
 
@@ -32,12 +32,12 @@ interface CurrentSelectionProviderProps {
 export const CurrentSelectionProvider: React.FC<
   CurrentSelectionProviderProps
 > = ({ children }) => {
-  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedCostType, setSelectedCostType] = useState<string>(
     'SpendingType'
   );
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
 
   const onMonthSelect = (month: string) => {
     setSelectedMonth(month);

@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+} from 'react';
 import {
   PieChart,
   Pie,
@@ -11,27 +17,24 @@ import {
   LabelList,
   CartesianGrid,
 } from 'recharts';
-import { COLORS } from '../util';
+import { COLORS, isCostCategory, isIncomeCategory } from '../util';
 import colors from 'plaid-threads/scss/colors';
 import { useCurrentSelection } from '../services/currentSelection';
+import useTransactions from '../services/transactions';
 
-interface Props {
-  categories: {
-    [key: string]: number;
-  };
-  onCategoryClick: (category: string) => void;
-  viewType: string;
-}
+export default function CategoriesChart() {
+  const pieChartRef = useRef<HTMLDivElement>(null);
+  const { monthlyCategorizedData } = useTransactions();
+  const [viewType, setViewType] = useState<'main' | 'subcategory'>('main');
 
-export default function CategoriesChart(props: Props) {
   const {
     selectedMonth,
     selectedCostType,
+    selectedCategory,
+    selectedSubCategory,
     onCategorySelect,
     onSubCategorySelect,
   } = useCurrentSelection();
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const pieChartRef = useRef<HTMLDivElement>(null);
 
   const [chartWidth, setChartWidth] = useState(0);
 
@@ -50,31 +53,60 @@ export default function CategoriesChart(props: Props) {
 
   const [chartType, setChartType] = useState<'pie' | 'bar'>('bar');
   const [activeIndex] = useState<number | null>(null);
-  let data: { name: string; value: number }[] = [];
-  const labels = Object.keys(props.categories);
-  const values = Object.values(props.categories);
-  let totalValue = 0;
 
-  for (let i = 0; i < labels.length; i++) {
-    if (values[i] <= 0 && selectedCostType !== 'IncomeType') {
-      continue;
+  // Calculate categories and data
+  const { data, totalValue } = useMemo(() => {
+    const currentMonthData = monthlyCategorizedData[selectedMonth] || {};
+    let total = 0;
+    
+    interface ChartDataItem {
+      name: string;
+      value: number;
+      id: string;
     }
-    const roundedValue = Math.round(values[i]);
-    data.push({ name: labels[i], value: roundedValue });
-    totalValue += values[i];
-  }
 
-  if (selectedCostType === 'IncomeType') {
-    // change all data values to positive
-    data = data.map(entry => {
-      return { name: entry.name, value: Math.abs(entry.value) };
-    });
-    totalValue = Math.abs(totalValue);
-  }
-  totalValue = Math.round(totalValue);
+    let chartData: ChartDataItem[] = [];
+    
+    const subcategories = currentMonthData[selectedCategory]?.subcategories;
+    const hasMultipleSubcategories = subcategories && Object.keys(subcategories).length > 1;
+    if (hasMultipleSubcategories) {
+      // Show subcategories data
+      chartData = Object.entries(subcategories)
+        .map(([subCategory, value]) => ({
+          name: subCategory,
+          value: selectedCostType === 'IncomeType' ? Math.abs(value) : value,
+          id: selectedCategory + ":" + subCategory,
+        }));
+      total = Object.values(subcategories).reduce((sum, val) => sum + val, 0);
+      setViewType('subcategory');
+    } else {
+      // Show categories data
+      chartData = Object.entries(currentMonthData)
+        .filter(([category, data]) => {
+          if (!isCostCategory(category) && !isIncomeCategory(category)) return false;
+          if (selectedCostType === 'IncomeType' && !isIncomeCategory(category)) return false;
+          if (selectedCostType === 'SpendingType' && !isCostCategory(category)) return false;
+          return true;
+        })
+        .map(([category, data]) => {
+          const value = Math.round(data.total);
+          total += value;
+          return {
+            name: category,
+            value: selectedCostType === 'IncomeType' ? Math.abs(value) : value,
+            id: category + ":",
+          };
+        });
+      setViewType('main');
+    }
+
+    return {
+      data: chartData.sort((a, b) => b.value - a.value),
+      totalValue: selectedCostType === 'IncomeType' ? Math.abs(total) : total,
+    };
+  }, [monthlyCategorizedData, selectedMonth, selectedCostType, selectedCategory]);
 
   const renderLabelNameValue = (entry: { name: string; value: number }) => {
-    //const percentage = ((entry.value / totalValue) * 100).toFixed(2);
     return `${entry.name} $${entry.value.toLocaleString()}`;
   };
 
@@ -83,24 +115,17 @@ export default function CategoriesChart(props: Props) {
   };
 
   // Event handler for click events on pie chart segments
-  const onPieChartClick = useCallback(
-    (entry: { name: string; value: number }) => {
-      // Perform any action here. For demonstration, we'll just log the clicked segment.
-      console.log(
-        `Clicked on: ${entry.name} - $${entry.value.toLocaleString()}`
-      );
-      // Here, you can also use entry data to perform more complex actions,
-      // like setting state, showing modal with more details, etc.
-      props.onCategoryClick(entry.name);
-      setSelectedCategory(entry.name);
-      onSubCategorySelect(entry.name);
-      onCategorySelect(entry.name);
+  const onChartClick = useCallback(
+    (entry: { name: string; value: number, id: string }) => {
+      const [category, subcategory] = entry.id.split(":");
+
+      onCategorySelect(category);
+      onSubCategorySelect(subcategory);
     },
-    [onCategorySelect, onSubCategorySelect, props]
+    [onCategorySelect, onSubCategorySelect]
   );
 
   const CustomTooltip: React.FC<any> = ({ active, payload }) => {
-    //console.log('CustomTooltip' + active + ' ' + payload);
     if (active && payload && payload.length) {
       const value = payload[0].value;
       const percentage = ((value / totalValue) * 100).toFixed(2);
@@ -116,15 +141,14 @@ export default function CategoriesChart(props: Props) {
 
   const handleClick = (data: any) => {
     if (!data) return;
-    console.log('handleClick: ' + data);
-    onPieChartClick({ name: data.activeLabel, value: 0 });
+    onChartClick({ name: data.activeLabel, value: 0, id: data.activePayload[0].payload.id });
   };
 
   useEffect(() => {
     if (data.length === 1 && selectedCategory !== data[0].name) {
-      onPieChartClick(data[0]);
+      onChartClick(data[0]);
     }
-  }, [data, selectedCategory, onPieChartClick]);
+  }, [data, selectedCategory, onChartClick]);
 
   const chartHeight = 550; // the height of your chart
 
@@ -132,7 +156,7 @@ export default function CategoriesChart(props: Props) {
     <div className="holdingsListCategories" ref={pieChartRef}>
       <h5 className="holdingsHeading">
         {selectedCostType === 'IncomeType' ? 'Income' : 'Spending'}{' '}
-        {props.viewType === 'main' ? 'Categories' : 'Sub-Categories'}
+        {viewType === 'main' ? 'Categories' : 'Sub-Categories'}
       </h5>
       <div className="categoryChartButtonDiv">
         <div>
@@ -150,9 +174,9 @@ export default function CategoriesChart(props: Props) {
             <button
               className="clearSelectionButton"
               onClick={() => {
-                props.onCategoryClick('');
-                setSelectedCategory('');
                 onCategorySelect('');
+                onSubCategorySelect('');
+                setViewType('main');
               }}
             >
               Clear Selection
@@ -191,7 +215,7 @@ export default function CategoriesChart(props: Props) {
                       ? 2
                       : 1
                   }
-                  onClick={() => onPieChartClick(entry)}
+                  onClick={() => onChartClick(entry)}
                 />
               ))}
           </Pie>
@@ -218,12 +242,12 @@ export default function CategoriesChart(props: Props) {
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}
                 stroke={
-                  activeIndex === index || entry.name === selectedCategory
+                  activeIndex === index || entry.name === selectedCategory || entry.name === selectedSubCategory
                     ? 'black'
                     : 'none'
                 }
                 strokeWidth={
-                  activeIndex === index || entry.name === selectedCategory
+                  activeIndex === index || entry.name === selectedCategory || entry.name === selectedSubCategory
                     ? 1.5
                     : 1
                 }

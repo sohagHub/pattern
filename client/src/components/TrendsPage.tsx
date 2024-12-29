@@ -214,13 +214,7 @@ const UserPage = () => {
               {spendingView === 'All' &&
                 numOfItems > 0 &&
                 transactions.length > 0 && (
-                  <SpendingInsights
-                    numOfItems={numOfItems}
-                    onMonthClick={setSelectedMonth}
-                    onCategoryClick={setSelectedCategory}
-                    onSubCategoryClick={setSelectedSubCategory}
-                    //selectedMonth={selectedMonth}
-                  />
+                  <SpendingInsights onMonthClick={setSelectedMonth} />
                 )}
               {spendingView === 'Vendor' && (
                 <h3>Placeholder for Spending by Vendor Graph</h3>

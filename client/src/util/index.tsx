@@ -9,7 +9,7 @@ import {
 
 import { postLinkEvent as apiPostLinkEvent } from '../services/api';
 import colors from 'plaid-threads/scss/colors';
-import { TransactionType } from '../components/types';
+import { TransactionType, CategoryCosts } from '../components/types';
 
 /**
  * @desc small helper for pluralizing words for display given a number of items
@@ -263,4 +263,47 @@ export const getMonthYear = (date: Date) => {
   const year = date.getFullYear();
   const monthYear = `${month} ${year}`;
   return monthYear;
+};
+
+export const getMonthlyCategorizedDataFromTransactions = (
+  transactions: TransactionType[]
+) => {
+  // make a deep copy of transactions and then do this
+  let transactionsCopy = transactions.map(tx => ({ ...tx }));
+
+  return transactionsCopy.reduce((acc: CategoryCosts, tx) => {
+    if (!isCostCategory(tx.category) && !isIncomeCategory(tx.category)) {
+      return acc;
+    }
+
+    if (isIncomeCategory(tx.category)) {
+      tx.amount = -tx.amount;
+    }
+
+    const date = new Date(tx.date);
+    const monthYear = getMonthYear(date);
+
+    if (!acc[monthYear]) {
+      acc[monthYear] = {};
+    }
+
+    if (!acc[monthYear][tx.category]) {
+      acc[monthYear][tx.category] = {
+        total: 0,
+        subcategories: {},
+      };
+    }
+
+    acc[monthYear][tx.category].total += tx.amount;
+
+    if (tx.subcategory) {
+      if (!acc[monthYear][tx.category].subcategories[tx.subcategory]) {
+        acc[monthYear][tx.category].subcategories[tx.subcategory] = 0;
+      }
+
+      acc[monthYear][tx.category].subcategories[tx.subcategory] += tx.amount;
+    }
+
+    return acc;
+  }, {});
 };

@@ -11,7 +11,7 @@ import groupBy from 'lodash/groupBy';
 import keyBy from 'lodash/keyBy';
 import omitBy from 'lodash/omitBy';
 
-import { TransactionType } from '../components/types';
+import { CategoryCosts, TransactionType } from '../components/types';
 
 import {
   getTransactionsByAccount as apiGetTransactionsByAccount,
@@ -19,6 +19,7 @@ import {
   getTransactionsByUser as apiGetTransactionsByUser,
 } from './api';
 import { Dictionary } from 'lodash';
+import { getMonthlyCategorizedDataFromTransactions } from '../util';
 
 interface TransactionsState {
   [transactionId: number]: TransactionType;
@@ -40,6 +41,7 @@ type TransactionsAction =
 interface TransactionsContextShape extends TransactionsState {
   dispatch: Dispatch<TransactionsAction>;
   allTransactions: TransactionType[];
+  monthlyCategorizedData: CategoryCosts;
   transactionsByAccount: Dictionary<any>;
   getTransactionsByAccount: (accountId: number, refresh?: boolean) => void;
   deleteTransactionsByItemId: (itemId: number) => void;
@@ -118,10 +120,12 @@ export function TransactionsProvider(props: any) {
    */
   const value = useMemo(() => {
     const allTransactions = Object.values(transactionsById);
+    const monthlyCategorizedData = getMonthlyCategorizedDataFromTransactions(allTransactions);
 
     return {
       dispatch,
       allTransactions,
+      monthlyCategorizedData,
       transactionsById,
       transactionsByAccount: groupBy(allTransactions, 'account_id'),
       transactionsByItem: groupBy(allTransactions, 'item_id'),
