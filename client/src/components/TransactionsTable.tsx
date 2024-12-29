@@ -73,10 +73,7 @@ export default function TransactionsTable(props: Props) {
 
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]); 
   const [subCategoryFilter, setSubCategoryFilter] = useState<string[]>([]);
-  const [
-    uniqueCategoryToSubcategoryMapping,
-    setUniqueCategoryToSubcategoryMapping,
-  ] = useState<Record<string, string[]>>({});
+
   const [
     categoryToSubcategoryMapping,
     setCategoryToSubcategoryMapping,
@@ -171,9 +168,6 @@ export default function TransactionsTable(props: Props) {
 
     setCategoryToSubcategoryMapping(
       mapCategoriesToSubcategories(transactions)
-    );
-    setUniqueCategoryToSubcategoryMapping(
-      mapCategoriesToSubcategories(filteredTransactions)
     );
     
     filteredTransactions = filteredTransactions.filter(tx => {

@@ -99,24 +99,6 @@ export default function SpendingInsights(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMonth, selectedCostType, transactions]);
 
-  /*const selectedIndex = useMemo(() => {
-    if (
-      selectedSubCategory &&
-      selectedCategory
-    ) {
-      return Object.keys(subcategoriesObject[selectedCategory]).indexOf(
-        selectedSubCategory
-      );
-    }
-    if (selectedCategory) {
-      return Object.keys(categoriesObject).indexOf(selectedCategory);
-    }
-    return -1;
-  }, [
-    selectedCategory,
-    selectedSubCategory,
-  ]);*/
-
   const namesObject = useMemo((): Categories => {
     return monthlyTransactions.reduce((obj: Categories, tx) => {
       if (selectedCategory && tx.category !== selectedCategory) {
@@ -183,14 +165,6 @@ export default function SpendingInsights(props: Props) {
       }
     };
   }, []); // Dependency array remains empty if no props/state affect sizing
-
-  /*const hasAtLeastTwoSubcategories = () => {
-    return (
-      subcategoriesObject &&
-      subcategoriesObject[selectedCategory] &&
-      Object.keys(subcategoriesObject[selectedCategory]).length >= 2
-    );
-  };*/
 
   return (
     <div>
