@@ -103,7 +103,7 @@ export default function MonthlyCostChart(props: Props) {
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
-  const [showIncome, setShowIncome] = useState(true);
+  const [showIncome, setShowIncome] = useState(false);
   const [showSpending, setShowSpending] = useState(true);
 
   const toggleIncome = () => {
@@ -158,7 +158,7 @@ export default function MonthlyCostChart(props: Props) {
 
   const data = monthlyCosts
     .sort(sortByMonthYear)
-    .slice(-12)
+    //.slice(-12)
     .map((item: { cost: number; income: number }) => ({
       ...item,
       spending: Math.round(item.cost),

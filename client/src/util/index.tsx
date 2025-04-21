@@ -272,6 +272,10 @@ export const getMonthlyCategorizedDataFromTransactions = (
   let transactionsCopy = transactions.map(tx => ({ ...tx }));
 
   return transactionsCopy.reduce((acc: CategoryCosts, tx) => {
+    if (tx.amount === 0) {
+      return acc;
+    }
+
     if (!isCostCategory(tx.category) && !isIncomeCategory(tx.category)) {
       return acc;
     }
