@@ -8,6 +8,7 @@ import Button from 'plaid-threads/Button';
 import { applyRulesForUser, syncAllForUser } from '../services/api';
 import { TransactionsTable } from '.';
 import { useCurrentUser } from '../services';
+import { useCurrentSelection } from '../services/currentSelection';
 
 import { RouteInfo, ItemType, AccountType, AssetType } from './types';
 import {
@@ -51,12 +52,15 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
   const { userState } = useCurrentUser();
   const userId = Number(userState.currentUser.id);
   const { generateLinkToken, linkTokens } = useLink();
-  const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedAccount, setSelectedAccount] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
   const [isExpanded, setIsExpanded] = useState(true);
   const [isArchivedBankExpanded, setIsArchivedBankExpanded] = useState(false);
+
+  const {
+    selectedMonth,
+    selectedCategory,
+    selectedSubCategory,
+  } = useCurrentSelection();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -334,7 +338,7 @@ const UserPage = ({ match }: RouteComponentProps<RouteInfo>) => {
                 userId={userId}
                 assetsOnly={false}
               />
-              <SpendingInsights onMonthClick={setSelectedMonth} />
+              <SpendingInsights />
             </>
           )}
           {numOfItems === 0 && transactions.length === 0 && assets.length > 0 && (

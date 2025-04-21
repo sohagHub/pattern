@@ -5,6 +5,7 @@ import sortBy from 'lodash/sortBy';
 import { applyRulesForUser, syncAllForUser } from '../services/api';
 import { TransactionsTable } from '.';
 import { useCurrentUser } from '../services';
+import { useCurrentSelection } from '../services/currentSelection';
 
 import { RouteInfo, ItemType, AccountType, AssetType } from './types';
 import {
@@ -37,13 +38,16 @@ const UserPage = () => {
   const { userState } = useCurrentUser();
   const userId = Number(userState.currentUser.id);
   const { linkTokens } = useLink();
-  const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedAccount, setSelectedAccount] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
   const [isExpanded, setIsExpanded] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const {
+    selectedMonth,
+    selectedCategory,
+    selectedSubCategory,
+  } = useCurrentSelection();
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -213,9 +217,7 @@ const UserPage = () => {
               )}
               {spendingView === 'All' &&
                 numOfItems > 0 &&
-                transactions.length > 0 && (
-                  <SpendingInsights onMonthClick={setSelectedMonth} />
-                )}
+                transactions.length > 0 && <SpendingInsights />}
               {spendingView === 'Vendor' && (
                 <h3>Placeholder for Spending by Vendor Graph</h3>
               )}

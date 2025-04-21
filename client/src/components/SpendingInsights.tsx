@@ -14,11 +14,7 @@ import SelectedCategoryChart from './SelectedCategoryChart';
 import { useCurrentSelection } from '../services/currentSelection';
 import useTransactions from '../services/transactions';
 
-interface Props {
-  onMonthClick: (month: string) => void;
-}
-
-export default function SpendingInsights(props: Props) {
+export default function SpendingInsights() {
   // grab transactions from most recent month and filter out transfers and payments
   const { allTransactions } = useTransactions();
   const [transactions, setTransactions] = useState<TransactionType[]>([]);
@@ -39,12 +35,6 @@ export default function SpendingInsights(props: Props) {
     selectedSubCategory,
     onSubCategorySelect,
   } = useCurrentSelection();
-
-  useEffect(() => {
-    if (selectedMonth) {
-      props.onMonthClick(selectedMonth);
-    }
-  }, [selectedMonth, props, onMonthSelect]);
 
   useEffect(() => {
     if (
@@ -83,7 +73,6 @@ export default function SpendingInsights(props: Props) {
       );
       //setSelectedMonth(getMonthYear(today));
       onMonthSelect(getMonthYear(today));
-      props.onMonthClick(getMonthYear(today));
       if (result.length <= 0 && transactions.length > 0) {
         result = getOneMonthTransactions(
           transactions,
@@ -92,7 +81,6 @@ export default function SpendingInsights(props: Props) {
         );
         //setSelectedMonth(getMonthYear(oneMonthAgo));
         onMonthSelect(getMonthYear(oneMonthAgo));
-        props.onMonthClick(getMonthYear(oneMonthAgo));
       }
     }
     return result;
