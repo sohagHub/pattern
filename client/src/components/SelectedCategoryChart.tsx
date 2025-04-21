@@ -74,7 +74,7 @@ const SelectedCategoryChart: React.FC<SelectedCategoryChartProps> = ({
     });
 
     return {
-      data: data.sort(sortByMonthYear).slice(-12),
+      data: data.sort(sortByMonthYear), //.slice(-12),
       lines,
     };
   }, [monthlyCategorizedData, selectedCategory, selectedSubCategory]);
